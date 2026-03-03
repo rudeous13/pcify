@@ -1,5 +1,5 @@
 """
-ASGI config for pcify project.
+ASGI config for PCify_Nexus project.
 
 It exposes the ASGI callable as a module-level variable named ``application``.
 

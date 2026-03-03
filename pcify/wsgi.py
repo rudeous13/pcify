@@ -1,5 +1,5 @@
 """
-WSGI config for pcify project.
+WSGI config for PCify_Nexus project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 

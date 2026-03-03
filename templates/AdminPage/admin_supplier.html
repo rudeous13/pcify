@@ -1,0 +1,1284 @@
+{% load static %}
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Nexus Admin | Supplier Management</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
+    />
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script>
+      tailwind.config = {
+        darkMode: ["class", '[data-theme="dark"]'],
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['"Outfit"', "sans-serif"],
+              mono: ['"Space Grotesk"', "monospace"],
+            },
+            colors: {
+              brand: {
+                400: "#38bdf8",
+                500: "#0ea5e9",
+                600: "#0284c7",
+                glow: "rgba(14, 165, 233, 0.3)",
+              },
+              accent: {
+                400: "#a78bfa",
+                500: "#8b5cf6",
+                600: "#7c3aed",
+                glow: "rgba(139, 92, 246, 0.3)",
+              },
+              dark: { bg: "#0b0f19", card: "#111827", border: "#1f2937" },
+              success: "#10b981",
+              danger: "#ef4444",
+              warning: "#f59e0b",
+            },
+            backgroundImage: {
+              "grid-pattern":
+                "linear-gradient(to right, #1f2937 1px, transparent 1px), linear-gradient(to bottom, #1f2937 1px, transparent 1px)",
+            },
+            boxShadow: {
+              neon: "0 0 12px -3px var(--tw-shadow-color)",
+              glass: "0 8px 32px 0 rgba(0, 0, 0, 0.37)",
+            },
+            animation: {
+              "slide-in": "slideIn 0.4s ease-out forwards",
+            },
+            keyframes: {
+              slideIn: {
+                "0%": { opacity: "0", transform: "translateY(10px)" },
+                "100%": { opacity: "1", transform: "translateY(0)" },
+              },
+            },
+          },
+        },
+      };
+    </script>
+
+    <style type="text/tailwindcss">
+      ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #a4a4a4;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #334155;
+        border-radius: 4px;
+      }
+
+      .bg-grid {
+        background-size: 40px 40px;
+        mask-image: linear-gradient(
+          to bottom,
+          transparent,
+          5% white,
+          95% white,
+          transparent
+        );
+        -webkit-mask-image: linear-gradient(
+          to bottom,
+          transparent,
+          5% white,
+          95% white,
+          transparent
+        );
+      }
+
+      .nav-item.active {
+        background: rgba(14, 165, 233, 0.1);
+        color: #38bdf8;
+        border-right: 3px solid #38bdf8;
+      }
+
+      .glass-table th {
+        background-color: rgba(255, 255, 255, 0.05);
+      }
+      .glass-table tr:hover td {
+        background-color: rgba(255, 255, 255, 0.02);
+      }
+
+      .mac-dock {
+        background: rgba(255, 255, 255, 0.65);
+        backdrop-filter: blur(24px) saturate(180%);
+        -webkit-backdrop-filter: blur(24px) saturate(180%);
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        box-shadow:
+          0 20px 40px -8px rgba(0, 0, 0, 0.15),
+          inset 0 1px 1px rgba(255, 255, 255, 0.8);
+      }
+
+      [data-theme="dark"] .mac-dock {
+        background: rgba(15, 23, 42, 0.55);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-top: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow:
+          0 25px 50px -12px rgba(0, 0, 0, 0.6),
+          inset 0 1px 1px rgba(255, 255, 255, 0.1);
+      }
+
+      .mobile-nav-link {
+        position: relative;
+        transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        will-change: transform;
+      }
+
+      .mobile-nav-link:active {
+        transform: scale(0.85);
+        opacity: 0.8;
+      }
+
+      .mobile-nav-link.active {
+        color: #38bdf8;
+        background: rgba(56, 189, 248, 0.12);
+        transform: translateY(-4px) scale(1.05);
+        box-shadow:
+          inset 0 1px 3px rgba(255, 255, 255, 0.2),
+          0 8px 12px -4px rgba(0, 0, 0, 0.1);
+      }
+
+      [data-theme="dark"] .mobile-nav-link.active {
+        background: rgba(56, 189, 248, 0.15);
+        box-shadow:
+          inset 0 1px 3px rgba(255, 255, 255, 0.05),
+          0 8px 12px -4px rgba(0, 0, 0, 0.3);
+      }
+
+      .mobile-nav-link.active::after {
+        content: "";
+        position: absolute;
+        bottom: -6px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 4px;
+        height: 4px;
+        border-radius: 50%;
+        background-color: #38bdf8;
+        box-shadow: 0 0 8px 1px rgba(56, 189, 248, 0.7);
+      }
+
+      /* Status Badges */
+      .status-active {
+        @apply bg-emerald-500/10 text-emerald-500 border border-emerald-500/20;
+      }
+      .status-inactive {
+        @apply bg-red-500/10 text-red-500 border border-red-500/20;
+      }
+    </style>
+  </head>
+  <body
+    class="bg-slate-50 dark:bg-dark-bg text-slate-600 dark:text-slate-300 antialiased font-sans transition-colors duration-300 h-screen overflow-hidden flex selection:bg-brand-500 selection:text-white pb-20 lg:pb-0"
+  >
+    <div class="fixed inset-0 z-0 pointer-events-none">
+      <div
+        class="absolute inset-0 bg-grid-pattern bg-grid opacity-[0.03] dark:opacity-[0.05]"
+      ></div>
+      <div
+        class="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-brand-500/10 rounded-full blur-[100px] mix-blend-screen"
+      ></div>
+      <div
+        class="absolute bottom-[20%] right-[-10%] w-[500px] h-[500px] bg-accent-500/10 rounded-full blur-[100px] mix-blend-screen"
+      ></div>
+    </div>
+
+    <aside
+      id="sidebar"
+      class="w-64 bg-white/80 dark:bg-dark-card/80 backdrop-blur-xl border-r border-slate-200 dark:border-white/5 h-full flex-col hidden lg:flex z-50 transition-all duration-300 relative"
+    >
+      <div
+        class="h-20 flex items-center px-6 border-b border-slate-200 dark:border-white/5"
+      >
+        <a href="" class="flex items-center gap-3">
+          <div
+            class="w-8 h-8 rounded-lg bg-gradient-to-tr from-brand-500 to-accent-600 text-white flex items-center justify-center font-bold shadow-lg shadow-brand-500/20"
+          >
+            <i class="bi bi-shield-lock-fill" aria-hidden="true"></i>
+          </div>
+          <div class="flex flex-col">
+            <span
+              class="font-bold text-lg tracking-tight text-slate-900 dark:text-white font-mono uppercase"
+              >Nexus<span class="text-brand-400">Admin</span></span
+            >
+            <span
+              class="text-[10px] font-bold tracking-widest text-slate-500 uppercase"
+              >Command Center</span
+            >
+          </div>
+        </a>
+      </div>
+      <!-- Navigation -->
+      <nav class="flex-1 overflow-y-auto py-6 px-4 space-y-1 custom-scrollbar">
+        
+        <!-- Main Menu -->
+        <p
+          class="px-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2"
+        >
+          Main Menu
+        </p>
+
+        <!-- Overview -->
+        <a
+          href="{% url 'dashboard:dashboard_home'%}"
+          class="nav-item  flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
+        >
+          <i
+            class="bi bi-grid-1x2-fill text-lg drop-shadow-sm"
+            aria-hidden="true"
+          ></i>
+          Overview
+        </a>
+        
+        <!-- Users  -->
+        <p
+          class="px-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 mt-6"
+        >
+          Users
+        </p>
+        
+        <!-- Customers -->
+        <a
+          href="{% url 'dashboard:customers'%}"
+          class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
+        >
+          <i
+            class="bi bi-people-fill text-lg drop-shadow-sm"
+            aria-hidden="true"
+          ></i>
+          Customers
+        </a>
+        
+        <!-- Employees -->
+        <a
+          href="{% url 'dashboard:employees'%}"
+          class="nav-item {% if request.resolver_match.url_name == 'admin_employee' %}active{% endif %} flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
+        >
+          <i
+            class="bi bi-person-vcard-fill text-lg drop-shadow-sm"
+            aria-hidden="true"
+          ></i>
+          Employees
+        </a>
+
+        <!-- Suppliers -->
+        <a
+          href="{% url 'dashboard:suppliers'%}"
+          class="nav-item active flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
+        >
+          <i class="bi bi-truck text-lg drop-shadow-sm"></i> Suppliers
+        </a>
+
+
+        <!-- Management -->
+        <p
+          class="px-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 mt-6"
+        >
+          Management
+        </p>
+
+
+        <!-- Product -->
+        <a
+          href="{% url 'dashboard:product'%}"
+          class="nav-item {% if request.resolver_match.url_name == 'admin_products' %}active{% endif %} flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
+        >
+          <i
+            class="bi bi-box-seam-fill text-lg drop-shadow-sm"
+            aria-hidden="true"
+          ></i>
+          Products
+        </a>
+
+        <!-- Brand -->
+        <a
+          href="{% url 'dashboard:brand'%}"
+          class="nav-item {% if request.resolver_match.url_name == 'admin_brand' %}active{% endif %} flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
+        >
+          <i
+            class="bi bi-tags-fill text-lg drop-shadow-sm"
+            aria-hidden="true"
+          ></i>
+          Brand
+        </a>
+
+        <!-- Category -->
+        <a
+          href="{% url 'dashboard:category'%}"
+          class="nav-item {% if request.resolver_match.url_name == 'admin_category' %}active{% endif %} flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
+        >
+          <i
+            class="bi bi-list-check text-lg drop-shadow-sm"
+            aria-hidden="true"
+          ></i>
+          Category
+        </a>
+
+        <!-- Compatibility -->
+        <a
+          href="{% url 'dashboard:order'%}"
+          class="nav-item {% if request.resolver_match.url_name == 'admin_order' %}active{% endif %} flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
+        >
+          <i
+            class="bi bi-cart-check-fill text-lg drop-shadow-sm"
+            aria-hidden="true"
+          ></i>
+          Orders
+        </a>
+
+        <!-- Task Management -->
+        <a
+          href="{% url 'dashboard:task'%}"
+          class="nav-item {% if request.resolver_match.url_name == 'admin_task_management' %}active{% endif %} flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
+        >
+          <i class="bi bi-briefcase-fill text-lg drop-shadow-sm"></i> Task Mgmt
+        </a>
+
+        <!-- Invetory -->
+        <a
+          href="{% url 'dashboard:inventory'%}"
+          class="nav-item {% if request.resolver_match.url_name == 'admin_inventory' %}active{% endif %} flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
+        >
+          <i class="bi bi-boxes text-lg drop-shadow-sm" aria-hidden="true"></i>
+          Inventory
+        </a>
+
+        <!-- Compatibility -->
+        <a
+          href="{% url 'dashboard:compatibility'%}"
+          class="nav-item {% if request.resolver_match.url_name == 'admin_compatibility' %}active{% endif %} flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
+        >
+          <i class="bi bi-puzzle-fill text-lg drop-shadow-sm"></i> Compatibility
+        </a>
+
+        <!-- Trending -->
+        <a
+          href="{% url 'dashboard:trending'%}"
+          class="nav-item {% if request.resolver_match.url_name == 'admin_trending' %}active{% endif %} flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
+        >
+          <i class="bi bi-fire text-lg drop-shadow-sm"></i> Trending
+        </a>
+
+        <!-- Pre-Built PCs -->
+        <a
+          href="{% url 'dashboard:pre_built'%}"
+          class="nav-item {% if request.resolver_match.url_name == 'admin_prebuilt_pc' %}active{% endif %} flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
+        >
+          <i class="bi bi-pc-display text-lg drop-shadow-sm"></i> Pre-Built PCs
+        </a>
+
+
+        <!-- System -->
+        <p
+          class="px-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 mt-6"
+        >
+          System
+        </p>
+
+        <!-- Analytics -->
+        <a
+          href="{% url 'dashboard:analytic'%}"
+          class="nav-item {% if request.resolver_match.url_name == 'reports' %}active{% endif %} flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
+        >
+          <i
+            class="bi bi-bar-chart-fill text-lg drop-shadow-sm"
+            aria-hidden="true"
+          ></i>
+          Analytics
+        </a>
+
+        <!-- Settings -->
+        <a
+          href="{% url 'dashboard:setting'%}"
+          class="nav-item {% if request.resolver_match.url_name == 'admin_settings' %}active{% endif %} flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
+        >
+          <i
+            class="bi bi-gear-fill text-lg drop-shadow-sm"
+            aria-hidden="true"
+          ></i>
+          Settings
+        </a>
+      </nav>
+
+      <div class="p-4 border-t border-slate-200 dark:border-white/5">
+        <a
+          href="{% url 'dashboard:logout'%}"
+          class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-red-500 hover:bg-red-500/10 transition-all"
+        >
+          <i class="bi bi-box-arrow-right"></i> Logout
+        </a>
+      </div>
+    </aside>
+
+    <div
+      class="flex-1 flex flex-col h-full relative z-10 w-full lg:w-[calc(100%-16rem)]"
+    >
+      <header
+        class="h-20 bg-white/80 dark:bg-dark-bg/80 backdrop-blur-md border-b border-slate-200 dark:border-white/5 flex items-center justify-between px-4 md:px-8 z-40 sticky top-0"
+      >
+        <div class="flex items-center gap-4 flex-1">
+          <div class="lg:hidden flex items-center gap-2">
+            <div
+              class="w-8 h-8 rounded-lg bg-gradient-to-tr from-brand-500 to-accent-600 text-white flex items-center justify-center font-bold"
+            >
+              <i class="bi bi-shield-lock-fill"></i>
+            </div>
+          </div>
+          <div class="relative hidden md:block w-full max-w-md">
+            <i class="bi bi-search absolute left-4 top-3 text-slate-400"></i>
+            <input
+              type="text"
+              id="adminSearch"
+              onkeyup="filterTable(this.value)"
+              placeholder="Search suppliers..."
+              class="w-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-full pl-10 pr-4 py-2.5 text-sm text-slate-700 dark:text-white outline-none focus:border-brand-500 transition-all"
+            />
+          </div>
+        </div>
+
+        <div class="flex items-center gap-3 md:gap-4">
+          <button
+            id="themeToggle"
+            class="w-10 h-10 rounded-full border border-slate-200 dark:border-white/10 flex items-center justify-center text-slate-500 hover:text-brand-400 transition-colors"
+          >
+            <i class="bi bi-moon-stars-fill"></i>
+          </button>
+          <div
+            class="h-8 w-px bg-slate-200 dark:bg-white/10 hidden sm:block"
+          ></div>
+          <div class="flex items-center gap-3 pl-2 cursor-pointer group">
+            <div class="text-right hidden sm:block">
+              <p
+                class="text-sm font-bold text-slate-900 dark:text-white leading-none"
+              >
+                {{ request.user.get_full_name|default:"Admin User" }}
+              </p>
+              <p class="text-[10px] text-slate-500 font-mono mt-1">Manager</p>
+            </div>
+            <img
+              src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix"
+              class="w-10 h-10 rounded-full border-2 border-slate-200 dark:border-white/10 group-hover:border-brand-500 transition-all"
+            />
+          </div>
+        </div>
+      </header>
+
+      <div class="flex-1 overflow-y-auto p-4 md:p-8 custom-scrollbar">
+        <div
+          class="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 animate-slide-in gap-4"
+        >
+          <div>
+            <h1
+              class="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white font-mono mb-2"
+            >
+              Supplier Directory
+            </h1>
+            <p class="text-slate-500 dark:text-slate-400 text-sm">
+              Manage vendors, procurement history, and contact details.
+            </p>
+          </div>
+          <button
+            onclick="openAddSupplierModal()"
+            class="w-full sm:w-auto flex items-center justify-center gap-2 bg-brand-500 hover:bg-brand-600 text-white px-5 py-2.5 rounded-xl font-bold text-sm shadow-lg shadow-brand-500/20 transition-all hover:scale-105 active:scale-95"
+          >
+            <i class="bi bi-plus-lg"></i> Add Supplier
+          </button>
+        </div>
+
+        <div
+          class="bg-white dark:bg-dark-card border border-slate-200 dark:border-white/10 rounded-3xl overflow-hidden shadow-xl animate-slide-in"
+          style="animation-delay: 0.1s"
+        >
+          <div
+            class="p-6 border-b border-slate-200 dark:border-white/10 flex flex-col sm:flex-row justify-between items-center gap-4"
+          >
+            <h3 class="font-bold text-lg text-slate-900 dark:text-white">
+              Vendor List
+            </h3>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm glass-table">
+              <thead>
+                <tr
+                  class="text-slate-500 border-b border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5"
+                >
+                  <th
+                    class="px-6 py-4 font-bold uppercase text-[10px] tracking-widest whitespace-nowrap"
+                  >
+                    Company & Owner
+                  </th>
+                  <th
+                    class="px-6 py-4 font-bold uppercase text-[10px] tracking-widest whitespace-nowrap"
+                  >
+                    Contact Details
+                  </th>
+                  <th
+                    class="px-6 py-4 font-bold uppercase text-[10px] tracking-widest whitespace-nowrap"
+                  >
+                    Status & Tax
+                  </th>
+                  <th
+                    class="px-6 py-4 font-bold uppercase text-[10px] tracking-widest whitespace-nowrap"
+                  >
+                    Last Purchase
+                  </th>
+                  <th
+                    class="px-6 py-4 font-bold uppercase text-[10px] tracking-widest text-center whitespace-nowrap"
+                  >
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody
+                class="divide-y divide-slate-200 dark:divide-white/5"
+                id="supplierTableBody"
+              >
+                {% for sup in suppliers %}
+                <tr
+                  class="text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors duration-200 supplier-row"
+                  data-id="{{ sup.id }}"
+                  data-company="{{ sup.company_name }}"
+                  data-owner="{{ sup.owner_name }}"
+                  data-phone="{{ sup.sup_mobilenum }}"
+                  data-email="{{ sup.sup_email }}"
+                  data-gst="{{ sup.gst_number }}"
+                  data-status="{{ sup.status }}"
+                  data-address1="{{ sup.sup_addresh_primary }}"
+                  data-address2="{{ sup.sup_addresh_secondary }}"
+                  data-lastdate="{{ sup.last_purchase_date|date:'Y-m-d' }}"
+                  data-lastitem="{{ sup.last_purchase_item }}"
+                >
+                  <td class="px-6 py-4">
+                    <div class="flex items-center gap-3">
+                      <div
+                        class="w-10 h-10 rounded-xl bg-brand-500/10 text-brand-500 flex items-center justify-center font-bold text-lg"
+                      >
+                        {{ sup.company_name|make_list|first|upper }}
+                      </div>
+                      <div>
+                        <p
+                          class="font-bold text-slate-900 dark:text-white cursor-pointer hover:text-brand-400 transition-colors"
+                          onclick="openViewSupplier(this.closest('tr'))"
+                        >
+                          {{ sup.company_name }}
+                        </p>
+                        <p
+                          class="text-[10px] text-slate-500 uppercase tracking-widest"
+                        >
+                          <i class="bi bi-person-fill"></i> {{ sup.owner_name }}
+                        </p>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="px-6 py-4">
+                    <div class="flex flex-col gap-1 text-xs">
+                      <span class="flex items-center gap-2"
+                        ><i class="bi bi-telephone-fill text-slate-400"></i> {{
+                        sup.sup_mobilenum }}</span
+                      >
+                      <span class="flex items-center gap-2"
+                        ><i class="bi bi-envelope-fill text-slate-400"></i> {{
+                        sup.sup_email }}</span
+                      >
+                    </div>
+                  </td>
+                  <td class="px-6 py-4">
+                    <div class="flex flex-col items-start gap-1">
+                      {% if sup.status == 'Active' %}
+                      <span
+                        class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-widest status-active"
+                        >{{ sup.status }}</span
+                      >
+                      {% else %}
+                      <span
+                        class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-widest status-inactive"
+                        >{{ sup.status|default:"Inactive" }}</span
+                      >
+                      {% endif %}
+                      <p
+                        class="text-[10px] text-slate-500 font-mono"
+                        title="GST Number"
+                      >
+                        GST: {{ sup.gst_number|default:"N/A" }}
+                      </p>
+                    </div>
+                  </td>
+                  <td class="px-6 py-4">
+                    <div class="flex flex-col gap-1">
+                      <span class="text-xs font-bold text-emerald-500"
+                        >{{ sup.last_purchase_date|date:"d M Y"|default:"No
+                        Purchases Yet" }}</span
+                      >
+                      <span
+                        class="text-[10px] text-slate-500 uppercase tracking-widest max-w-[150px] truncate"
+                        title="{{ sup.last_purchase_item }}"
+                        >{{ sup.last_purchase_item|default:"--" }}</span
+                      >
+                    </div>
+                  </td>
+                  <td class="px-6 py-4 text-center">
+                    <div class="flex items-center justify-center gap-2">
+                      <button
+                        class="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-brand-400 hover:bg-brand-400/10 transition-all"
+                        onclick="openEditSupplierModal(this.closest('tr'))"
+                        title="Edit Supplier"
+                      >
+                        <i class="bi bi-pencil"></i>
+                      </button>
+                      <button
+                        class="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-500/10 transition-all"
+                        onclick="openDeleteSupplierModal('{{ sup.id }}')"
+                        title="Delete Supplier"
+                      >
+                        <i class="bi bi-trash"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                {% empty %}
+                <tr>
+                  <td
+                    colspan="5"
+                    class="text-center py-10 text-slate-500 dark:text-slate-400"
+                  >
+                    <div class="flex flex-col items-center justify-center">
+                      <i class="bi bi-truck text-5xl mb-3 opacity-30"></i>
+                      <p>
+                        No suppliers registered yet. Click "Add Supplier" to get
+                        started.
+                      </p>
+                    </div>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="supplierModal" class="fixed inset-0 z-[100] hidden">
+      <div
+        class="absolute inset-0 bg-black/60 backdrop-blur-md transition-opacity duration-300"
+        onclick="closeModal('supplierModal')"
+      ></div>
+
+      <div
+        class="absolute right-0 top-0 h-full w-full md:w-[600px] bg-[#0f172a] border-l border-white/10 shadow-2xl p-0 overflow-y-auto transform translate-x-full transition-transform duration-300 ease-out"
+        id="supplierModalPanel"
+      >
+        <div
+          class="sticky top-0 z-20 bg-[#0f172a]/95 backdrop-blur-xl border-b border-white/5 px-8 py-6 flex justify-between items-center"
+        >
+          <div>
+            <h2
+              class="text-2xl font-black text-white font-mono tracking-tight uppercase"
+              id="modalTitle"
+            >
+              Add Supplier
+            </h2>
+            <p
+              class="text-xs text-brand-400 font-bold tracking-widest mt-1 uppercase"
+              id="modalSubtitle"
+            >
+              Vendor Details
+            </p>
+          </div>
+          <button
+            onclick="closeModal('supplierModal')"
+            class="group w-10 h-10 rounded-full bg-white/5 border border-white/5 hover:bg-red-500/10 hover:border-red-500/50 flex items-center justify-center transition-all duration-300"
+          >
+            <i
+              class="bi bi-x-lg text-slate-400 group-hover:text-red-500 transition-colors"
+            ></i>
+          </button>
+        </div>
+
+        <div class="p-8">
+          <form
+            method="POST"
+            action=""
+            class="space-y-8"
+            id="supplierForm"
+          >
+            {% csrf_token %}
+            <input type="hidden" name="action" id="formAction" value="insert" />
+            <input type="hidden" name="sup_id" id="formSupId" />
+
+            <div
+              class="bg-white/5 border border-white/10 rounded-2xl p-6 space-y-6"
+            >
+              <h3
+                class="text-sm font-bold text-white uppercase tracking-widest border-b border-white/10 pb-2"
+              >
+                <i class="bi bi-building mr-2 text-brand-400"></i>Business
+                Information
+              </h3>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="group">
+                  <label
+                    class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block group-focus-within:text-brand-300 transition-colors"
+                    >Company Name</label
+                  >
+                  <input
+                    type="text"
+                    name="company_name"
+                    id="supCompany"
+                    required
+                    class="w-full bg-[#1e293b]/50 border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white font-bold placeholder-slate-500 focus:outline-none focus:border-brand-500/50 focus:bg-brand-500/5 transition-all"
+                    placeholder="e.g. TechCorp Distributors"
+                  />
+                </div>
+                <div class="group">
+                  <label
+                    class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block group-focus-within:text-brand-300 transition-colors"
+                    >Owner / Rep Name</label
+                  >
+                  <input
+                    type="text"
+                    name="owner_name"
+                    id="supOwner"
+                    required
+                    class="w-full bg-[#1e293b]/50 border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-500/50 focus:bg-brand-500/5 transition-all"
+                    placeholder="John Doe"
+                  />
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="group">
+                  <label
+                    class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block group-focus-within:text-brand-300 transition-colors"
+                    >GST Number</label
+                  >
+                  <input
+                    type="text"
+                    name="gst_number"
+                    id="supGst"
+                    class="w-full bg-[#1e293b]/50 border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white font-mono placeholder-slate-500 focus:outline-none focus:border-brand-500/50 focus:bg-brand-500/5 transition-all uppercase"
+                    placeholder="22AAAAA0000A1Z5"
+                  />
+                </div>
+                <div class="group">
+                  <label
+                    class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block group-focus-within:text-brand-300 transition-colors"
+                    >Status</label
+                  >
+                  <div class="relative">
+                    <select
+                      name="status"
+                      id="supStatus"
+                      class="w-full appearance-none bg-[#1e293b]/50 border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white font-medium focus:outline-none focus:border-brand-500/50 focus:bg-brand-500/5 transition-all cursor-pointer"
+                    >
+                      <option value="Active">Active</option>
+                      <option value="Inactive">Inactive</option>
+                    </select>
+                    <i
+                      class="bi bi-chevron-down absolute right-4 top-4 text-xs text-slate-500 pointer-events-none"
+                    ></i>
+                  </div>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="group">
+                  <label
+                    class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block group-focus-within:text-brand-300 transition-colors"
+                    >Mobile Number</label
+                  >
+                  <input
+                    type="tel"
+                    name="sup_mobilenum"
+                    id="supMobile"
+                    required
+                    class="w-full bg-[#1e293b]/50 border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white font-mono placeholder-slate-500 focus:outline-none focus:border-brand-500/50 focus:bg-brand-500/5 transition-all"
+                    placeholder="+1 234 567 8900"
+                  />
+                </div>
+                <div class="group">
+                  <label
+                    class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block group-focus-within:text-brand-300 transition-colors"
+                    >Email Address</label
+                  >
+                  <input
+                    type="email"
+                    name="sup_email"
+                    id="supEmail"
+                    required
+                    class="w-full bg-[#1e293b]/50 border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-500/50 focus:bg-brand-500/5 transition-all"
+                    placeholder="contact@supplier.com"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div
+              class="bg-accent-500/5 border border-accent-500/20 rounded-2xl p-6 space-y-6"
+            >
+              <h3
+                class="text-sm font-bold text-accent-400 uppercase tracking-widest border-b border-accent-500/20 pb-2"
+              >
+                <i class="bi bi-geo-alt-fill mr-2"></i>Location Details
+              </h3>
+
+              <div class="group">
+                <label
+                  class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block group-focus-within:text-accent-300 transition-colors"
+                  >Primary Address (Required)</label
+                >
+                <textarea
+                  name="sup_addresh_primary"
+                  id="supAddress1"
+                  rows="2"
+                  required
+                  class="w-full bg-[#1e293b]/50 border border-white/10 rounded-xl px-4 py-3 text-sm text-white leading-relaxed placeholder-slate-600 focus:outline-none focus:border-accent-500/50 focus:bg-accent-500/5 resize-none transition-all"
+                  placeholder="Main office or warehouse address..."
+                ></textarea>
+              </div>
+
+              <div class="group">
+                <label
+                  class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block flex justify-between group-focus-within:text-accent-300 transition-colors"
+                >
+                  <span
+                    >Alternative Address
+                    <span class="text-slate-600">(Optional)</span></span
+                  >
+                </label>
+                <textarea
+                  name="sup_addresh_secondary"
+                  id="supAddress2"
+                  rows="2"
+                  class="w-full bg-[#1e293b]/50 border border-white/10 rounded-xl px-4 py-3 text-sm text-white leading-relaxed placeholder-slate-600 focus:outline-none focus:border-accent-500/50 focus:bg-accent-500/5 resize-none transition-all"
+                  placeholder="Secondary warehouse or billing address..."
+                ></textarea>
+              </div>
+            </div>
+
+            <div
+              class="pt-6 mt-8 border-t border-white/10 sticky bottom-0 bg-[#0f172a] pb-4 z-20"
+            >
+              <button
+                type="submit"
+                class="w-full py-4 rounded-xl bg-gradient-to-r from-brand-600 to-accent-600 hover:from-brand-500 hover:to-accent-500 text-white font-bold text-sm tracking-wide shadow-lg shadow-brand-500/20 hover:shadow-brand-500/40 hover:-translate-y-0.5 transition-all duration-300 flex items-center justify-center gap-2"
+              >
+                <i class="bi bi-check2-circle text-lg"></i>
+                SAVE SUPPLIER
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div id="viewSupSheet" class="fixed inset-0 z-[100] hidden">
+      <div
+        class="absolute inset-0 bg-black/80 backdrop-blur-sm transition-opacity"
+        onclick="closeModal('viewSupSheet')"
+      ></div>
+      <div
+        class="absolute right-0 top-0 h-full w-full md:w-[600px] bg-white dark:bg-dark-card border-l border-slate-200 dark:border-white/10 shadow-2xl p-8 overflow-y-auto transform translate-x-full transition-transform duration-300"
+        id="viewSupSheetPanel"
+      >
+        <div class="flex justify-between items-start mb-6">
+          <span
+            class="px-2 py-1 rounded bg-brand-500/10 text-brand-400 text-xs font-bold uppercase tracking-widest border border-brand-500/20"
+            >Vendor Profile</span
+          >
+          <button
+            onclick="closeModal('viewSupSheet')"
+            class="w-8 h-8 rounded-full bg-slate-100 dark:bg-white/10 flex items-center justify-center hover:rotate-90 transition-all text-slate-500"
+          >
+            <i class="bi bi-x-lg"></i>
+          </button>
+        </div>
+
+        <div
+          class="flex flex-col items-center mb-6 pb-6 border-b border-slate-200 dark:border-white/10"
+        >
+          <div
+            class="w-20 h-20 rounded-2xl bg-gradient-to-tr from-brand-500 to-accent-500 text-white flex items-center justify-center text-3xl font-black mb-4 shadow-lg shadow-brand-500/20"
+            id="vSupAvatar"
+          >
+            A
+          </div>
+          <h1
+            id="vSupCompany"
+            class="text-2xl font-black text-slate-900 dark:text-white text-center mb-1 uppercase tracking-tight"
+          >
+            Company Name
+          </h1>
+          <p id="vSupOwner" class="text-sm font-bold text-slate-500 mb-3">
+            <i class="bi bi-person-fill"></i> Owner Name
+          </p>
+
+          <div
+            class="flex gap-4 text-sm text-slate-600 dark:text-slate-400 font-mono mb-4"
+          >
+            <span id="vSupPhone"
+              ><i class="bi bi-telephone-fill mr-1 text-slate-400"></i
+            ></span>
+            <span id="vSupEmail"
+              ><i class="bi bi-envelope-fill mr-1 text-slate-400"></i
+            ></span>
+          </div>
+
+          <div class="flex gap-4 items-center">
+            <span
+              id="vSupStatus"
+              class="px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-widest status-active"
+              >Active</span
+            >
+            <span
+              id="vSupGst"
+              class="px-3 py-1 rounded-lg bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300 font-mono text-xs"
+              ><i class="bi bi-receipt mr-1"></i> GST: --</span
+            >
+          </div>
+        </div>
+
+        <div class="space-y-6">
+          <div>
+            <h4
+              class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3"
+            >
+              Location Details
+            </h4>
+            <div
+              class="p-4 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/5 mb-3"
+            >
+              <p
+                class="text-[10px] text-brand-500 uppercase tracking-wider font-bold mb-1"
+              >
+                Primary Address
+              </p>
+              <p
+                id="vSupAddress1"
+                class="text-sm font-medium text-slate-800 dark:text-slate-300 leading-relaxed"
+              >
+                --
+              </p>
+            </div>
+            <div
+              id="vSupAddress2Container"
+              class="p-4 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/5"
+            >
+              <p
+                class="text-[10px] text-accent-500 uppercase tracking-wider font-bold mb-1"
+              >
+                Alternative Address
+              </p>
+              <p
+                id="vSupAddress2"
+                class="text-sm font-medium text-slate-800 dark:text-slate-300 leading-relaxed"
+              >
+                --
+              </p>
+            </div>
+          </div>
+
+          <div>
+            <h4
+              class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3"
+            >
+              Procurement History
+            </h4>
+            <div
+              class="flex items-center gap-4 p-4 rounded-xl bg-emerald-500/5 border border-emerald-500/20"
+            >
+              <div
+                class="w-10 h-10 rounded-lg bg-emerald-500/10 text-emerald-500 flex items-center justify-center"
+              >
+                <i class="bi bi-bag-check-fill text-xl"></i>
+              </div>
+              <div>
+                <p
+                  class="text-[10px] text-emerald-600 dark:text-emerald-400 uppercase tracking-wider font-bold"
+                  id="vSupLastDate"
+                >
+                  Last Purchase Date
+                </p>
+                <p
+                  id="vSupLastItem"
+                  class="text-sm font-bold text-slate-800 dark:text-white mt-0.5"
+                >
+                  --
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div
+      id="deleteModal"
+      class="fixed inset-0 z-[110] hidden flex items-center justify-center px-4"
+    >
+      <div
+        class="absolute inset-0 bg-black/80 backdrop-blur-sm"
+        onclick="closeModal('deleteModal')"
+      ></div>
+      <div
+        class="relative bg-white dark:bg-dark-card w-full max-w-sm rounded-2xl p-6 border border-slate-200 dark:border-white/10 shadow-2xl text-center transform scale-95 opacity-0 transition-all duration-200"
+        id="deletePanel"
+      >
+        <div
+          class="w-12 h-12 rounded-full bg-red-500/10 text-red-500 flex items-center justify-center mx-auto mb-4 text-xl"
+        >
+          <i class="bi bi-exclamation-triangle-fill"></i>
+        </div>
+        <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-2">
+          Delete Supplier?
+        </h3>
+        <p class="text-sm text-slate-500 mb-6">
+          Are you sure you want to remove this supplier? All associated data
+          will be deleted.
+        </p>
+        <div class="flex gap-3 justify-center">
+          <button
+            onclick="closeModal('deleteModal')"
+            class="px-4 py-2 rounded-lg bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-300 font-bold hover:bg-slate-200 dark:hover:bg-white/10"
+          >
+            Cancel
+          </button>
+          <form method="POST" action="">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="delete" />
+            <input type="hidden" name="sup_id" id="deleteSupId" />
+            <button
+              type="submit"
+              class="px-4 py-2 rounded-lg bg-red-500 text-white font-bold hover:bg-red-600 shadow-lg shadow-red-500/20"
+            >
+              Delete
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <nav
+      class="lg:hidden fixed bottom-6 left-4 right-4 sm:left-1/2 sm:right-auto sm:-translate-x-1/2 sm:w-max mac-dock p-2.5 rounded-[2rem] sm:rounded-full z-[100] grid grid-cols-4 sm:grid-cols-8 gap-2 items-center justify-items-center"
+    >
+      <a
+        href="{% url 'dashboard:dashboard_home'%}"
+        class="mobile-nav-link w-full flex flex-col items-center justify-center gap-1 p-2.5 rounded-2xl text-slate-500 dark:text-slate-400 hover:text-brand-500 dark:hover:text-brand-400"
+        ><i class="bi bi-grid-1x2-fill text-[22px] drop-shadow-sm"></i
+        ><span class="text-[9px] font-bold tracking-wide">Home</span></a
+      >
+      <a
+        href="{% url 'dashboard:employees'%}"
+        class="mobile-nav-link w-full flex flex-col items-center justify-center gap-1 p-2.5 rounded-2xl text-slate-500 dark:text-slate-400 hover:text-brand-500 dark:hover:text-brand-400"
+        ><i class="bi bi-person-vcard-fill text-[22px] drop-shadow-sm"></i
+        ><span class="text-[9px] font-bold tracking-wide">Employees</span></a
+      >
+      <a
+        href="#"
+        class="mobile-nav-link active w-full flex flex-col items-center justify-center gap-1 p-2.5 rounded-2xl"
+        ><i class="bi bi-truck text-[22px] drop-shadow-sm"></i
+        ><span class="text-[9px] font-bold tracking-wide">Suppliers</span></a
+      >
+      <a
+        href="{% url 'dashboard:product'%}"
+        class="mobile-nav-link w-full flex flex-col items-center justify-center gap-1 p-2.5 rounded-2xl text-slate-500 dark:text-slate-400 hover:text-brand-500 dark:hover:text-brand-400"
+        ><i class="bi bi-box-seam-fill text-[22px] drop-shadow-sm"></i
+        ><span class="text-[9px] font-bold tracking-wide">Products</span></a
+      >
+    </nav>
+
+    <script>
+      // --- Theme Init ---
+      const html = document.documentElement;
+      const themeToggle = document.getElementById("themeToggle");
+
+      function initTheme() {
+        const saved = localStorage.getItem("theme") || "dark";
+        html.setAttribute("data-theme", saved);
+        if (saved === "dark") {
+          html.classList.add("dark");
+        } else {
+          html.classList.remove("dark");
+        }
+      }
+      initTheme();
+
+      themeToggle.addEventListener("click", () => {
+        const isDark = html.getAttribute("data-theme") === "dark";
+        const newTheme = isDark ? "light" : "dark";
+        html.setAttribute("data-theme", newTheme);
+        localStorage.setItem("theme", newTheme);
+        initTheme();
+      });
+
+      // --- OPEN ADD MODAL ---
+      function openAddSupplierModal() {
+        document.getElementById("supplierForm").reset();
+        document.getElementById("formAction").value = "insert";
+        document.getElementById("formSupId").value = "";
+        document.getElementById("modalTitle").innerText = "Add Supplier";
+        document.getElementById("modalSubtitle").innerText = "Vendor Details";
+
+        const modal = document.getElementById("supplierModal");
+        modal.classList.remove("hidden");
+        setTimeout(() => {
+          document
+            .getElementById("supplierModalPanel")
+            .classList.remove("translate-x-full");
+        }, 10);
+      }
+
+      // --- OPEN EDIT MODAL ---
+      function openEditSupplierModal(row) {
+        const data = row.dataset;
+
+        document.getElementById("supplierForm").reset();
+        document.getElementById("formAction").value = "update";
+        document.getElementById("formSupId").value = data.id;
+        document.getElementById("modalTitle").innerText = "Edit Supplier";
+        document.getElementById("modalSubtitle").innerText =
+          "Update Vendor Details";
+
+        document.getElementById("supCompany").value = data.company;
+        document.getElementById("supOwner").value = data.owner;
+        document.getElementById("supGst").value =
+          data.gst !== "None" ? data.gst : "";
+
+        // Match Select Dropdown
+        const statusSelect = document.getElementById("supStatus");
+        if (data.status) {
+          statusSelect.value = data.status;
+        }
+
+        document.getElementById("supMobile").value = data.phone;
+        document.getElementById("supEmail").value = data.email;
+        document.getElementById("supAddress1").value = data.address1;
+        document.getElementById("supAddress2").value =
+          data.address2 !== "None" ? data.address2 : "";
+
+        const modal = document.getElementById("supplierModal");
+        modal.classList.remove("hidden");
+        setTimeout(() => {
+          document
+            .getElementById("supplierModalPanel")
+            .classList.remove("translate-x-full");
+        }, 10);
+      }
+
+      // --- VIEW MODAL ---
+      function openViewSupplier(row) {
+        const data = row.dataset;
+
+        document.getElementById("vSupAvatar").innerText = data.company
+          .charAt(0)
+          .toUpperCase();
+        document.getElementById("vSupCompany").innerText = data.company;
+        document.getElementById("vSupOwner").innerHTML =
+          `<i class="bi bi-person-fill mr-1"></i> ${data.owner}`;
+
+        document.getElementById("vSupPhone").innerHTML = `${data.phone}`;
+        document.getElementById("vSupEmail").innerHTML = `${data.email}`;
+
+        document.getElementById("vSupAddress1").innerText = data.address1;
+
+        if (
+          data.address2 &&
+          data.address2 !== "None" &&
+          data.address2.trim() !== ""
+        ) {
+          document.getElementById("vSupAddress2").innerText = data.address2;
+          document.getElementById("vSupAddress2Container").style.display =
+            "block";
+        } else {
+          document.getElementById("vSupAddress2Container").style.display =
+            "none";
+        }
+
+        // Status & GST Badge Logic
+        const statusBadge = document.getElementById("vSupStatus");
+        statusBadge.innerText = data.status;
+        if (data.status === "Active") {
+          statusBadge.className =
+            "px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-widest status-active";
+        } else {
+          statusBadge.className =
+            "px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-widest status-inactive";
+        }
+
+        document.getElementById("vSupGst").innerHTML =
+          `<i class="bi bi-receipt mr-1"></i> GST: ${data.gst && data.gst !== "None" ? data.gst : "--"}`;
+
+        document.getElementById("vSupLastDate").innerText = data.lastdate
+          ? `Last Purchase: ${data.lastdate}`
+          : "No purchases recorded";
+        document.getElementById("vSupLastItem").innerText =
+          data.lastitem && data.lastitem !== "None" ? data.lastitem : "N/A";
+
+        const sheet = document.getElementById("viewSupSheet");
+        sheet.classList.remove("hidden");
+        setTimeout(
+          () =>
+            document
+              .getElementById("viewSupSheetPanel")
+              .classList.remove("translate-x-full"),
+          10,
+        );
+      }
+
+      // --- DELETE MODAL ---
+      function openDeleteSupplierModal(supId) {
+        document.getElementById("deleteSupId").value = supId;
+        const modal = document.getElementById("deleteModal");
+        const panel = document.getElementById("deletePanel");
+        modal.classList.remove("hidden");
+        setTimeout(() => {
+          panel.classList.remove("scale-95", "opacity-0");
+          panel.classList.add("scale-100", "opacity-100");
+        }, 10);
+      }
+
+      // --- CLOSE MODALS ---
+      function closeModal(modalId) {
+        const modal = document.getElementById(modalId);
+        const panel = modal.querySelector('div[id$="Panel"]');
+
+        if (panel) {
+          panel.classList.add("translate-x-full");
+        } else {
+          const centerPanel = modal.querySelector("#deletePanel");
+          if (centerPanel) {
+            centerPanel.classList.remove("scale-100", "opacity-100");
+            centerPanel.classList.add("scale-95", "opacity-0");
+          }
+        }
+
+        setTimeout(() => {
+          modal.classList.add("hidden");
+        }, 300);
+      }
+
+      // --- SEARCH FILTER ---
+      function filterTable(query) {
+        const term = query.toLowerCase();
+        document.querySelectorAll("tbody tr.supplier-row").forEach((row) => {
+          row.style.display = row.innerText.toLowerCase().includes(term)
+            ? ""
+            : "none";
+        });
+      }
+    </script>
+  </body>
+</html>
