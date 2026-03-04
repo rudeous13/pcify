@@ -1,0 +1,90 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Nexus Admin • Restricted</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="{%static 'AdminPage/login.css'%}">
+</head>
+<body>
+
+  <div class="ambient-light">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+  </div>
+
+  <div class="card-auth" id="mainCard">
+    <div class="theme-toggle-wrapper">
+       <button id="themeToggle" onclick="toggleTheme()">
+        <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 9 9c0-.46-.04-.92-.1-1.36a5.389 5.389 0 0 1-4.4 2.26 5.403 5.403 0 0 1-3.14-9.8c-.44-.06-.9-.1-1.36-.1z"/></svg>
+      </button>
+    </div>
+
+    <div class="right-panel">
+      <div class="slider-viewport">
+        <div id="signin-container" class="auth-form-container active">
+          
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <div class="brand-logo mb-0">
+               <div class="logo-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>
+               </div>
+               <span>PCify_Nexus</span>
+            </div>
+            <span class="badge badge-admin">RESTRICTED</span>
+          </div>
+
+          <div class="mb-5">
+             <h2 class="form-title">System Login</h2>
+             <p class="form-subtitle">Secure access for authorized personnel.</p>
+          </div>
+          
+          <form id="form-signin" method="POST" autocomplete="off" novalidate action="{% url 'dashboard:admin_login'%}">
+            {% csrf_token %}
+            <!-- <input type="hidden" name="csrfmiddlewaretoken" value="..."> -->
+            
+            <div class="form-floating">
+              <input type="text" id="admin-id" name="username" class="custom-input form-control" placeholder=" " required>
+              <label for="admin-id" class="custom-label">Admin ID</label>
+            </div>
+
+            <div class="form-floating">
+              <input type="password" id="admin-pass" name="password" class="custom-input form-control" placeholder=" " required>
+              <label for="admin-pass" class="custom-label">Password</label>
+              <button type="button" class="pw-toggle-btn" onclick="togglePass('admin-pass', this)">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+              </button>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center mb-4 security-row">
+              <label class="d-flex align-items-center gap-2 secure-label">
+                <input type="checkbox" id="remember" class="custom-checkbox"> 
+                Secure Session
+              </label>
+            </div>
+
+            <ul class="req-list">
+
+            </ul>
+              {%if error%}<li role="alert" style="color:red;">{{error}}</li>{%endif%}
+              <!-- {%if phoneissue%}<li role="alert" style="color:red;">{{phoneissue}}</li>{%endif%} -->
+            <button type="submit" class="btn-primary-custom">
+              Authenticate Access
+            </button>
+
+            <div class="switch-link">
+               <a href="/">Return to Main Site</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="{% static 'AdminPage/login.js'%}"></script>
+</body>
+</html>
