@@ -183,7 +183,7 @@
 
         <!-- Overview -->
         <a
-          href="{% url 'dashboard:dashboard_home'%}"
+          href="{% url 'dashboard:home'%}"
           class="nav-item active flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
         >
           <i
@@ -243,7 +243,7 @@
 
         <!-- Product -->
         <a
-          href="{% url 'dashboard:product'%}"
+          href="{% url 'dashboard:products'%}"
           class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
         >
           <i
@@ -255,7 +255,7 @@
 
         <!-- Brand -->
         <a
-          href="{% url 'dashboard:brand'%}"
+          href="{% url 'dashboard:brands'%}"
           class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
         >
           <i
@@ -267,7 +267,7 @@
 
         <!-- Category -->
         <a
-          href="{% url 'dashboard:category'%}"
+          href="{% url 'dashboard:categories'%}"
           class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
         >
           <i
@@ -279,7 +279,7 @@
 
         <!-- Compatibility -->
         <a
-          href="{% url 'dashboard:order'%}"
+          href="{% url 'dashboard:orders'%}"
           class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
         >
           <i
@@ -291,7 +291,7 @@
 
         <!-- Task Management -->
         <a
-          href="{% url 'dashboard:task'%}"
+          href="{% url 'dashboard:employee_management'%}"
           class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
         >
           <i class="bi bi-briefcase-fill text-lg drop-shadow-sm"></i> Task Mgmt
@@ -324,7 +324,7 @@
 
         <!-- Pre-Built PCs -->
         <a
-          href="{% url 'dashboard:pre_built'%}"
+          href="{% url 'dashboard:prebuilt_pc'%}"
           class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
         >
           <i class="bi bi-pc-display text-lg drop-shadow-sm"></i> Pre-Built PCs
@@ -340,7 +340,7 @@
 
         <!-- Analytics -->
         <a
-          href="{% url 'dashboard:analytic'%}"
+          href="{% url 'dashboard:analytics'%}"
           class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
         >
           <i
@@ -352,7 +352,7 @@
 
         <!-- Settings -->
         <a
-          href="{% url 'dashboard:setting'%}"
+          href="{% url 'dashboard:settings'%}"
           class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
         >
           <i
@@ -365,7 +365,7 @@
 
       <div class="p-4 border-t border-slate-200 dark:border-white/5">
         <a
-          href="{% url 'dashboard:logout'%}"
+          href="#"
           class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-red-500 hover:bg-red-500/10 transition-all"
         >
           <i class="bi bi-box-arrow-right"></i> Logout
@@ -669,38 +669,38 @@
       class="lg:hidden fixed bottom-2 left-1 right-1 bg-white/90 dark:bg-[#0f172a]/95 backdrop-blur-xl border border-slate-200 dark:border-white/10 p-2 rounded-full shadow-2xl z-50 flex overflow-x-auto gap-2 items-center [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
     >
       <a
-        href=""
-        class="mobile-nav-link {% if request.resolver_match.url_name == 'admin_home' %}active{% endif %} flex-shrink-0 flex flex-col items-center justify-center w-10 h-10 rounded-full text-slate-500 dark:text-slate-400 hover:text-brand-500"
+        href="{% url 'dashboard:home' %}"
+        class="mobile-nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %} flex-shrink-0 flex flex-col items-center justify-center w-10 h-10 rounded-full text-slate-500 dark:text-slate-400 hover:text-brand-500"
       >
         <i class="bi bi-grid-1x2-fill text-lg drop-shadow-sm"></i>
       </a>
       <a
-        href=""
-        class="mobile-nav-link {% if request.resolver_match.url_name == 'admin_customer' %}active{% endif %} flex-shrink-0 flex flex-col items-center justify-center w-10 h-10 rounded-full text-slate-500 dark:text-slate-400 hover:text-brand-500"
+        href="{% url 'dashboard:customers' %}"
+        class="mobile-nav-link {% if request.resolver_match.url_name == 'customers' %}active{% endif %} flex-shrink-0 flex flex-col items-center justify-center w-10 h-10 rounded-full text-slate-500 dark:text-slate-400 hover:text-brand-500"
       >
         <i class="bi bi-people-fill text-lg drop-shadow-sm"></i>
       </a>
       <a
-        href=""
-        class="mobile-nav-link {% if request.resolver_match.url_name == 'admin_employee' %}active{% endif %} flex-shrink-0 flex flex-col items-center justify-center w-10 h-10 rounded-full text-slate-500 dark:text-slate-400 hover:text-brand-500"
+        href="{% url 'dashboard:employees' %}"
+        class="mobile-nav-link {% if request.resolver_match.url_name == 'employees' %}active{% endif %} flex-shrink-0 flex flex-col items-center justify-center w-10 h-10 rounded-full text-slate-500 dark:text-slate-400 hover:text-brand-500"
       >
         <i class="bi bi-person-vcard-fill text-lg drop-shadow-sm"></i>
       </a>
       <a
-        href=""
-        class="mobile-nav-link {% if request.resolver_match.url_name == 'admin_products' %}active{% endif %} flex-shrink-0 flex flex-col items-center justify-center w-10 h-10 rounded-full text-slate-500 dark:text-slate-400 hover:text-brand-500"
+        href="{% url 'dashboard:products' %}"
+        class="mobile-nav-link {% if request.resolver_match.url_name == 'products' %}active{% endif %} flex-shrink-0 flex flex-col items-center justify-center w-10 h-10 rounded-full text-slate-500 dark:text-slate-400 hover:text-brand-500"
       >
         <i class="bi bi-box-seam-fill text-lg drop-shadow-sm"></i>
       </a>
       <a
-        href=""
-        class="mobile-nav-link {% if request.resolver_match.url_name == 'admin_order' %}active{% endif %} flex-shrink-0 flex flex-col items-center justify-center w-10 h-10 rounded-full text-slate-500 dark:text-slate-400 hover:text-brand-500"
+        href="{% url 'dashboard:orders' %}"
+        class="mobile-nav-link {% if request.resolver_match.url_name == 'orders' %}active{% endif %} flex-shrink-0 flex flex-col items-center justify-center w-10 h-10 rounded-full text-slate-500 dark:text-slate-400 hover:text-brand-500"
       >
         <i class="bi bi-cart-check-fill text-lg drop-shadow-sm"></i>
       </a>
       <a
-        href=""
-        class="mobile-nav-link {% if request.resolver_match.url_name == 'reports' %}active{% endif %} flex-shrink-0 flex flex-col items-center justify-center w-10 h-10 rounded-full text-slate-500 dark:text-slate-400 hover:text-brand-500"
+        href="{% url 'dashboard:analytics' %}"
+        class="mobile-nav-link {% if request.resolver_match.url_name == 'analytics' %}active{% endif %} flex-shrink-0 flex flex-col items-center justify-center w-10 h-10 rounded-full text-slate-500 dark:text-slate-400 hover:text-brand-500"
       >
         <i class="bi bi-bar-chart-fill text-lg drop-shadow-sm"></i>
       </a>
