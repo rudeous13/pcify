@@ -6,18 +6,113 @@ function isAlphaOnly(value) {
     return /^[A-Za-z]+$/.test(value.trim());
 }
 
+function setFieldError(input, errorElement, message) {
+    if (input) {
+        input.classList.add('input-error');
+    }
+    if (errorElement) {
+        errorElement.innerText = message;
+    }
+}
+
+function clearFieldError(input, errorElement) {
+    if (input) {
+        input.classList.remove('input-error');
+    }
+    if (errorElement) {
+        errorElement.innerText = '';
+    }
+}
+
+const signinForm = document.querySelector('#signin-container form');
+
+if (signinForm) {
+    const emailInput = signinForm.querySelector('[name="email"]');
+    const passwordInput = signinForm.querySelector('[name="password"]');
+    const emailError = signinForm.querySelector('#email-error, #admin-email-error');
+    const passwordError = signinForm.querySelector('#password-error, #admin-password-error');
+
+    emailInput?.addEventListener('input', () => {
+        clearFieldError(emailInput, emailError);
+    });
+    passwordInput?.addEventListener('input', () => {
+        clearFieldError(passwordInput, passwordError);
+    });
+
+    signinForm.addEventListener('submit', function (e) {
+        const email = (emailInput?.value || '').trim();
+        const password = passwordInput?.value || '';
+        let valid = true;
+
+        clearFieldError(emailInput, emailError);
+        clearFieldError(passwordInput, passwordError);
+
+        if (!email) {
+            e.preventDefault();
+            setFieldError(emailInput, emailError, 'Email is required.');
+            emailInput?.focus();
+            valid = false;
+        }
+
+        if (!password) {
+            e.preventDefault();
+            setFieldError(passwordInput, passwordError, 'Password is required.');
+            if (valid) {
+                passwordInput?.focus();
+            }
+            valid = false;
+        }
+
+        if (!valid) {
+            return false;
+        }
+    });
+}
+
 const signupForm = document.querySelector('#signup-container form');
 
 
 if (signupForm) {
     const inputs = signupForm.querySelectorAll('input');
+    const firstName = signupForm.querySelector('[name="firstname"]');
+    const lastName = signupForm.querySelector('[name="lastname"]');
+    const emailInput = signupForm.querySelector('[name="email"]');
+    const phoneInput = signupForm.querySelector('[name="phone"]');
+    const passwordInput = signupForm.querySelector('#signup-pass');
+    const confirmPassInput = signupForm.querySelector('#signup-confirm-pass');
+
+    const firstNameError = document.getElementById('fname-error');
+    const lastNameError = document.getElementById('lname-error');
+    const emailError = document.getElementById('signup-email-error');
+    const phoneError = document.getElementById('phone-error');
+    const passwordError = document.getElementById('signup-password-error');
+    const confirmPassError = document.getElementById('confirm-password-error');
 
     // Remove error on typing
     inputs.forEach(input => {
         input.addEventListener('input', () => {
-            input.classList.remove('input-error');
-            const err = input.parentElement.querySelector('.error-msg');
-            if (err) err.innerText = '';
+            switch (input.name) {
+                case 'firstname':
+                    clearFieldError(firstName, firstNameError);
+                    break;
+                case 'lastname':
+                    clearFieldError(lastName, lastNameError);
+                    break;
+                case 'email':
+                    clearFieldError(emailInput, emailError);
+                    break;
+                case 'phone':
+                    clearFieldError(phoneInput, phoneError);
+                    break;
+                case 'password':
+                    clearFieldError(passwordInput, passwordError);
+                    break;
+                case 'confirmpassword':
+                    clearFieldError(confirmPassInput, confirmPassError);
+                    break;
+                default:
+                    input.classList.remove('input-error');
+            }
         });
     });
 
@@ -26,37 +121,33 @@ if (signupForm) {
 
         let valid = true;
         let firstErrorInput = null;
-        const errorMessages = []; // New: Collect all error messages
 
-        const firstName = signupForm.querySelector('[name="firstname"]');
-        const lastName = signupForm.querySelector('[name="lastname"]');
-        const emailInput = signupForm.querySelector('[name="email"]');
-        const phoneInput = signupForm.querySelector('[name="phone"]');
-        const passwordInput = signupForm.querySelector('#signup-pass');
-        const confirmPassInput = signupForm.querySelector('#signup-confirm-pass');
+        // reset per-field errors
+        clearFieldError(firstName, firstNameError);
+        clearFieldError(lastName, lastNameError);
+        clearFieldError(emailInput, emailError);
+        clearFieldError(phoneInput, phoneError);
+        clearFieldError(passwordInput, passwordError);
+        clearFieldError(confirmPassInput, confirmPassError);
 
-        function markError(input, message) {
+        function markError(input, errorElement, message) {
             if (valid) firstErrorInput = input;
             valid = false;
-            input.classList.add('input-error');
-            const span = input.parentElement.querySelector('.error-msg');
-            if (span) span.innerText = message;
-            errorMessages.push(message); // New: Collect the message
-            // Removed: showToast(message); // No longer call here to avoid overwriting
+            setFieldError(input, errorElement, message);
         }
 
         /* ---------- FIRST NAME ---------- */
         if (!firstName.value.trim()) {
-            markError(firstName, "First name is required.");
+            markError(firstName, firstNameError, "First name is required.");
         } else if (!isAlphaOnly(firstName.value)) {
-            markError(firstName, "Only letters allowed.");
+            markError(firstName, firstNameError, "Only letters allowed.");
         }
 
         /* ---------- LAST NAME ---------- */
         if (!lastName.value.trim()) {
-            markError(lastName, "Last name is required.");
+            markError(lastName, lastNameError, "Last name is required.");
         } else if (!isAlphaOnly(lastName.value)) {
-            markError(lastName, "Only letters allowed.");
+            markError(lastName, lastNameError, "Only letters allowed.");
         }
 
         /* ---------- EMAIL ---------- */
@@ -66,40 +157,36 @@ if (signupForm) {
         const emailDomain = emailValue.split("@")[1]?.toLowerCase();
 
         if (!emailValue) {
-            markError(emailInput, "Email is required.");
+            markError(emailInput, emailError, "Email is required.");
         } else if (!emailPattern.test(emailValue)) {
-            markError(emailInput, "Invalid email format.");
+            markError(emailInput, emailError, "Invalid email format.");
         } else if (!allowedDomains.includes(emailDomain)) {
-            markError(emailInput, "Use Gmail, Yahoo, Outlook or Hotmail.");
+            markError(emailInput, emailError, "Use Gmail, Yahoo, Outlook or Hotmail.");
         }
 
         /* ---------- PHONE ---------- */
         if (!phoneInput.value.trim()) {
-            markError(phoneInput, "Phone number is required.");
+            markError(phoneInput, phoneError, "Phone number is required.");
         } else if (!/^[6-9]\d{9}$/.test(phoneInput.value.trim())) {
-            markError(phoneInput, "Enter valid 10-digit number starting 6–9.");
+            markError(phoneInput, phoneError, "Enter valid 10-digit number starting 6–9.");
         }
 
         /* ---------- PASSWORD ---------- */
         if (!passwordInput.value) {
-            markError(passwordInput, "Password is required.");
+            markError(passwordInput, passwordError, "Password is required.");
         } else if (scorePassword(passwordInput.value) < 3) {
-            markError(passwordInput, "Password is too weak.");
+            markError(passwordInput, passwordError, "Password is too weak.");
         }
 
         /* ---------- CONFIRM PASSWORD ---------- */
         if (!confirmPassInput.value) {
-            markError(confirmPassInput, "Please confirm password.");
+            markError(confirmPassInput, confirmPassError, "Please confirm password.");
         } else if (passwordInput.value !== confirmPassInput.value) {
-            markError(confirmPassInput, "Passwords do not match.");
+            markError(confirmPassInput, confirmPassError, "Passwords do not match.");
         }
 
         /* ---------- FINAL VALIDATION ---------- */
         if (!valid) {
-            // New: Show a single toast with the first error (or customize as needed)
-            if (errorMessages.length > 0) {
-                showToast(errorMessages[0]); // Shows only the first error in toast
-            }
             firstErrorInput?.focus();
             shakeForm();
             return false; // stop form submit
@@ -233,51 +320,31 @@ function updateStrengthMeter(val) {
 const themeBtn = document.getElementById('themeToggle');
 const themeIcon = document.getElementById('themeIcon');
 
-themeBtn.addEventListener('click', () => {
-    const html = document.documentElement;
-    const current = html.getAttribute('data-theme');
-    const next = current === 'dark' ? 'light' : 'dark';
+if (themeBtn && themeIcon) {
+    themeBtn.addEventListener('click', () => {
+        const html = document.documentElement;
+        const current = html.getAttribute('data-theme');
+        const next = current === 'dark' ? 'light' : 'dark';
 
-    html.setAttribute('data-theme', next);
+        html.setAttribute('data-theme', next);
 
-    if (next === 'dark') {
-        // Sun Icon
-        themeIcon.innerHTML = '<circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>';
-    } else {
-        // Moon Icon
-        themeIcon.innerHTML = '<path d="M12 3a9 9 0 1 0 9 9c0-.46-.04-.92-.1-1.36a5.389 5.389 0 0 1-4.4 2.26 5.403 5.403 0 0 1-3.14-9.8c-.44-.06-.9-.1-1.36-.1z"/>';
-    }
-});
-
-/* -----------------------------------------------------------
-   5. FORM SUBMISSION (Validation Shake)
-   ----------------------------------------------------------- */
-const forms = document.querySelectorAll('form');
-forms.forEach(form => {
-    form.addEventListener('submit', (e) => {
-        let isValid = true;
-
-        // Simple required check
-        form.querySelectorAll('input[required]').forEach(input => {
-            if (input.value.trim() === '') {
-                isValid = false;
-                input.classList.add('input-error');
-                setTimeout(() => input.classList.remove('input-error'), 300);
-            }
-        });
-
-        if (!isValid) {
-            e.preventDefault(); // Stop if invalid
+        if (themeIcon.tagName.toLowerCase() === 'i') {
+            themeIcon.classList.remove('bi-moon-stars-fill', 'bi-sun-fill');
+            themeIcon.classList.add(next === 'dark' ? 'bi-sun-fill' : 'bi-moon-stars-fill');
+        } else if (next === 'dark') {
+            themeIcon.innerHTML = '<circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>';
+        } else {
+            themeIcon.innerHTML = '<path d="M12 3a9 9 0 1 0 9 9c0-.46-.04-.92-.1-1.36a5.389 5.389 0 0 1-4.4 2.26 5.403 5.403 0 0 1-3.14-9.8c-.44-.06-.9-.1-1.36-.1z"/>';
         }
-        // If valid, allow Django form submission to proceed
     });
-});
+}
 
 // Initialize viewport height on load
 window.addEventListener('load', () => {
     const activeForm = document.querySelector('.auth-form-container.active');
-    if (activeForm) {
-        document.getElementById('viewport').style.minHeight = activeForm.offsetHeight + 'px';
+    const viewport = document.getElementById('viewport');
+    if (activeForm && viewport) {
+        viewport.style.minHeight = activeForm.offsetHeight + 'px';
     }
 });
 

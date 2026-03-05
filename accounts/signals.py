@@ -7,8 +7,8 @@ from .models import Role, Staff
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
 def ensure_staff_for_superuser(sender, instance, created, **kwargs):
-    """Attach Staff(Admin) profile automatically when a superuser is created."""
-    if not instance.is_superuser:
+    """Attach Staff(Admin) profile only when a superuser is first created."""
+    if not created or not instance.is_superuser:
         return
 
     admin_role, _ = Role.objects.get_or_create(role_name="Admin")

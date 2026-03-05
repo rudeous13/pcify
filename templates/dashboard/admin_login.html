@@ -1,90 +1,258 @@
 {% load static %}
+
 <!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Nexus Admin • Restricted</title>
+<html lang="en" data-theme="dark" class="scroll-smooth">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Nexus Admin • Restricted</title>
 
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  
-</head>
-<body>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
+    />
 
-  <div class="ambient-light">
-    <div class="orb orb-1"></div>
-    <div class="orb orb-2"></div>
-  </div>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: ["class", '[data-theme="dark"]'],
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['"Outfit"', "sans-serif"],
+              mono: ['"Space Grotesk"', "monospace"],
+            },
+            colors: {
+              brand: {
+                400: "#38bdf8",
+                500: "#0ea5e9",
+                600: "#0284c7",
+              },
+              accent: {
+                500: "#8b5cf6",
+                600: "#7c3aed",
+              },
+              dark: {
+                bg: "#0b0f19",
+                card: "#111827",
+              },
+            },
+            backgroundImage: {
+              "grid-pattern":
+                "linear-gradient(to right, #1f2937 1px, transparent 1px), linear-gradient(to bottom, #1f2937 1px, transparent 1px)",
+            },
+          },
+        },
+      };
+    </script>
 
-  <div class="card-auth" id="mainCard">
-    <div class="theme-toggle-wrapper">
-       <button id="themeToggle" onclick="toggleTheme()">
-        <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 9 9c0-.46-.04-.92-.1-1.36a5.389 5.389 0 0 1-4.4 2.26 5.403 5.403 0 0 1-3.14-9.8c-.44-.06-.9-.1-1.36-.1z"/></svg>
-      </button>
+    <style type="text/tailwindcss">
+      .bg-grid {
+        background-size: 40px 40px;
+        mask-image: linear-gradient(to bottom, transparent, 8% white, 92% white, transparent);
+        -webkit-mask-image: linear-gradient(to bottom, transparent, 8% white, 92% white, transparent);
+      }
+
+      .error-msg {
+        color: #ef4444;
+        font-size: 13px;
+        min-height: 16px;
+      }
+
+      .input-error {
+        border-color: #ef4444 !important;
+        background-color: rgba(239, 68, 68, 0.06) !important;
+      }
+    </style>
+  </head>
+  <body class="bg-slate-50 dark:bg-dark-bg text-slate-700 dark:text-slate-300 antialiased min-h-screen overflow-hidden">
+    <div class="fixed inset-0 z-0 pointer-events-none" aria-hidden="true">
+      <div class="absolute inset-0 bg-grid-pattern bg-grid opacity-[0.03] dark:opacity-[0.05]"></div>
+      <div class="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-brand-500/15 rounded-full blur-[100px] mix-blend-screen"></div>
+      <div class="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-accent-500/15 rounded-full blur-[100px] mix-blend-screen"></div>
     </div>
 
-    <div class="right-panel">
-      <div class="slider-viewport">
-        <div id="signin-container" class="auth-form-container active">
-          
-          <div class="d-flex justify-content-between align-items-center mb-4">
-            <div class="brand-logo mb-0">
-               <div class="logo-icon">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>
-               </div>
-               <span>PCify_Nexus</span>
+    <main class="relative z-10 min-h-screen flex items-center justify-center p-4">
+      <div class="w-full max-w-md bg-white/95 dark:bg-dark-card/90 backdrop-blur-xl border border-slate-200/70 dark:border-white/10 rounded-3xl p-6 shadow-2xl shadow-brand-500/10">
+        <div class="flex justify-end mb-2">
+          <button
+            id="themeToggle"
+            type="button"
+            class="w-10 h-10 rounded-full border border-slate-200 dark:border-white/10 flex items-center justify-center text-slate-500 dark:text-slate-300 hover:text-brand-500 dark:hover:text-brand-400 hover:bg-slate-100 dark:hover:bg-white/10 transition-all"
+            aria-label="Toggle theme"
+          >
+            <i id="themeIcon" class="bi bi-moon-stars-fill"></i>
+          </button>
+        </div>
+
+        <div class="flex items-center justify-between mb-6">
+          <div class="flex items-center gap-2.5">
+            <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-500 to-accent-600 text-white flex items-center justify-center">
+              <i class="bi bi-shield-lock-fill"></i>
             </div>
-            <span class="badge badge-admin">RESTRICTED</span>
+            <span class="font-mono font-bold text-slate-900 dark:text-white">PCify_Nexus</span>
+          </div>
+          <span class="text-[10px] font-bold tracking-widest text-red-500 bg-red-500/10 border border-red-500/25 px-2.5 py-1 rounded-full">RESTRICTED</span>
+        </div>
+
+        <div class="mb-6">
+          <h1 class="text-3xl font-black text-slate-900 dark:text-white font-mono tracking-tight">System Login</h1>
+          <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Secure access for authorized personnel.</p>
+        </div>
+
+        <form id="form-signin" method="POST" autocomplete="off" novalidate action="{% url 'dashboard:admin_login' %}" class="space-y-4">
+          {% csrf_token %}
+
+          <div class="space-y-2">
+            <label for="admin-id" class="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">Email</label>
+            <div class="relative">
+              <input
+                type="email"
+                id="admin-id"
+                name="email"
+                required
+                class="w-full rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-black/20 p-3 pl-10 text-slate-900 dark:text-white outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20"
+                placeholder="admin@pcify.com"
+              />
+              <i class="bi bi-envelope absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+            </div>
+            <span class="error-msg" id="admin-email-error"></span>
           </div>
 
-          <div class="mb-5">
-             <h2 class="form-title">System Login</h2>
-             <p class="form-subtitle">Secure access for authorized personnel.</p>
-          </div>
-          
-          <form id="form-signin" method="POST" autocomplete="off" novalidate action="{% url 'dashboard:admin_login'%}">
-            {% csrf_token %}
-            <!-- <input type="hidden" name="csrfmiddlewaretoken" value="..."> -->
-            
-            <div class="form-floating">
-              <input type="email" id="admin-id" name="email" class="custom-input form-control" placeholder=" " required>
-              <label for="admin-id" class="custom-label">Email</label>
-            </div>
-
-            <div class="form-floating">
-              <input type="password" id="admin-pass" name="password" class="custom-input form-control" placeholder=" " required>
-              <label for="admin-pass" class="custom-label">Password</label>
-              <button type="button" class="pw-toggle-btn" onclick="togglePass('admin-pass', this)">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+          <div class="space-y-2">
+            <label for="admin-pass" class="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">Password</label>
+            <div class="relative">
+              <input
+                type="password"
+                id="admin-pass"
+                name="password"
+                required
+                class="w-full rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-black/20 p-3 pl-10 pr-10 text-slate-900 dark:text-white outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20"
+                placeholder="Enter your password"
+              />
+              <i class="bi bi-lock absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+              <button type="button" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-brand-500 transition-colors" onclick="togglePass('admin-pass', this)">
+                <i class="bi bi-eye-slash"></i>
               </button>
             </div>
+            <span class="error-msg" id="admin-password-error"></span>
+          </div>
 
-            <div class="d-flex justify-content-between align-items-center mb-4 security-row">
-              <label class="d-flex align-items-center gap-2 secure-label">
-                <input type="checkbox" id="remember" name="remember" class="custom-checkbox"> 
-                Secure Session
-              </label>
-            </div>
+          <label class="inline-flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 select-none">
+            <input type="checkbox" id="remember" name="remember" class="accent-brand-500 w-4 h-4" />
+            Secure Session
+          </label>
 
-            <ul class="req-list">
+          {% if error %}
+          <div role="alert" class="rounded-xl border border-red-500/20 bg-red-500/10 px-3 py-2 text-sm text-red-500">{{ error }}</div>
+          {% endif %}
 
-            </ul>
-              {%if error%}<li role="alert" style="color:red;">{{error}}</li>{%endif%}
-              <!-- {%if phoneissue%}<li role="alert" style="color:red;">{{phoneissue}}</li>{%endif%} -->
-            <button type="submit" class="btn-primary-custom">
-              Authenticate Access
-            </button>
+          <button type="submit" class="w-full py-3 rounded-xl bg-gradient-to-r from-brand-600 to-accent-600 text-white font-bold hover:from-brand-500 hover:to-accent-500 transition-all shadow-lg shadow-brand-500/20">
+            Authenticate Access
+          </button>
 
-            <div class="switch-link">
-               <a href="/">Return to Main Site</a>
-            </div>
-          </form>
-        </div>
+          <div class="text-center text-sm pt-1">
+            <a href="/" class="text-brand-500 hover:text-brand-400 font-semibold">Return to Main Site</a>
+          </div>
+        </form>
       </div>
-    </div>
-  </div>
+    </main>
 
-  <script src="{% static 'js/login.js'%}"></script>
-</body>
+    <script>
+      function togglePass(id, btn) {
+        const input = document.getElementById(id);
+        const icon = btn.querySelector("i");
+        const hidden = input.type === "password";
+        input.type = hidden ? "text" : "password";
+        icon.classList.toggle("bi-eye");
+        icon.classList.toggle("bi-eye-slash");
+      }
+
+      document.addEventListener("DOMContentLoaded", function () {
+        const toggleBtn = document.getElementById("themeToggle");
+        const html = document.documentElement;
+        const icon = document.getElementById("themeIcon");
+        const adminForm = document.getElementById("form-signin");
+        const adminEmail = document.getElementById("admin-id");
+        const adminPassword = document.getElementById("admin-pass");
+        const adminEmailError = document.getElementById("admin-email-error");
+        const adminPasswordError = document.getElementById("admin-password-error");
+
+        function updateIcon() {
+          const isDark = html.getAttribute("data-theme") === "dark";
+          icon.classList.remove("bi-moon-stars-fill", "bi-sun-fill");
+          icon.classList.add(isDark ? "bi-sun-fill" : "bi-moon-stars-fill");
+          toggleBtn.setAttribute("aria-label", isDark ? "Switch to light theme" : "Switch to dark theme");
+        }
+
+        const saved = localStorage.getItem("theme");
+        if (saved === "light") {
+          html.removeAttribute("data-theme");
+        } else if (saved === "dark") {
+          html.setAttribute("data-theme", "dark");
+        }
+        updateIcon();
+
+        toggleBtn.addEventListener("click", function () {
+          const isDark = html.getAttribute("data-theme") === "dark";
+          if (isDark) {
+            html.removeAttribute("data-theme");
+            localStorage.setItem("theme", "light");
+          } else {
+            html.setAttribute("data-theme", "dark");
+            localStorage.setItem("theme", "dark");
+          }
+          updateIcon();
+        });
+
+        if (adminForm) {
+          function clearField(input, errorEl) {
+            input.classList.remove("input-error");
+            if (errorEl) {
+              errorEl.innerText = "";
+            }
+          }
+
+          function setField(input, errorEl, message) {
+            input.classList.add("input-error");
+            if (errorEl) {
+              errorEl.innerText = message;
+            }
+          }
+
+          adminEmail.addEventListener("input", () => clearField(adminEmail, adminEmailError));
+          adminPassword.addEventListener("input", () => clearField(adminPassword, adminPasswordError));
+
+          adminForm.addEventListener("submit", function (e) {
+            let valid = true;
+            clearField(adminEmail, adminEmailError);
+            clearField(adminPassword, adminPasswordError);
+
+            if (!adminEmail.value.trim()) {
+              setField(adminEmail, adminEmailError, "Email is required.");
+              adminEmail.focus();
+              valid = false;
+            }
+
+            if (!adminPassword.value) {
+              setField(adminPassword, adminPasswordError, "Password is required.");
+              if (valid) {
+                adminPassword.focus();
+              }
+              valid = false;
+            }
+
+            if (!valid) {
+              e.preventDefault();
+            }
+          });
+        }
+      });
+    </script>
+  </body>
 </html>
