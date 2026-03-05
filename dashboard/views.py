@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 
 def dashboard_home_view(request):
     return render(request, 'dashboard/home.html')
@@ -47,3 +47,8 @@ def suppliers_view(request):
 
 def trending_view(request):
     return render(request, 'dashboard/trending.html')
+
+
+def logout_view(request):
+    # Simple placeholder logout flow until auth/session handling is implemented.
+    return redirect('dashboard:admin_login')
