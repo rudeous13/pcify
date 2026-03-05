@@ -568,7 +568,7 @@
             <i class="bi bi-x-lg"></i>
           </button>
         </div>
-        <form method="POST" action="{% url 'dashboard:brand' %}">
+        <form method="POST" action="{% url 'dashboard:brands' %}">
           {% csrf_token %}
           <input type="hidden" name="action" value="insert" />
           <div class="mb-6">
@@ -614,7 +614,7 @@
             <i class="bi bi-x-lg"></i>
           </button>
         </div>
-        <form method="POST" action="{% url 'dashboard:brand' %}">
+        <form method="POST" action="{% url 'dashboard:brands' %}">
           {% csrf_token %}
           <input type="hidden" name="action" value="update" />
           <input type="hidden" name="brand_id" id="editBrandId" />
@@ -675,7 +675,7 @@
           <form
             id="deleteForm"
             method="POST"
-            action="{% url 'dashboard:brand' %}"
+            action="{% url 'dashboard:brands' %}"
           >
             {% csrf_token %}
             <input type="hidden" name="action" value="delete" />

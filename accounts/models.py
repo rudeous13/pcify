@@ -85,4 +85,4 @@ class Staff(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"Staff: {self.user.email}"
+        return f"{self.role.role_name} - {self.user.email}"

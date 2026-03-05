@@ -138,16 +138,16 @@
             {% csrf_token %}
             
             <div class="space-y-2 group">
-              <label for="signin-id" class="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 group-focus-within:text-brand-500 transition-colors duration-300">Email or Phone</label>
+              <label for="signin-id" class="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 group-focus-within:text-brand-500 transition-colors duration-300">Email</label>
               <div class="relative focus-within:transform focus-within:-translate-y-0.5 transition-transform duration-300">
                 <input
                   type="text"
                   id="signin-id"
-                  name="emailorphone"
+                  name="email"
                   required
-                  value="{%if email_or_phone%}{{email_or_phone}}{%endif%}"
+                  value="{%if email%}{{email}}{%endif%}"
                   class="w-full bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-white/10 rounded-xl p-3 pl-10 text-slate-900 dark:text-white hover:border-brand-400/50 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 focus:bg-white dark:focus:bg-black/40 outline-none transition-all duration-300 placeholder:text-slate-400/50 focus:shadow-[0_0_15px_rgba(14,165,233,0.1)]"
-                  placeholder="Enter your email or phone"
+                  placeholder="Enter your email"
                 />
                 <i class="bi bi-person absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-brand-500 group-focus-within:scale-110 transition-all duration-300"></i>
               </div>

@@ -232,7 +232,7 @@
 
         <!-- Overview -->
         <a
-          href="{% url 'dashboard:dashboard_home'%}"
+          href="{% url 'dashboard:home'%}"
           class="nav-item  flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
         >
           <i
@@ -292,7 +292,7 @@
 
         <!-- Product -->
         <a
-          href="{% url 'dashboard:product'%}"
+          href="{% url 'dashboard:products'%}"
           class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
         >
           <i
@@ -304,7 +304,7 @@
 
         <!-- Brand -->
         <a
-          href="{% url 'dashboard:brand'%}"
+          href="{% url 'dashboard:brands'%}"
           class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
         >
           <i
@@ -316,7 +316,7 @@
 
         <!-- Category -->
         <a
-          href="{% url 'dashboard:category'%}"
+          href="{% url 'dashboard:categories'%}"
           class="nav-item  flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
         >
           <i
@@ -328,7 +328,7 @@
 
         <!-- Compatibility -->
         <a
-          href="{% url 'dashboard:order'%}"
+          href="{% url 'dashboard:orders'%}"
           class="nav-item    flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
         >
           <i
@@ -340,7 +340,7 @@
 
         <!-- Task Management -->
         <a
-          href="{% url 'dashboard:task'%}"
+          href="{% url 'dashboard:employee_management'%}"
           class="nav-item  flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
         >
           <i class="bi bi-briefcase-fill text-lg drop-shadow-sm"></i> Task Mgmt
@@ -373,7 +373,7 @@
 
         <!-- Pre-Built PCs -->
         <a
-          href="{% url 'dashboard:pre_built'%}"
+          href="{% url 'dashboard:prebuilt_pc'%}"
           class="nav-item active flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
         >
           <i class="bi bi-pc-display text-lg drop-shadow-sm"></i> Pre-Built PCs
@@ -389,7 +389,7 @@
 
         <!-- Analytics -->
         <a
-          href="{% url 'dashboard:analytic'%}"
+          href="{% url 'dashboard:analytics'%}"
           class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
         >
           <i
@@ -401,7 +401,7 @@
 
         <!-- Settings -->
         <a
-          href="{% url 'dashboard:setting'%}"
+          href="{% url 'dashboard:settings'%}"
           class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
         >
           <i
@@ -1353,13 +1353,13 @@
       class="lg:hidden fixed bottom-6 left-4 right-4 sm:left-1/2 sm:right-auto sm:-translate-x-1/2 sm:w-max mac-dock p-2.5 rounded-[2rem] sm:rounded-full z-[100] grid grid-cols-4 sm:grid-cols-8 gap-2 items-center justify-items-center"
     >
       <a
-        href="{% url 'dashboard:dashboard_home'%}"
+        href="{% url 'dashboard:home'%}"
         class="mobile-nav-link w-full flex flex-col items-center justify-center gap-1 p-2.5 rounded-2xl text-slate-500 dark:text-slate-400 hover:text-brand-500 dark:hover:text-brand-400"
         ><i class="bi bi-grid-1x2-fill text-[22px] drop-shadow-sm"></i
         ><span class="text-[9px] font-bold tracking-wide">Home</span></a
       >
       <a
-        href="{% url 'dashboard:product'%}"
+        href="{% url 'dashboard:products'%}"
         class="mobile-nav-link w-full flex flex-col items-center justify-center gap-1 p-2.5 rounded-2xl text-slate-500 dark:text-slate-400 hover:text-brand-500 dark:hover:text-brand-400"
         ><i class="bi bi-box-seam-fill text-[22px] drop-shadow-sm"></i
         ><span class="text-[9px] font-bold tracking-wide">Parts</span></a
@@ -1371,7 +1371,7 @@
         ><span class="text-[9px] font-bold tracking-wide">PCs</span></a
       >
       <a
-        href="{% url 'dashboard:order'%}"
+        href="{% url 'dashboard:orders'%}"
         class="mobile-nav-link w-full flex flex-col items-center justify-center gap-1 p-2.5 rounded-2xl text-slate-500 dark:text-slate-400 hover:text-brand-500 dark:hover:text-brand-400"
         ><i class="bi bi-cart-check-fill text-[22px] drop-shadow-sm"></i
         ><span class="text-[9px] font-bold tracking-wide">Orders</span></a
