@@ -2,13 +2,11 @@ from django.contrib.auth import authenticate, get_user_model, login
 from django.db import IntegrityError
 from django.shortcuts import redirect, render
 
-from .models import Customer
-
 User = get_user_model()
 
 
 def login_view(request):
-    if request.user.is_authenticated and hasattr(request.user, "customer_profile"):
+    if request.user.is_authenticated and request.user.role == User.Roles.CUSTOMER:
         return redirect("home")
 
     context = {}
@@ -26,7 +24,7 @@ def login_view(request):
             context["message"] = "Invalid email or password."
             return render(request, "accounts/login.html", context)
 
-        if not hasattr(user, "customer_profile"):
+        if user.role != User.Roles.CUSTOMER:
             context["message"] = "Customer account not found for this user."
             return render(request, "accounts/login.html", context)
 
@@ -39,7 +37,7 @@ def login_view(request):
 
 
 def signup_view(request):
-    if request.user.is_authenticated and hasattr(request.user, "customer_profile"):
+    if request.user.is_authenticated and request.user.role == User.Roles.CUSTOMER:
         return redirect("home")
 
     context = {}
@@ -93,8 +91,8 @@ def signup_view(request):
                 first_name=first_name,
                 last_name=last_name,
                 phone_number=phone_number,
+                role=User.Roles.CUSTOMER,
             )
-            Customer.objects.get_or_create(user=user)
         except IntegrityError:
             context["emailissue"] = "Unable to create account with these details."
             return render(request, "accounts/signup.html", context)
