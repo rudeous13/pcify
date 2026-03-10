@@ -68,6 +68,7 @@
     </script>
 
     <style type="text/tailwindcss">
+      /* Global Styles */
       ::-webkit-scrollbar {
         width: 6px;
         height: 6px;
@@ -98,12 +99,14 @@
         );
       }
 
+      /* Sidebar Active State */
       .nav-item.active {
         background: rgba(14, 165, 233, 0.1);
         color: #38bdf8;
         border-right: 3px solid #38bdf8;
       }
 
+      /* Table Styles */
       .glass-table th {
         background-color: rgba(255, 255, 255, 0.05);
       }
@@ -111,11 +114,13 @@
         background-color: rgba(255, 255, 255, 0.02);
       }
 
+      /* Mobile Nav Active State */
       .mobile-nav-link.active {
         color: #38bdf8;
         background: rgba(14, 165, 233, 0.1);
       }
 
+      /* Input Fields */
       .form-input {
         width: 100%;
         background: rgba(255, 255, 255, 0.05);
@@ -183,19 +188,16 @@
           </div>
         </a>
       </div>
-      <!-- Navigation -->
       <nav class="flex-1 overflow-y-auto py-6 px-4 space-y-1 custom-scrollbar">
         
-        <!-- Main Menu -->
         <p
           class="px-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2"
         >
           Main Menu
         </p>
 
-        <!-- Overview -->
         <a
-          href="{% url 'dashboard:home'%}"
+          href="{% url 'dashboard:dashboard_home'%}"
           class="nav-item  flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
         >
           <i
@@ -205,14 +207,12 @@
           Overview
         </a>
         
-        <!-- Users  -->
         <p
           class="px-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 mt-6"
         >
           Users
         </p>
         
-        <!-- Customers -->
         <a
           href="{% url 'dashboard:customers'%}"
           class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
@@ -224,7 +224,6 @@
           Customers
         </a>
         
-        <!-- Employees -->
         <a
           href="{% url 'dashboard:employees'%}"
           class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
@@ -236,7 +235,6 @@
           Employees
         </a>
 
-        <!-- Suppliers -->
         <a
           href="{% url 'dashboard:suppliers'%}"
           class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
@@ -245,7 +243,6 @@
         </a>
 
 
-        <!-- Management -->
         <p
           class="px-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 mt-6"
         >
@@ -253,9 +250,8 @@
         </p>
 
 
-        <!-- Product -->
         <a
-          href="{% url 'dashboard:products'%}"
+          href="{% url 'dashboard:product'%}"
           class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
         >
           <i
@@ -265,9 +261,8 @@
           Products
         </a>
 
-        <!-- Brand -->
         <a
-          href="{% url 'dashboard:brands'%}"
+          href="{% url 'dashboard:brand'%}"
           class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
         >
           <i
@@ -277,9 +272,8 @@
           Brand
         </a>
 
-        <!-- Category -->
         <a
-          href="{% url 'dashboard:categories'%}"
+          href="{% url 'dashboard:category'%}"
           class="nav-item  flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
         >
           <i
@@ -289,9 +283,8 @@
           Category
         </a>
 
-        <!-- Compatibility -->
         <a
-          href="{% url 'dashboard:orders'%}"
+          href="{% url 'dashboard:order'%}"
           class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
         >
           <i
@@ -301,15 +294,13 @@
           Orders
         </a>
 
-        <!-- Task Management -->
         <a
-          href="{% url 'dashboard:employee_management'%}"
+          href="{% url 'dashboard:task'%}"
           class="nav-item active flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
         >
           <i class="bi bi-briefcase-fill text-lg drop-shadow-sm"></i> Task Mgmt
         </a>
 
-        <!-- Invetory -->
         <a
           href="{% url 'dashboard:inventory'%}"
           class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
@@ -318,7 +309,6 @@
           Inventory
         </a>
 
-        <!-- Compatibility -->
         <a
           href="{% url 'dashboard:compatibility'%}"
           class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
@@ -326,7 +316,6 @@
           <i class="bi bi-puzzle-fill text-lg drop-shadow-sm"></i> Compatibility
         </a>
 
-        <!-- Trending -->
         <a
           href="{% url 'dashboard:trending'%}"
           class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
@@ -334,25 +323,22 @@
           <i class="bi bi-fire text-lg drop-shadow-sm"></i> Trending
         </a>
 
-        <!-- Pre-Built PCs -->
         <a
-          href="{% url 'dashboard:prebuilt_pc'%}"
+          href="{% url 'dashboard:pre_built'%}"
           class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
         >
           <i class="bi bi-pc-display text-lg drop-shadow-sm"></i> Pre-Built PCs
         </a>
 
 
-        <!-- System -->
         <p
           class="px-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 mt-6"
         >
           System
         </p>
 
-        <!-- Analytics -->
         <a
-          href="{% url 'dashboard:analytics'%}"
+          href="{% url 'dashboard:analytic'%}"
           class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
         >
           <i
@@ -362,9 +348,8 @@
           Analytics
         </a>
 
-        <!-- Settings -->
         <a
-          href="{% url 'dashboard:settings'%}"
+          href="{% url 'dashboard:setting'%}"
           class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
         >
           <i
@@ -377,7 +362,7 @@
 
       <div class="p-4 border-t border-slate-200 dark:border-white/5">
         <a
-          href="#"
+          href="{% url 'dashboard:logout'%}"
           class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-red-500 hover:bg-red-500/10 transition-all"
         >
           <i class="bi bi-box-arrow-right"></i> Logout
@@ -430,7 +415,7 @@
               <p class="text-[10px] text-slate-500 font-mono mt-1">Manager</p>
             </div>
             <img
-              src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix"
+              src="https://api.dicebear.com/7.x/avataaars/svg?seed={{ request.user.username|default:'Admin' }}"
               class="w-10 h-10 rounded-full border-2 border-slate-200 dark:border-white/10 group-hover:border-brand-500 transition-all"
             />
           </div>
@@ -594,162 +579,198 @@
 
     <div id="assignTaskModal" class="fixed inset-0 z-[100] hidden">
       <div
-        class="absolute inset-0 bg-black/80 backdrop-blur-sm transition-opacity"
+        class="absolute inset-0 bg-black/60 backdrop-blur-md transition-opacity duration-300"
         onclick="closeModal('assignTaskModal')"
       ></div>
+
       <div
-        class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-lg bg-white dark:bg-dark-card border border-slate-200 dark:border-white/10 shadow-2xl p-6 rounded-2xl transform scale-95 opacity-0 transition-all duration-200"
+        class="absolute right-0 top-0 h-full w-full md:w-[600px] bg-[#0f172a] border-l border-white/10 shadow-2xl p-0 overflow-y-auto transform translate-x-full transition-transform duration-300 ease-out"
         id="assignTaskModalPanel"
       >
-        <div class="flex justify-between items-center mb-6">
-          <h2 class="text-xl font-bold text-slate-900 dark:text-white">
-            Assign Task
-          </h2>
+        <div class="sticky top-0 z-20 bg-[#0f172a]/95 backdrop-blur-xl border-b border-white/5 px-8 py-6 flex justify-between items-center">
+          <div>
+            <h2 class="text-2xl font-black text-white font-mono tracking-tight uppercase">
+              Assign Task
+            </h2>
+            <p class="text-xs text-brand-400 font-bold tracking-widest mt-1 uppercase">
+              New Assignment
+            </p>
+          </div>
           <button
             onclick="closeModal('assignTaskModal')"
-            class="w-8 h-8 rounded-full bg-slate-100 dark:bg-white/10 flex items-center justify-center hover:bg-red-500 hover:text-white transition-all"
+            class="group w-10 h-10 rounded-full bg-white/5 border border-white/5 hover:bg-red-500/10 hover:border-red-500/50 flex items-center justify-center transition-all duration-300"
           >
-            <i class="bi bi-x-lg"></i>
+            <i class="bi bi-x-lg text-slate-400 group-hover:text-red-500 transition-colors"></i>
           </button>
         </div>
-        <form
-          method="POST"
-          action=""
-          class="space-y-4"
-        >
-          {% csrf_token %}
-          <div>
-            <label
-              class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1 block"
-              >Select Employee</label
-            >
-            <select
-              name="employee_id"
-              class="form-input bg-[#f8fafc] border-slate-300 text-slate-700 dark:bg-white/5 dark:border-white/10 dark:text-white cursor-pointer"
-              required
-            >
-              <option value="" disabled selected>-- Choose Employee --</option>
-              {% for emp in employees %}
-              <option value="{{ emp.id }}">
-                {{ emp.employee_name }} (#{{ emp.employe_id }})
-              </option>
-              {% endfor %}
-            </select>
-          </div>
-          <div>
-            <label
-              class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1 block"
-              >Select Order</label
-            >
-            <select
-              name="order_id"
-              class="form-input bg-[#f8fafc] border-slate-300 text-slate-700 dark:bg-white/5 dark:border-white/10 dark:text-white cursor-pointer"
-              required
-            >
-              <option value="" disabled selected>-- Choose Order --</option>
-              {% for order in pending_orders %}
-              <option value="{{ order.id }}">
-                Order #{{ order.order_id }}
-              </option>
-              {% endfor %}
-            </select>
-          </div>
-          <div>
-            <label
-              class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1 block"
-              >Start Time</label
-            >
-            <input
-              type="datetime-local"
-              name="start_time"
-              class="form-input bg-[#f8fafc] border-slate-300 text-slate-700 dark:bg-white/5 dark:border-white/10 dark:text-white"
-              required
-            />
-          </div>
-          <div>
-            <label
-              class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1 block"
-              >Initial Status</label
-            >
-            <select
-              name="status"
-              class="form-input bg-[#f8fafc] border-slate-300 text-slate-700 dark:bg-white/5 dark:border-white/10 dark:text-white cursor-pointer"
-              required
-            >
-              <option value="Pending">Pending</option>
-              <option value="Working">Working</option>
-            </select>
-          </div>
-          <button
-            type="submit"
-            class="w-full py-3 rounded-xl bg-brand-500 hover:bg-brand-600 text-white font-bold transition-all shadow-lg shadow-brand-500/20 mt-4"
-          >
-            Assign to Employee
-          </button>
-        </form>
+
+        <div class="p-8">
+          <form method="POST" action="" class="space-y-8" id="assignTaskForm">
+            {% csrf_token %}
+
+            <div class="bg-white/5 border border-white/10 rounded-2xl p-6 space-y-6">
+              <h3 class="text-sm font-bold text-white uppercase tracking-widest border-b border-white/10 pb-2">
+                <i class="bi bi-clipboard-check mr-2 text-brand-400"></i>Task Details
+              </h3>
+              
+              <div class="grid grid-cols-1 gap-6">
+                <div class="group">
+                  <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block group-focus-within:text-brand-300 transition-colors">
+                    Select Employee
+                  </label>
+                  <select
+                    name="employee_id"
+                    class="w-full bg-[#1e293b]/50 border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white font-medium focus:outline-none focus:border-brand-500/50 focus:bg-brand-500/5 transition-all cursor-pointer"
+                    required
+                  >
+                    <option value="" disabled selected>-- Choose Employee --</option>
+                    {% for emp in employees %}
+                    <option value="{{ emp.id }}">
+                      {{ emp.employee_name }} (#{{ emp.employe_id }})
+                    </option>
+                    {% endfor %}
+                  </select>
+                </div>
+
+                <div class="group">
+                  <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block group-focus-within:text-brand-300 transition-colors">
+                    Select Order
+                  </label>
+                  <select
+                    name="order_id"
+                    class="w-full bg-[#1e293b]/50 border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white font-medium focus:outline-none focus:border-brand-500/50 focus:bg-brand-500/5 transition-all cursor-pointer"
+                    required
+                  >
+                    <option value="" disabled selected>-- Choose Order --</option>
+                    {% for order in pending_orders %}
+                    <option value="{{ order.id }}">
+                      Order #{{ order.order_id }}
+                    </option>
+                    {% endfor %}
+                  </select>
+                </div>
+
+                <div class="group">
+                  <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block group-focus-within:text-brand-300 transition-colors">
+                    Start Time
+                  </label>
+                  <input
+                    type="datetime-local"
+                    name="start_time"
+                    class="w-full bg-[#1e293b]/50 border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white font-medium focus:outline-none focus:border-brand-500/50 focus:bg-brand-500/5 transition-all"
+                    required
+                  />
+                </div>
+
+                <div class="group">
+                  <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block group-focus-within:text-brand-300 transition-colors">
+                    Initial Status
+                  </label>
+                  <select
+                    name="status"
+                    class="w-full bg-[#1e293b]/50 border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white font-medium focus:outline-none focus:border-brand-500/50 focus:bg-brand-500/5 transition-all cursor-pointer"
+                    required
+                  >
+                    <option value="Pending">Pending</option>
+                    <option value="Working">Working</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="pt-6 mt-8 border-t border-white/10 sticky bottom-0 bg-[#0f172a] pb-4 z-20">
+              <button
+                type="submit"
+                class="w-full py-4 rounded-xl bg-gradient-to-r from-brand-600 to-accent-600 hover:from-brand-500 hover:to-accent-500 text-white font-bold text-sm tracking-wide shadow-lg shadow-brand-500/20 hover:shadow-brand-500/40 hover:-translate-y-0.5 transition-all duration-300 flex items-center justify-center gap-2"
+              >
+                <i class="bi bi-check2-circle text-lg"></i>
+                ASSIGN TO EMPLOYEE
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
 
     <div id="editTaskModal" class="fixed inset-0 z-[100] hidden">
       <div
-        class="absolute inset-0 bg-black/80 backdrop-blur-sm transition-opacity"
+        class="absolute inset-0 bg-black/60 backdrop-blur-md transition-opacity duration-300"
         onclick="closeModal('editTaskModal')"
       ></div>
+
       <div
-        class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-lg bg-white dark:bg-dark-card border border-slate-200 dark:border-white/10 shadow-2xl p-6 rounded-2xl transform scale-95 opacity-0 transition-all duration-200"
+        class="absolute right-0 top-0 h-full w-full md:w-[600px] bg-[#0f172a] border-l border-white/10 shadow-2xl p-0 overflow-y-auto transform translate-x-full transition-transform duration-300 ease-out"
         id="editTaskModalPanel"
       >
-        <div class="flex justify-between items-center mb-6">
-          <h2 class="text-xl font-bold text-slate-900 dark:text-white">
-            Update Task Status
-          </h2>
+        <div class="sticky top-0 z-20 bg-[#0f172a]/95 backdrop-blur-xl border-b border-white/5 px-8 py-6 flex justify-between items-center">
+          <div>
+            <h2 class="text-2xl font-black text-white font-mono tracking-tight uppercase">
+              Update Task
+            </h2>
+            <p class="text-xs text-brand-400 font-bold tracking-widest mt-1 uppercase">
+              Modify Assignment
+            </p>
+          </div>
           <button
             onclick="closeModal('editTaskModal')"
-            class="w-8 h-8 rounded-full bg-slate-100 dark:bg-white/10 flex items-center justify-center hover:bg-red-500 hover:text-white transition-all"
+            class="group w-10 h-10 rounded-full bg-white/5 border border-white/5 hover:bg-red-500/10 hover:border-red-500/50 flex items-center justify-center transition-all duration-300"
           >
-            <i class="bi bi-x-lg"></i>
+            <i class="bi bi-x-lg text-slate-400 group-hover:text-red-500 transition-colors"></i>
           </button>
         </div>
-        <form id="editTaskForm" method="POST" action="" class="space-y-4">
-          {% csrf_token %}
-          <input type="hidden" id="edit_task_id" name="task_id" />
 
-          <div>
-            <label
-              class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1 block"
-              >Update Status</label
-            >
-            <select
-              id="edit_task_status"
-              name="status"
-              class="form-input bg-[#f8fafc] border-slate-300 text-slate-700 dark:bg-white/5 dark:border-white/10 dark:text-white cursor-pointer"
-              required
-            >
-              <option value="Pending">Pending</option>
-              <option value="Working">Working</option>
-              <option value="Completed">Completed</option>
-            </select>
-          </div>
-          <div>
-            <label
-              class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1 block"
-              >End Time (If Completed)</label
-            >
-            <input
-              type="datetime-local"
-              id="edit_end_time"
-              name="end_time"
-              class="form-input bg-[#f8fafc] border-slate-300 text-slate-700 dark:bg-white/5 dark:border-white/10 dark:text-white"
-            />
-          </div>
+        <div class="p-8">
+          <form id="editTaskForm" method="POST" action="" class="space-y-8">
+            {% csrf_token %}
+            <input type="hidden" id="edit_task_id" name="task_id" />
 
-          <button
-            type="submit"
-            class="w-full py-3 rounded-xl bg-brand-500 hover:bg-brand-600 text-white font-bold transition-all shadow-lg shadow-brand-500/20 mt-4"
-          >
-            Update Record
-          </button>
-        </form>
+            <div class="bg-white/5 border border-white/10 rounded-2xl p-6 space-y-6">
+              <h3 class="text-sm font-bold text-white uppercase tracking-widest border-b border-white/10 pb-2">
+                <i class="bi bi-pencil-square mr-2 text-brand-400"></i>Status Update
+              </h3>
+              
+              <div class="grid grid-cols-1 gap-6">
+                <div class="group">
+                  <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block group-focus-within:text-brand-300 transition-colors">
+                    Update Status
+                  </label>
+                  <select
+                    id="edit_task_status"
+                    name="status"
+                    class="w-full bg-[#1e293b]/50 border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white font-medium focus:outline-none focus:border-brand-500/50 focus:bg-brand-500/5 transition-all cursor-pointer"
+                    required
+                  >
+                    <option value="Pending">Pending</option>
+                    <option value="Working">Working</option>
+                    <option value="Completed">Completed</option>
+                  </select>
+                </div>
+
+                <div class="group">
+                  <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block group-focus-within:text-brand-300 transition-colors">
+                    End Time <span class="text-slate-600">(If Completed)</span>
+                  </label>
+                  <input
+                    type="datetime-local"
+                    id="edit_end_time"
+                    name="end_time"
+                    class="w-full bg-[#1e293b]/50 border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white font-medium focus:outline-none focus:border-brand-500/50 focus:bg-brand-500/5 transition-all"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div class="pt-6 mt-8 border-t border-white/10 sticky bottom-0 bg-[#0f172a] pb-4 z-20">
+              <button
+                type="submit"
+                class="w-full py-4 rounded-xl bg-gradient-to-r from-brand-600 to-accent-600 hover:from-brand-500 hover:to-accent-500 text-white font-bold text-sm tracking-wide shadow-lg shadow-brand-500/20 hover:shadow-brand-500/40 hover:-translate-y-0.5 transition-all duration-300 flex items-center justify-center gap-2"
+              >
+                <i class="bi bi-check2-circle text-lg"></i>
+                UPDATE RECORD
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
 
@@ -757,7 +778,7 @@
       class="lg:hidden fixed bottom-4 left-4 right-4 bg-white/90 dark:bg-[#0f172a]/95 backdrop-blur-xl border border-slate-200 dark:border-white/10 p-2 rounded-2xl shadow-2xl z-50 flex justify-around items-center"
     >
       <a
-        href="{% url 'dashboard:home'%}"
+        href="{% url 'dashboard:dashboard_home'%}"
         class="mobile-nav-link flex flex-col items-center gap-1 p-2 rounded-xl text-slate-400 hover:text-brand-600 transition-colors"
         ><i class="bi bi-grid-1x2-fill text-xl"></i
         ><span class="text-[10px] font-bold">Home</span></a
@@ -775,7 +796,7 @@
         ><span class="text-[10px] font-bold">Tasks</span></a
       >
       <a
-        href="{% url 'dashboard:orders'%}"
+        href="{% url 'dashboard:order'%}"
         class="mobile-nav-link flex flex-col items-center gap-1 p-2 rounded-xl text-slate-400 hover:text-brand-600 transition-colors"
         ><i class="bi bi-cart-check-fill text-xl"></i
         ><span class="text-[10px] font-bold">Orders</span></a
@@ -811,15 +832,14 @@
 
       // Modal Triggers
       function openAssignModal() {
+        document.getElementById("assignTaskForm").reset();
+
         const modal = document.getElementById("assignTaskModal");
         modal.classList.remove("hidden");
         setTimeout(() => {
           document
             .getElementById("assignTaskModalPanel")
-            .classList.remove("scale-95", "opacity-0");
-          document
-            .getElementById("assignTaskModalPanel")
-            .classList.add("scale-100", "opacity-100");
+            .classList.remove("translate-x-full");
         }, 10);
       }
 
@@ -844,21 +864,26 @@
         setTimeout(() => {
           document
             .getElementById("editTaskModalPanel")
-            .classList.remove("scale-95", "opacity-0");
-          document
-            .getElementById("editTaskModalPanel")
-            .classList.add("scale-100", "opacity-100");
+            .classList.remove("translate-x-full");
         }, 10);
       }
 
-      function closeModal(id) {
-        const modal = document.getElementById(id);
+      function closeModal(modalId) {
+        const modal = document.getElementById(modalId);
         const panel = modal.querySelector('div[id$="Panel"]');
-        if (panel) {
+
+        if (panel && panel.id !== "deletePanel") {
+          // It's a sliding side panel
+          panel.classList.add("translate-x-full");
+        } else if (panel && panel.id === "deletePanel") {
+          // It's the centered delete panel
           panel.classList.remove("scale-100", "opacity-100");
           panel.classList.add("scale-95", "opacity-0");
         }
-        setTimeout(() => modal.classList.add("hidden"), 200);
+
+        setTimeout(() => {
+          modal.classList.add("hidden");
+        }, 300);
       }
 
       // Search Logic

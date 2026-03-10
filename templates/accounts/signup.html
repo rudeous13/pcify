@@ -1,306 +1,52 @@
-{% load static %}
-
-<!doctype html>
-<html lang="en" data-theme="dark">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Nexus Auth • Sign Up</title>
-
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
-    />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com"></script>
-
-    <script>
-      tailwind.config = {
-        darkMode: ["class", '[data-theme="dark"]'],
-        theme: {
-          extend: {
-            fontFamily: {
-              sans: ['"Outfit"', "sans-serif"],
-              mono: ['"Space Grotesk"', "monospace"],
-            },
-            colors: {
-              brand: {
-                400: "#38bdf8",
-                500: "#0ea5e9",
-                600: "#0284c7",
-                glow: "rgba(14, 165, 233, 0.3)",
-              },
-              accent: {
-                400: "#a78bfa",
-                500: "#8b5cf6",
-                600: "#7c3aed",
-                glow: "rgba(139, 92, 246, 0.3)",
-              },
-              dark: { bg: "#0b0f19", card: "#111827", border: "#1f2937" },
-            },
-            backgroundImage: {
-              "grid-pattern":
-                "linear-gradient(to right, #1f2937 1px, transparent 1px), linear-gradient(to bottom, #1f2937 1px, transparent 1px)",
-            },
-            animation: {
-              'blob': 'blob 10s infinite',
-              'blob-delayed': 'blob 10s infinite 5s',
-            },
-            keyframes: {
-              blob: {
-                '0%, 100%': { transform: 'translateY(0) scale(1)' },
-                '50%': { transform: 'translateY(-20px) scale(1.05)' },
-              }
-            }
-          },
-        },
-      };
-    </script>
-
-    <style type="text/tailwindcss">
-      body {overflow-x: hidden;}
-
-      /* THE ANIMATION CORE - 1 SECOND DURATION */
-      #signup-container {transition:transform 1s cubic-bezier(0.4, 0, 0.2, 1),opacity 1s ease,filter 1s ease;will-change: transform, opacity, filter;}
-
-      /* Animation States */
-      .slide-out-left {transform: translateX(-100%) scale(0.9);opacity: 0;filter: blur(5px);}
-      .slide-out-right {transform: translateX(100%) scale(0.9);opacity: 0;filter: blur(5px);}
-      .init-right {transform: translateX(100%) scale(0.9);opacity: 0;filter: blur(5px);}
-      .init-left {transform: translateX(-100%) scale(0.9);opacity: 0;filter: blur(5px);}
-
-      .bg-grid {
-        background-size: 40px 40px;
-        mask-image: linear-gradient(to bottom,transparent,10% white,90% white,transparent);
-        -webkit-mask-image: linear-gradient(to bottom,transparent,5% white,95% white,transparent);}
-        
-      .glass-effect {
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-      }
-
-      /* Specific to signup validation (kept from original) */
-      .input-error {border-color: #ef4444 !important;background-color: rgba(239, 68, 68, 0.05) !important;}
-      .shake {animation: shake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;}
-      @keyframes shake {
-          10%, 90% { transform: translate3d(-1px, 0, 0); }
-          20%, 80% { transform: translate3d(2px, 0, 0); }
-          30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
-          40%, 60% { transform: translate3d(4px, 0, 0); }
-      }
-    </style>
-  </head>
-  <body class="bg-slate-50 dark:bg-dark-bg text-slate-600 dark:text-slate-300 antialiased transition-colors duration-500 min-h-screen flex flex-col">
-    
-    <div class="fixed inset-0 z-0 pointer-events-none">
-      <div class="absolute inset-0 bg-grid-pattern bg-grid opacity-[0.03] dark:opacity-[0.05]"></div>
-      <div class="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-brand-500/20 rounded-full blur-[100px] mix-blend-screen animate-blob transition-all duration-1000"></div>
-      <div class="absolute bottom-[20%] right-[-10%] w-[500px] h-[500px] bg-accent-500/20 rounded-full blur-[100px] mix-blend-screen animate-blob-delayed transition-all duration-1000"></div>
-    </div>
-
-    <header class="absolute top-0 z-50 w-full">
-      <div class="max-w-7xl mx-auto px-4 md:px-6 h-20 flex items-center justify-between">
-        <a href="#" class="flex items-center gap-3 group">
-          <div class="relative w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-500 to-accent-600 text-white flex items-center justify-center font-bold text-lg shadow-lg shadow-brand-500/30 group-hover:shadow-brand-500/50 transition-all duration-500">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" class="transition-transform duration-700 group-hover:rotate-[360deg]">
-                <circle cx="12" cy="12" r="10" />
-            </svg>
-          </div>
-          <span class="font-bold text-xl tracking-tight text-slate-900 dark:text-white font-mono uppercase group-hover:tracking-wider transition-all duration-300">
-            PCify_<span class="text-brand-400">Nexus</span>
-          </span>
-        </a>
-
-        <div class="flex items-center gap-3">
-          <button
-            id="themeToggle"
-            class="w-10 h-10 rounded-full flex items-center justify-center text-slate-500 hover:bg-slate-200 dark:hover:bg-white/10 dark:text-slate-400 hover:text-brand-500 dark:hover:text-brand-400 transition-all duration-300 border border-transparent dark:hover:border-white/20 hover:scale-110 active:scale-95"
-          >
-            <i id="themeIcon" class="bi bi-moon-stars-fill text-sm"></i>
-          </button>
-        </div>
-      </div>
-    </header>
-
-    <main id="viewport" class="relative z-10 flex-1 flex items-center justify-center p-4 py-24">
-      <div class="w-full max-w-md" id="mainCard">
-        
-        <div
-          id="signup-container"
-          class="auth-form-container active bg-white/95 dark:bg-dark-card/90 glass-effect border border-slate-200/50 dark:border-white/10 rounded-3xl p-6 shadow-2xl shadow-accent-500/5 hover:shadow-accent-500/20 hover:-translate-y-1 transition-all duration-500 relative overflow-hidden"
-        >
-          <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-accent-500 via-brand-500 to-accent-500 bg-[length:200%_auto] animate-[gradient_3s_ease_infinite]"></div>
-
-          <div class="text-center mb-6">
-            <h1 id="heroTitle" class="text-3xl font-black text-slate-900 dark:text-white font-mono mb-2 tracking-tight">
-              Join the Builders
-            </h1>
-            <p class="text-slate-500 dark:text-slate-400 text-sm leading-relaxed">
-              Create your account to start configuring.
-            </p>
-          </div>
-
-          <form action="{% url 'account:signup' %}" method="POST" autocomplete="off" novalidate class="space-y-4">
-            {% csrf_token %}
-            
-            <div class="grid grid-cols-2 gap-4">
-              <div class="space-y-2 group">
-                <label class="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 group-focus-within:text-brand-500 transition-colors duration-300">First Name</label>
-                <div class="relative focus-within:transform focus-within:-translate-y-0.5 transition-transform duration-300">
-                    <input
-                      type="text"
-                      id="signup-fname"
-                      name="firstname"
-                      required
-                      value="{%if f_name %} {{f_name}} {%endif%}"
-                      class="w-full bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-white/10 rounded-xl p-3 text-slate-900 dark:text-white hover:border-brand-400/50 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 focus:bg-white dark:focus:bg-black/40 outline-none transition-all duration-300 placeholder:text-slate-400/50 focus:shadow-[0_0_15px_rgba(14,165,233,0.1)]"
-                      placeholder="First Name"
-                    />
-                </div>
-                <span class="error-msg" id="fname-error" style="display: block; margin-top: 4px; color: #ff4d4d; font-size: 12px;"></span>
-              </div>
-              
-              <div class="space-y-2 group">
-                <label class="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 group-focus-within:text-brand-500 transition-colors duration-300">Last Name</label>
-                <div class="relative focus-within:transform focus-within:-translate-y-0.5 transition-transform duration-300">
-                    <input
-                      type="text"
-                      id="signup-lname"
-                      name="lastname"
-                      required
-                      value="{%if l_name%}{{l_name}}{%endif%}"
-                      class="w-full bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-white/10 rounded-xl p-3 text-slate-900 dark:text-white hover:border-brand-400/50 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 focus:bg-white dark:focus:bg-black/40 outline-none transition-all duration-300 placeholder:text-slate-400/50 focus:shadow-[0_0_15px_rgba(14,165,233,0.1)]"
-                      placeholder="Last Name"
-                    />
-                </div>
-                <span class="error-msg" id="lname-error" style="display: block; margin-top: 4px; color: #ff4d4d; font-size: 12px;"></span>
-              </div>
-            </div>
-
-            <div class="space-y-2 group">
-              <label class="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 group-focus-within:text-brand-500 transition-colors duration-300">Email Address</label>
-              <div class="relative focus-within:transform focus-within:-translate-y-0.5 transition-transform duration-300">
-                  <input
-                    type="email"
-                    id="signup-email"
-                    name="email"
-                    required
-                    value="{%if Email%}{{Email}}{%endif%}"
-                    class="w-full bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-white/10 rounded-xl p-3 text-slate-900 dark:text-white hover:border-brand-400/50 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 focus:bg-white dark:focus:bg-black/40 outline-none transition-all duration-300 placeholder:text-slate-400/50 focus:shadow-[0_0_15px_rgba(14,165,233,0.1)]"
-                    placeholder="Enter Email"
-                  />
-              </div>
-              <span class="error-msg" id="signup-email-error" style="display: block; margin-top: 4px; color: #ff4d4d; font-size: 12px;"></span>
-            </div>
-
-            <div class="space-y-2 group">
-              <label class="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 group-focus-within:text-brand-500 transition-colors duration-300">Phone Number</label>
-              <div class="relative focus-within:transform focus-within:-translate-y-0.5 transition-transform duration-300">
-                  <input
-                    type="tel"
-                    id="signup-phone"
-                    name="phone"
-                    required
-                    value="{%if PhoneNo%}{{PhoneNo}}{%endif%}"
-                    class="w-full bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-white/10 rounded-xl p-3 text-slate-900 dark:text-white hover:border-brand-400/50 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 focus:bg-white dark:focus:bg-black/40 outline-none transition-all duration-300 placeholder:text-slate-400/50 focus:shadow-[0_0_15px_rgba(14,165,233,0.1)]"
-                    placeholder="Enter Phone Number"
-                  />
-              </div>
-              <span class="error-msg" id="phone-error" style="display: block; margin-top: 4px; color: #ff4d4d; font-size: 12px;"></span>
-            </div>
-
-            <div class="space-y-2 group">
-              <label class="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 group-focus-within:text-brand-500 transition-colors duration-300">Password</label>
-              <div class="relative focus-within:transform focus-within:-translate-y-0.5 transition-transform duration-300">
-                <input
-                  type="password"
-                  id="signup-pass"
-                  name="password"
-                  required
-                  value="{%if password%}{{password}}{%endif%}"
-                  class="w-full bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-white/10 rounded-xl p-3 pr-10 text-slate-900 dark:text-white hover:border-brand-400/50 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 focus:bg-white dark:focus:bg-black/40 outline-none transition-all duration-300 placeholder:text-slate-400/50 focus:shadow-[0_0_15px_rgba(14,165,233,0.1)]"
-                  placeholder="Enter Password"
-                />
-                <button
-                  type="button"
-                  onclick="togglePass('signup-pass', this)"
-                  class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white transition-colors duration-300 pw-toggle-btn hover:scale-110 active:scale-95"
-                >
-                  <i class="bi bi-eye-slash"></i>
-                </button>
-              </div>
-              <span class="error-msg" id="signup-password-error" style="display: block; margin-top: 4px; color: #ff4d4d; font-size: 12px;"></span>
-              
-              <div class="h-1 w-full bg-slate-200 dark:bg-white/10 rounded-full overflow-hidden mt-1 shadow-inner">
-                <div id="strength-bar" class="h-full bg-red-500 w-0 transition-all duration-300 relative shadow-[0_0_10px_rgba(239,68,68,0.8)]"></div>
-              </div>
-            </div>
-
-            <div class="space-y-2 group">
-              <label class="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 group-focus-within:text-brand-500 transition-colors duration-300">Confirm Password</label>
-              <div class="relative focus-within:transform focus-within:-translate-y-0.5 transition-transform duration-300">
-                <input
-                  type="password"
-                  id="signup-confirm-pass"
-                  name="confirmpassword"
-                  required
-                  class="w-full bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-white/10 rounded-xl p-3 pr-10 text-slate-900 dark:text-white hover:border-brand-400/50 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 focus:bg-white dark:focus:bg-black/40 outline-none transition-all duration-300 placeholder:text-slate-400/50 focus:shadow-[0_0_15px_rgba(14,165,233,0.1)]"
-                  placeholder="Confirm Password"
-                />
-                <button 
-                  type="button" 
-                  class="pw-toggle-btn absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white transition-colors duration-300 hover:scale-110 active:scale-95" 
-                  onclick="togglePass('signup-confirm-pass', this)"
-                >
-                    <i class="bi bi-eye-slash"></i>
-                </button>
-              </div>
-              <span class="error-msg" id="confirm-password-error" style="display: block; margin-top: 4px; color: #ff4d4d; font-size: 12px;"></span>
-            </div>
-
-            <ul class="req-list text-sm text-slate-500 dark:text-slate-400 space-y-1 px-1">
-                <li>Use a password at least 8 characters long.</li>
-                <li>Include uppercase, numbers, or symbols to increase strength.</li>
-                {%if fnameissue%}<li role="alert" class="text-red-500 mt-2 animate-pulse font-medium">{{fnameissue}}</li>{%endif%}
-                {%if lnameissue%}<li role="alert" class="text-red-500 mt-2 animate-pulse font-medium">{{lnameissue}}</li>{%endif%}
-                {%if emailissue%}<li role="alert" class="text-red-500 mt-2 animate-pulse font-medium">{{emailissue}}</li>{%endif%}
-                {%if phoneissue%}<li role="alert" class="text-red-500 mt-2 animate-pulse font-medium">{{phoneissue}}</li>{%endif%}
-            </ul>
-
-            {% if message %}
-            <div role="alert" class="p-3 bg-red-500/10 border border-red-500/20 text-red-500 rounded-xl text-sm text-center">
-              {{ message }}
-            </div>
-            {% endif %}
-
-            <button
-              type="submit"
-              class="group w-full py-3.5 bg-gradient-to-r from-accent-600 to-brand-600 hover:from-accent-500 hover:to-brand-500 text-white font-bold rounded-xl shadow-lg shadow-accent-500/25 hover:shadow-[0_0_20px_rgba(139,92,246,0.4)] hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 flex items-center justify-center gap-2 relative overflow-hidden"
-            >
-              <span class="relative z-10 flex items-center gap-2">
-                Sign Up <i class="bi bi-person-plus-fill transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3"></i>
-              </span>
-            </button>
-          </form>
-
-          <div class="mt-6 text-center text-sm text-slate-500 dark:text-slate-400">
-            Already have an account?
-            <a
-              href="{% url 'account:signin'%}"
-              class="text-brand-500 font-bold hover:text-brand-400 transition-all duration-300 hover:underline underline-offset-4 decoration-2 decoration-brand-400/40"
-              >Sign In</a
-            >
-          </div>
-        </div>
-      </div>
-    </main>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="{%static 'js/login.js'%}"></script>
-  </body>
+﻿<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Sign Up | PCify</title>
+	<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-slate-100 flex items-center justify-center p-4">
+	<div class="w-full max-w-lg bg-white rounded-xl shadow p-6">
+		<h1 class="text-2xl font-bold mb-4">Create account</h1>
+		{% if message %}
+			<p class="mb-3 text-sm text-red-600">{{ message }}</p>
+		{% endif %}
+		<form method="post" class="grid grid-cols-1 md:grid-cols-2 gap-3">
+			{% csrf_token %}
+			<div>
+				<label class="block text-sm mb-1">First name</label>
+				<input name="firstname" type="text" value="{{ f_name|default:'' }}" class="w-full border rounded px-3 py-2" required>
+				{% if fnameissue %}<p class="text-xs text-red-600 mt-1">{{ fnameissue }}</p>{% endif %}
+			</div>
+			<div>
+				<label class="block text-sm mb-1">Last name</label>
+				<input name="lastname" type="text" value="{{ l_name|default:'' }}" class="w-full border rounded px-3 py-2" required>
+				{% if lnameissue %}<p class="text-xs text-red-600 mt-1">{{ lnameissue }}</p>{% endif %}
+			</div>
+			<div class="md:col-span-2">
+				<label class="block text-sm mb-1">Email</label>
+				<input name="email" type="email" value="{{ Email|default:'' }}" class="w-full border rounded px-3 py-2" required>
+				{% if emailissue %}<p class="text-xs text-red-600 mt-1">{{ emailissue }}</p>{% endif %}
+			</div>
+			<div class="md:col-span-2">
+				<label class="block text-sm mb-1">Phone</label>
+				<input name="phone" type="text" value="{{ PhoneNo|default:'' }}" class="w-full border rounded px-3 py-2" required>
+				{% if phoneissue %}<p class="text-xs text-red-600 mt-1">{{ phoneissue }}</p>{% endif %}
+			</div>
+			<div>
+				<label class="block text-sm mb-1">Password</label>
+				<input name="password" type="password" class="w-full border rounded px-3 py-2" required>
+			</div>
+			<div>
+				<label class="block text-sm mb-1">Confirm password</label>
+				<input name="confirmpassword" type="password" class="w-full border rounded px-3 py-2" required>
+			</div>
+			<div class="md:col-span-2">
+				<button type="submit" class="w-full bg-slate-900 text-white rounded px-3 py-2">Create account</button>
+			</div>
+		</form>
+		<p class="mt-4 text-sm">Have an account? <a href="{% url 'account:signin' %}" class="text-blue-600">Sign in</a></p>
+	</div>
+</body>
 </html>

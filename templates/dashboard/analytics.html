@@ -173,7 +173,7 @@
 
         <!-- Overview -->
         <a
-          href="{% url 'dashboard:home'%}"
+          href="{% url 'dashboard:dashboard_home'%}"
           class="nav-item  flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
         >
           <i
@@ -233,7 +233,7 @@
 
         <!-- Product -->
         <a
-          href="{% url 'dashboard:products'%}"
+          href="{% url 'dashboard:product'%}"
           class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
         >
           <i
@@ -245,7 +245,7 @@
 
         <!-- Brand -->
         <a
-          href="{% url 'dashboard:brands'%}"
+          href="{% url 'dashboard:brand'%}"
           class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
         >
           <i
@@ -257,7 +257,7 @@
 
         <!-- Category -->
         <a
-          href="{% url 'dashboard:categories'%}"
+          href="{% url 'dashboard:category'%}"
           class="nav-item  flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
         >
           <i
@@ -269,7 +269,7 @@
 
         <!-- Compatibility -->
         <a
-          href="{% url 'dashboard:orders'%}"
+          href="{% url 'dashboard:order'%}"
           class="nav-item    flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
         >
           <i
@@ -281,7 +281,7 @@
 
         <!-- Task Management -->
         <a
-          href="{% url 'dashboard:employee_management'%}"
+          href="{% url 'dashboard:task'%}"
           class="nav-item  flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
         >
           <i class="bi bi-briefcase-fill text-lg drop-shadow-sm"></i> Task Mgmt
@@ -314,7 +314,7 @@
 
         <!-- Pre-Built PCs -->
         <a
-          href="{% url 'dashboard:prebuilt_pc'%}"
+          href="{% url 'dashboard:pre_built'%}"
           class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
         >
           <i class="bi bi-pc-display text-lg drop-shadow-sm"></i> Pre-Built PCs
@@ -330,7 +330,7 @@
 
         <!-- Analytics -->
         <a
-          href="{% url 'dashboard:analytics'%}"
+          href="{% url 'dashboard:analytic'%}"
           class="nav-item active flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
         >
           <i
@@ -342,7 +342,7 @@
 
         <!-- Settings -->
         <a
-          href="{% url 'dashboard:settings'%}"
+          href="{% url 'dashboard:setting'%}"
           class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
         >
           <i
@@ -355,7 +355,7 @@
 
       <div class="p-4 border-t border-slate-200 dark:border-white/5">
         <a
-          href="#"
+          href="{% url 'dashboard:logout'%}"
           class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-red-500 hover:bg-red-500/10 transition-all"
         >
           <i class="bi bi-box-arrow-right"></i> Logout
@@ -421,7 +421,7 @@
             </div>
             <div class="relative">
               <img
-                src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix"
+                src="https://api.dicebear.com/7.x/avataaars/svg?seed={{ request.user.username|default:'Admin' }}"
                 alt="User Avatar"
                 class="w-10 h-10 rounded-full border-2 border-slate-200 dark:border-white/10 group-hover:border-brand-500 transition-all"
               />

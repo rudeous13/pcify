@@ -241,7 +241,7 @@
 
         <!-- Overview -->
         <a
-          href="{% url 'dashboard:home'%}"
+          href="{% url 'dashboard:dashboard_home'%}"
           class="nav-item  flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
         >
           <i
@@ -301,7 +301,7 @@
 
         <!-- Product -->
         <a
-          href="{% url 'dashboard:products'%}"
+          href="{% url 'dashboard:product'%}"
           class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
         >
           <i
@@ -313,7 +313,7 @@
 
         <!-- Brand -->
         <a
-          href="{% url 'dashboard:brands'%}"
+          href="{% url 'dashboard:brand'%}"
           class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
         >
           <i
@@ -325,7 +325,7 @@
 
         <!-- Category -->
         <a
-          href="{% url 'dashboard:categories'%}"
+          href="{% url 'dashboard:category'%}"
           class="nav-item  flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
         >
           <i
@@ -337,7 +337,7 @@
 
         <!-- Compatibility -->
         <a
-          href="{% url 'dashboard:orders'%}"
+          href="{% url 'dashboard:order'%}"
           class="nav-item    flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
         >
           <i
@@ -349,7 +349,7 @@
 
         <!-- Task Management -->
         <a
-          href="{% url 'dashboard:employee_management'%}"
+          href="{% url 'dashboard:task'%}"
           class="nav-item  flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
         >
           <i class="bi bi-briefcase-fill text-lg drop-shadow-sm"></i> Task Mgmt
@@ -382,7 +382,7 @@
 
         <!-- Pre-Built PCs -->
         <a
-          href="{% url 'dashboard:prebuilt_pc'%}"
+          href="{% url 'dashboard:pre_built'%}"
           class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
         >
           <i class="bi bi-pc-display text-lg drop-shadow-sm"></i> Pre-Built PCs
@@ -398,7 +398,7 @@
 
         <!-- Analytics -->
         <a
-          href="{% url 'dashboard:analytics'%}"
+          href="{% url 'dashboard:analytic'%}"
           class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
         >
           <i
@@ -410,7 +410,7 @@
 
         <!-- Settings -->
         <a
-          href="{% url 'dashboard:settings'%}"
+          href="{% url 'dashboard:setting'%}"
           class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
         >
           <i
@@ -477,7 +477,7 @@
               <p class="text-[10px] text-slate-500 font-mono mt-1">Manager</p>
             </div>
             <img
-              src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix"
+              src="https://api.dicebear.com/7.x/avataaars/svg?seed={{ request.user.username|default:'Admin' }}"
               class="w-10 h-10 rounded-full border-2 border-slate-200 dark:border-white/10 group-hover:border-brand-500 transition-all"
             />
           </div>
@@ -664,13 +664,13 @@
       class="lg:hidden fixed bottom-6 left-4 right-4 sm:left-1/2 sm:right-auto sm:-translate-x-1/2 sm:w-max mac-dock p-2.5 rounded-[2rem] sm:rounded-full z-[100] grid grid-cols-4 sm:grid-cols-8 gap-2 items-center justify-items-center"
     >
       <a
-        href="{% url 'dashboard:home'%}"
+        href="{% url 'dashboard:dashboard_home'%}"
         class="mobile-nav-link w-full flex flex-col items-center justify-center gap-1 p-2.5 rounded-2xl text-slate-500 dark:text-slate-400 hover:text-brand-500 dark:hover:text-brand-400"
         ><i class="bi bi-grid-1x2-fill text-[22px] drop-shadow-sm"></i
         ><span class="text-[9px] font-bold tracking-wide">Home</span></a
       >
       <a
-        href="{% url 'dashboard:products'%}"
+        href="{% url 'dashboard:product'%}"
         class="mobile-nav-link w-full flex flex-col items-center justify-center gap-1 p-2.5 rounded-2xl text-slate-500 dark:text-slate-400 hover:text-brand-500 dark:hover:text-brand-400"
         ><i class="bi bi-box-seam-fill text-[22px] drop-shadow-sm"></i
         ><span class="text-[9px] font-bold tracking-wide">Products</span></a

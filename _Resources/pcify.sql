@@ -4,11 +4,6 @@ SET default_storage_engine=INNODB;
 -- 1. USERS & AUTHENTICATION
 -- =========================
 
-CREATE TABLE Roles (
-  role_id INT AUTO_INCREMENT PRIMARY KEY,
-  role_name VARCHAR(50) UNIQUE NOT NULL
-);
-
 CREATE TABLE Users (
   user_id INT AUTO_INCREMENT PRIMARY KEY,
   first_name VARCHAR(100),
@@ -16,33 +11,51 @@ CREATE TABLE Users (
   email VARCHAR(150) NOT NULL UNIQUE,
   phone_number VARCHAR(20),
   password_hash VARCHAR(255) NOT NULL,
+  profile_image_url VARCHAR(255),
+  role ENUM('admin','customer','employee') NOT NULL,
   is_active BOOLEAN NOT NULL DEFAULT TRUE,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-);
-
-CREATE TABLE Customers (
-  customer_id INT AUTO_INCREMENT PRIMARY KEY,
-  user_id INT NOT NULL UNIQUE,
-  is_active BOOLEAN NOT NULL DEFAULT TRUE,
-  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  FOREIGN KEY (user_id) REFERENCES Users(user_id) ON DELETE CASCADE
-);
-
-CREATE TABLE Staff (
-  staff_id INT AUTO_INCREMENT PRIMARY KEY,
-  user_id INT NOT NULL UNIQUE,
-  role_id INT NOT NULL,
-  is_active BOOLEAN NOT NULL DEFAULT TRUE,
-  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  FOREIGN KEY (user_id) REFERENCES Users(user_id) ON DELETE CASCADE,
-  FOREIGN KEY (role_id) REFERENCES Roles(role_id) ON DELETE RESTRICT
+  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP 
+  ON UPDATE CURRENT_TIMESTAMP
 );
 
 -- =========================
--- 2. CATALOG & PRODUCTS
+-- 2. LOCATION & ADDRESSES
+-- =========================
+
+CREATE TABLE Pincodes (
+  pincode_id INT AUTO_INCREMENT PRIMARY KEY,
+  pincode CHAR(6) NOT NULL UNIQUE,
+  city_name VARCHAR(100) NOT NULL DEFAULT 'Ahmedabad',
+  region_name VARCHAR(100)
+);
+
+CREATE TABLE Addresses (
+  address_id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  street_address VARCHAR(255) NOT NULL,
+  pincode_id INT NOT NULL,
+  is_primary BOOLEAN NOT NULL DEFAULT FALSE,
+  is_active BOOLEAN NOT NULL DEFAULT TRUE,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (pincode_id) REFERENCES Pincodes(pincode_id) ON DELETE RESTRICT,
+  FOREIGN KEY (user_id) REFERENCES Users(user_id) ON DELETE CASCADE
+);
+
+CREATE TABLE Suppliers (
+    supplier_id INT AUTO_INCREMENT PRIMARY KEY,
+    supplier_name VARCHAR(50) NOT NULL,
+    company_name VARCHAR(100),
+    email VARCHAR(100) UNIQUE,
+    phone VARCHAR(15),
+    gst_no VARCHAR(15) UNIQUE,
+    address_one VARCHAR(300),
+    address_two VARCHAR(300)
+);
+
+-- =========================
+-- 3. CATALOG & PRODUCTS
 -- =========================
 
 CREATE TABLE Categories (
@@ -122,60 +135,6 @@ CREATE TABLE ProductReviews (
     ON DELETE CASCADE,
 
   UNIQUE (variant_id, customer_id)
-);
-
--- =========================
--- 3. LOCATION & ADDRESSES
--- =========================
-
-CREATE TABLE States (
-  state_id INT AUTO_INCREMENT PRIMARY KEY,
-  state_name VARCHAR(100) NOT NULL UNIQUE
-);
-
-CREATE TABLE Cities (
-  city_id INT AUTO_INCREMENT PRIMARY KEY,
-  city_name VARCHAR(100) NOT NULL,
-  state_id INT NOT NULL,
-  UNIQUE (city_name, state_id),
-  FOREIGN KEY (state_id) REFERENCES States(state_id) ON DELETE RESTRICT
-);
-
-CREATE TABLE Pincodes (
-  pincode_id INT AUTO_INCREMENT PRIMARY KEY,
-  pincode VARCHAR(15) UNIQUE NOT NULL,
-  city_id INT NOT NULL,
-  region_name VARCHAR(100),
-  FOREIGN KEY (city_id) REFERENCES Cities(city_id) ON DELETE RESTRICT
-);
-
-CREATE TABLE Addresses (
-  address_id INT AUTO_INCREMENT PRIMARY KEY,
-  street VARCHAR(255) NOT NULL,
-  pincode_id INT NOT NULL,
-  is_active BOOLEAN NOT NULL DEFAULT TRUE,
-  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  FOREIGN KEY (pincode_id) REFERENCES Pincodes(pincode_id) ON DELETE RESTRICT
-);
-
-CREATE TABLE AddressTypes (
-  address_type_id INT AUTO_INCREMENT PRIMARY KEY,
-  address_type VARCHAR(50) UNIQUE NOT NULL
-);
-
-CREATE TABLE CustomerAddresses (
-  customer_address_id INT AUTO_INCREMENT PRIMARY KEY,
-  customer_id INT NOT NULL,
-  address_id INT NOT NULL,
-  address_type_id INT NOT NULL,
-  is_primary BOOLEAN NOT NULL DEFAULT FALSE,
-  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  UNIQUE (customer_id, address_id),
-  FOREIGN KEY (customer_id) REFERENCES Customers(customer_id) ON DELETE CASCADE,
-  FOREIGN KEY (address_id) REFERENCES Addresses(address_id) ON DELETE RESTRICT,
-  FOREIGN KEY (address_type_id) REFERENCES AddressTypes(address_type_id) ON DELETE RESTRICT
 );
 
 -- =========================
@@ -405,14 +364,13 @@ CREATE TABLE ShipmentPackages (
 
 CREATE TABLE Suppliers (
   supplier_id INT AUTO_INCREMENT PRIMARY KEY,
-  supplier_name VARCHAR(150) NOT NULL UNIQUE,
-  contact_name VARCHAR(100),
-  phone_number VARCHAR(20),
-  email VARCHAR(150),
-  gst_number VARCHAR(20),
-  is_active BOOLEAN NOT NULL DEFAULT TRUE,
-  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  supplier_name VARCHAR(50),
+  company_name VARCHAR(100),
+  email VARCHAR(100),
+  phone VARCHAR(15),
+  gst_no VARCHAR(15) UNIQUE,
+  address_one VARCHAR(300),
+  address_two VARCHAR(300)
 );
 
 CREATE TABLE PurchaseOrderStatuses (

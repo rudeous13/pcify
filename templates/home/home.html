@@ -1,3 +1,4 @@
+﻿{% load static %}
 <!doctype html>
 <html lang="en" data-theme="dark" class="scroll-smooth">
   <head>
@@ -285,20 +286,25 @@
           class="hidden lg:flex items-center gap-1 bg-slate-100/50 dark:bg-white/5 p-1.5 rounded-full border border-slate-200 dark:border-white/10 backdrop-blur-md"
         >
           <a
-            href="home.html"
+            href="{% url 'main:home'%}"
             class="px-6 py-2 rounded-full text-sm font-bold bg-white dark:bg-brand-600 text-brand-600 dark:text-white shadow-md shadow-brand-500/10 font-mono Monaco"
             >Home</a
           >
           <a
-            href="prebuilt.html"
+            href="{% url 'main:prebuilt'%}"
             class="px-6 py-2 rounded-full text-sm font-medium hover:text-brand-600 hover:bg-white dark:hover:bg-white/10 dark:hover:text-white transition-all"
             >Prebuilt</a
           >
           <a
-            href="custom.html"
+            href="{% url 'main:pc'%}"
             class="px-6 py-2 rounded-full text-sm font-medium hover:text-brand-600 hover:bg-white dark:hover:bg-white/10 dark:hover:text-white transition-all"
             >Builder</a
-          >
+            >
+            <a 
+              href="{% url 'main:accessories'%}"
+              class="px-6 py-2 rounded-full text-sm font-medium hover:text-brand-600 hover:bg-white dark:hover:bg-white/10 dark:hover:text-white transition-all"
+              >Accessories</a
+              >
           <a
             href="cart.html"
             class="px-6 py-2 rounded-full text-sm font-medium hover:text-brand-600 hover:bg-white dark:hover:bg-white/10 dark:hover:text-white transition-all relative"
@@ -309,10 +315,11 @@
             ></span>
           </a>
           <a
-            href="checkout.html"
+            href="{% url 'profile:profile_overview'%}"
             class="px-6 py-2 rounded-full text-sm font-medium hover:text-brand-600 hover:bg-white dark:hover:bg-white/10 dark:hover:text-white transition-all"
-            >Checkout</a
+            >Profile</a
           >
+
         </nav>
 
         <div class="flex items-center gap-2 sm:gap-3">
@@ -326,12 +333,22 @@
           <div
             class="h-8 w-px bg-slate-200 dark:bg-white/10 mx-1 hidden sm:block"
           ></div>
+          
+          {% if request.session.active %}
+          <a
+            href="{% url 'account:singout' %}"
+            class="hidden sm:flex items-center gap-2 px-6 py-2.5 rounded-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold text-sm hover:scale-105 active:scale-95 transition-all shadow-md btn"
+          >
+            <span>{{request.session.user_name}} {{request.session.user_lname}} Logout</span>
+          </a>
+          {% else%}
           <a
             href="{% url 'account:signin'%}"
             class="hidden sm:flex items-center gap-2 px-6 py-2.5 rounded-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold text-sm hover:scale-105 active:scale-95 transition-all shadow-md btn"
           >
             <span>Login</span>
           </a>
+          {%endif%}
         </div>
       </div>
     </header>
@@ -656,12 +673,16 @@
               </button>
             </div>
 
-            <div class="relative group">
+            <div class="relative group z-30">
               <button
                 class="flex items-center gap-2 px-4 py-2 text-xs font-bold rounded-lg bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 hover:border-brand-500 transition-all text-slate-700 dark:text-white"
               >
                 <i class="bi bi-sort-down"></i> Sort by Price
               </button>
+              <div class="absolute right-0 mt-2 w-40 bg-white dark:bg-dark-card border border-slate-200 dark:border-white/10 rounded-lg shadow-xl opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto transition-all flex flex-col overflow-hidden">
+                <a href="?sort=price_asc" class="px-4 py-2 text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5">Price: Low to High</a>
+                <a href="?sort=price_desc" class="px-4 py-2 text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5">Price: High to Low</a>
+              </div>
             </div>
           </div>
         </div>
@@ -669,147 +690,57 @@
         <div
           class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
         >
+          {% for product in trending_products %}
           <div
             class="group bg-white dark:bg-white/5 backdrop-blur-sm border border-slate-200 dark:border-white/10 rounded-2xl p-4 transition-all duration-300 hover:border-brand-500/50 hover:shadow-neon hover:shadow-brand-500/20 hover:-translate-y-1"
           >
             <div
               class="relative aspect-square rounded-xl bg-slate-50 dark:bg-black/20 mb-4 flex items-center justify-center overflow-hidden"
             >
+              {% if product.badge %}
               <span
-                class="absolute top-2 left-2 px-2 py-1 bg-brand-500 text-white text-[10px] font-bold uppercase rounded-md z-10"
-                >Hot</span
+                class="absolute top-2 left-2 px-2 py-1 {% if product.badge == 'Hot' %}bg-brand-500{% else %}bg-accent-500{% endif %} text-white text-[10px] font-bold uppercase rounded-md z-10"
+                >{{ product.badge }}</span
               >
-              <i
-                class="bi bi-gpu-card text-6xl text-slate-200 dark:text-white/10 group-hover:scale-110 transition-transform duration-500"
-                aria-hidden="true"
-              ></i>
-            </div>
-            <div>
-              <h3 class="font-bold text-slate-900 dark:text-white text-lg">
-                RTX 4090 OC
-              </h3>
-              <p
-                class="text-xs text-slate-500 dark:text-slate-400 font-mono mb-3"
-              >
-                24GB GDDR6X • ASUS ROG
-              </p>
-              <div class="flex items-center justify-between">
-                <span class="text-brand-500 font-bold font-mono"
-                  >₹1,85,000</span
-                >
-                <button
-                  class="add-to-cart-btn w-8 h-8 rounded-lg bg-slate-100 dark:bg-white/10 flex items-center justify-center hover:bg-brand-500 hover:text-white transition-colors"
-                  aria-label="Add RTX 4090 OC to cart"
-                  data-name="RTX 4090 OC"
-                >
-                  <i class="bi bi-plus-lg" aria-hidden="true"></i>
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <div
-            class="group bg-white dark:bg-white/5 backdrop-blur-sm border border-slate-200 dark:border-white/10 rounded-2xl p-4 transition-all duration-300 hover:border-brand-500/50 hover:shadow-neon hover:shadow-brand-500/20 hover:-translate-y-1"
-          >
-            <div
-              class="relative aspect-square rounded-xl bg-slate-50 dark:bg-black/20 mb-4 flex items-center justify-center overflow-hidden"
-            >
+              {% endif %}
+              
+              {% if product.image %}
+              <img src="{{ product.image.url }}" alt="{{ product.name }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+              {% else %}
               <i
                 class="bi bi-cpu text-6xl text-slate-200 dark:text-white/10 group-hover:scale-110 transition-transform duration-500"
                 aria-hidden="true"
               ></i>
+              {% endif %}
             </div>
             <div>
               <h3 class="font-bold text-slate-900 dark:text-white text-lg">
-                Intel Core i9-14900K
+                {{ product.name }}
               </h3>
               <p
                 class="text-xs text-slate-500 dark:text-slate-400 font-mono mb-3"
               >
-                24 Cores • 6.0 GHz
+                {{ product.short_description|default:"High Performance Component" }}
               </p>
               <div class="flex items-center justify-between">
-                <span class="text-brand-500 font-bold font-mono">₹56,999</span>
+                <span class="text-brand-500 font-bold font-mono"
+                  >â‚¹{{ product.price }}</span
+                >
                 <button
                   class="add-to-cart-btn w-8 h-8 rounded-lg bg-slate-100 dark:bg-white/10 flex items-center justify-center hover:bg-brand-500 hover:text-white transition-colors"
-                  aria-label="Add Intel Core i9-14900K to cart"
-                  data-name="Intel Core i9-14900K"
+                  aria-label="Add {{ product.name }} to cart"
+                  data-name="{{ product.name }}"
                 >
                   <i class="bi bi-plus-lg" aria-hidden="true"></i>
                 </button>
               </div>
             </div>
           </div>
-
-          <div
-            class="group bg-white dark:bg-white/5 backdrop-blur-sm border border-slate-200 dark:border-white/10 rounded-2xl p-4 transition-all duration-300 hover:border-brand-500/50 hover:shadow-neon hover:shadow-brand-500/20 hover:-translate-y-1"
-          >
-            <div
-              class="relative aspect-square rounded-xl bg-slate-50 dark:bg-black/20 mb-4 flex items-center justify-center overflow-hidden"
-            >
-              <span
-                class="absolute top-2 left-2 px-2 py-1 bg-accent-500 text-white text-[10px] font-bold uppercase rounded-md z-10"
-                >New</span
-              >
-              <i
-                class="bi bi-motherboard text-6xl text-slate-200 dark:text-white/10 group-hover:scale-110 transition-transform duration-500"
-                aria-hidden="true"
-              ></i>
-            </div>
-            <div>
-              <h3 class="font-bold text-slate-900 dark:text-white text-lg">
-                Z790 Aorus Master
-              </h3>
-              <p
-                class="text-xs text-slate-500 dark:text-slate-400 font-mono mb-3"
-              >
-                LGA1700 • DDR5 • WiFi 7
-              </p>
-              <div class="flex items-center justify-between">
-                <span class="text-brand-500 font-bold font-mono">₹48,500</span>
-                <button
-                  class="add-to-cart-btn w-8 h-8 rounded-lg bg-slate-100 dark:bg-white/10 flex items-center justify-center hover:bg-brand-500 hover:text-white transition-colors"
-                  aria-label="Add Z790 Aorus Master to cart"
-                  data-name="Z790 Aorus Master"
-                >
-                  <i class="bi bi-plus-lg" aria-hidden="true"></i>
-                </button>
-              </div>
-            </div>
+          {% empty %}
+          <div class="col-span-full text-center py-10">
+            <p class="text-slate-500 dark:text-slate-400 font-mono">No trending products found.</p>
           </div>
-
-          <div
-            class="group bg-white dark:bg-white/5 backdrop-blur-sm border border-slate-200 dark:border-white/10 rounded-2xl p-4 transition-all duration-300 hover:border-brand-500/50 hover:shadow-neon hover:shadow-brand-500/20 hover:-translate-y-1"
-          >
-            <div
-              class="relative aspect-square rounded-xl bg-slate-50 dark:bg-black/20 mb-4 flex items-center justify-center overflow-hidden"
-            >
-              <i
-                class="bi bi-memory text-6xl text-slate-200 dark:text-white/10 group-hover:scale-110 transition-transform duration-500"
-                aria-hidden="true"
-              ></i>
-            </div>
-            <div>
-              <h3 class="font-bold text-slate-900 dark:text-white text-lg">
-                Dominator Platinum
-              </h3>
-              <p
-                class="text-xs text-slate-500 dark:text-slate-400 font-mono mb-3"
-              >
-                64GB (2x32) • 6000MHz
-              </p>
-              <div class="flex items-center justify-between">
-                <span class="text-brand-500 font-bold font-mono">₹22,999</span>
-                <button
-                  class="add-to-cart-btn w-8 h-8 rounded-lg bg-slate-100 dark:bg-white/10 flex items-center justify-center hover:bg-brand-500 hover:text-white transition-colors"
-                  aria-label="Add Dominator Platinum to cart"
-                  data-name="Dominator Platinum"
-                >
-                  <i class="bi bi-plus-lg" aria-hidden="true"></i>
-                </button>
-              </div>
-            </div>
-          </div>
+          {% endfor %}
         </div>
       </section>
     </main>
@@ -903,61 +834,31 @@
               Shop Categories
             </h3>
             <ul class="space-y-3">
-              <li>
+              {% for category in categories %}
+              <li class="relative group z-10">
                 <a
                   href="#"
-                  class="text-slate-600 dark:text-slate-400 hover:text-brand-500 dark:hover:text-brand-400 text-sm flex items-center gap-2 transition-colors"
-                  ><i
-                    class="bi bi-chevron-right text-xs opacity-50"
-                    aria-hidden="true"
-                  ></i>
-                  Processor</a
+                  class="text-slate-600 dark:text-slate-400 hover:text-brand-500 dark:hover:text-brand-400 text-sm flex items-center gap-2 transition-colors cursor-pointer py-1"
                 >
+                  <i class="bi bi-chevron-right text-xs opacity-50" aria-hidden="true"></i>
+                  {{ category.name }}
+                </a>
+                
+                {% if category.subcategories.all %}
+                <div class="absolute left-6 top-6 hidden group-hover:block w-40 bg-white dark:bg-dark-card border border-slate-200 dark:border-white/10 rounded-xl shadow-xl overflow-hidden z-50">
+                  <ul class="py-1">
+                    {% for subcategory in category.subcategories.all %}
+                    <li>
+                      <a href="#" class="block px-4 py-2 text-xs text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 hover:text-brand-500 dark:hover:text-brand-400 transition-colors">
+                        {{ subcategory.name }}
+                      </a>
+                    </li>
+                    {% endfor %}
+                  </ul>
+                </div>
+                {% endif %}
               </li>
-              <li>
-                <a
-                  href="#"
-                  class="text-slate-600 dark:text-slate-400 hover:text-brand-500 dark:hover:text-brand-400 text-sm flex items-center gap-2 transition-colors"
-                  ><i
-                    class="bi bi-chevron-right text-xs opacity-50"
-                    aria-hidden="true"
-                  ></i>
-                  Motherboard</a
-                >
-              </li>
-              <li>
-                <a
-                  href="#"
-                  class="text-slate-600 dark:text-slate-400 hover:text-brand-500 dark:hover:text-brand-400 text-sm flex items-center gap-2 transition-colors"
-                  ><i
-                    class="bi bi-chevron-right text-xs opacity-50"
-                    aria-hidden="true"
-                  ></i>
-                  CPU Cooler</a
-                >
-              </li>
-              <li>
-                <a
-                  href="#"
-                  class="text-slate-600 dark:text-slate-400 hover:text-brand-500 dark:hover:text-brand-400 text-sm flex items-center gap-2 transition-colors"
-                  ><i
-                    class="bi bi-chevron-right text-xs opacity-50"
-                    aria-hidden="true"
-                  ></i>
-                  RAM</a
-                >
-              </li>
-              <li>
-                <a
-                  href="#"
-                  class="text-slate-600 dark:text-slate-400 hover:text-brand-500 dark:hover:text-brand-400 text-sm flex items-center gap-2 transition-colors"
-                  ><i
-                    class="bi bi-chevron-right text-xs opacity-50"
-                    aria-hidden="true"
-                  ></i>
-                  Graphics Card</a
-                >
-              </li>
+              {% endfor %}
             </ul>
           </div>
 
@@ -980,13 +881,6 @@
                   href="about.html"
                   class="text-slate-600 dark:text-slate-400 hover:text-brand-500 dark:hover:text-brand-400 text-sm transition-colors"
                   >About Us</a
-                >
-              </li>
-              <li>
-                <a
-                  href="blogs.html"
-                  class="text-slate-600 dark:text-slate-400 hover:text-brand-500 dark:hover:text-brand-400 text-sm transition-colors"
-                  >Blogs</a
                 >
               </li>
               <li>
@@ -1071,7 +965,7 @@
           class="border-t border-slate-200 dark:border-white/10 mt-12 pt-8 text-center"
         >
           <p class="text-xs text-slate-500">
-            © 2026 NexusBuild Inc. All rights reserved.
+            Â© 2026 NexusBuild Inc. All rights reserved.
           </p>
         </div>
       </div>

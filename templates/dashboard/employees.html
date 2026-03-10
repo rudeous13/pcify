@@ -1,3 +1,4 @@
+{% load static %}
 <!doctype html>
 <html lang="en" data-theme="dark">
   <head>
@@ -176,19 +177,16 @@
           </div>
         </a>
       </div>
-      <!-- Navigation -->
       <nav class="flex-1 overflow-y-auto py-6 px-4 space-y-1 custom-scrollbar">
         
-        <!-- Main Menu -->
         <p
           class="px-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2"
         >
           Main Menu
         </p>
 
-        <!-- Overview -->
         <a
-          href="{% url 'dashboard:home'%}"
+          href="{% url 'dashboard:dashboard_home'%}"
           class="nav-item    flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
         >
           <i
@@ -198,14 +196,12 @@
           Overview
         </a>
         
-        <!-- Users  -->
         <p
           class="px-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 mt-6"
         >
           Users
         </p>
         
-        <!-- Customers -->
         <a
           href="{% url 'dashboard:customers'%}"
           class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
@@ -217,7 +213,6 @@
           Customers
         </a>
         
-        <!-- Employees -->
         <a
           href="{% url 'dashboard:employees'%}"
           class="nav-item active flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
@@ -229,7 +224,6 @@
           Employees
         </a>
 
-        <!-- Suppliers -->
         <a
           href="{% url 'dashboard:suppliers'%}"
           class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
@@ -238,7 +232,6 @@
         </a>
 
 
-        <!-- Management -->
         <p
           class="px-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 mt-6"
         >
@@ -246,9 +239,8 @@
         </p>
 
 
-        <!-- Product -->
         <a
-          href="{% url 'dashboard:products'%}"
+          href="{% url 'dashboard:product'%}"
           class="nav-item {% if request.resolver_match.url_name == 'admin_products' %}active{% endif %} flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
         >
           <i
@@ -258,9 +250,8 @@
           Products
         </a>
 
-        <!-- Brand -->
         <a
-          href="{% url 'dashboard:brands'%}"
+          href="{% url 'dashboard:brand'%}"
           class="nav-item {% if request.resolver_match.url_name == 'admin_brand' %}active{% endif %} flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
         >
           <i
@@ -270,9 +261,8 @@
           Brand
         </a>
 
-        <!-- Category -->
         <a
-          href="{% url 'dashboard:categories'%}"
+          href="{% url 'dashboard:category'%}"
           class="nav-item {% if request.resolver_match.url_name == 'admin_category' %}active{% endif %} flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
         >
           <i
@@ -282,9 +272,8 @@
           Category
         </a>
 
-        <!-- Compatibility -->
         <a
-          href="{% url 'dashboard:orders'%}"
+          href="{% url 'dashboard:order'%}"
           class="nav-item {% if request.resolver_match.url_name == 'admin_order' %}active{% endif %} flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
         >
           <i
@@ -294,15 +283,13 @@
           Orders
         </a>
 
-        <!-- Task Management -->
         <a
-          href="{% url 'dashboard:employee_management'%}"
+          href="{% url 'dashboard:task'%}"
           class="nav-item {% if request.resolver_match.url_name == 'admin_task_management' %}active{% endif %} flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
         >
           <i class="bi bi-briefcase-fill text-lg drop-shadow-sm"></i> Task Mgmt
         </a>
 
-        <!-- Invetory -->
         <a
           href="{% url 'dashboard:inventory'%}"
           class="nav-item {% if request.resolver_match.url_name == 'admin_inventory' %}active{% endif %} flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
@@ -311,7 +298,6 @@
           Inventory
         </a>
 
-        <!-- Compatibility -->
         <a
           href="{% url 'dashboard:compatibility'%}"
           class="nav-item {% if request.resolver_match.url_name == 'admin_compatibility' %}active{% endif %} flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
@@ -319,7 +305,6 @@
           <i class="bi bi-puzzle-fill text-lg drop-shadow-sm"></i> Compatibility
         </a>
 
-        <!-- Trending -->
         <a
           href="{% url 'dashboard:trending'%}"
           class="nav-item {% if request.resolver_match.url_name == 'admin_trending' %}active{% endif %} flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
@@ -327,25 +312,22 @@
           <i class="bi bi-fire text-lg drop-shadow-sm"></i> Trending
         </a>
 
-        <!-- Pre-Built PCs -->
         <a
-          href="{% url 'dashboard:prebuilt_pc'%}"
+          href="{% url 'dashboard:pre_built'%}"
           class="nav-item {% if request.resolver_match.url_name == 'admin_prebuilt_pc' %}active{% endif %} flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
         >
           <i class="bi bi-pc-display text-lg drop-shadow-sm"></i> Pre-Built PCs
         </a>
 
 
-        <!-- System -->
         <p
           class="px-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 mt-6"
         >
           System
         </p>
 
-        <!-- Analytics -->
         <a
-          href="{% url 'dashboard:analytics'%}"
+          href="{% url 'dashboard:analytic'%}"
           class="nav-item {% if request.resolver_match.url_name == 'reports' %}active{% endif %} flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
         >
           <i
@@ -355,9 +337,8 @@
           Analytics
         </a>
 
-        <!-- Settings -->
         <a
-          href="{% url 'dashboard:settings'%}"
+          href="{% url 'dashboard:setting'%}"
           class="nav-item {% if request.resolver_match.url_name == 'admin_settings' %}active{% endif %} flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
         >
           <i
@@ -370,7 +351,7 @@
 
       <div class="p-4 border-t border-slate-200 dark:border-white/5">
         <a
-          href="#"
+          href="{% url 'dashboard:logout'%}"
           class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-red-500 hover:bg-red-500/10 transition-all"
         >
           <i class="bi bi-box-arrow-right"></i> Logout
@@ -423,7 +404,7 @@
               <p class="text-[10px] text-slate-500 font-mono mt-1">Manager</p>
             </div>
             <img
-              src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix"
+              src="https://api.dicebear.com/7.x/avataaars/svg?seed={{ request.user.username|default:'Admin' }}"
               class="w-10 h-10 rounded-full border-2 border-slate-200 dark:border-white/10 group-hover:border-brand-500 transition-all"
             />
           </div>
@@ -518,11 +499,6 @@
                   >
                     Join Date
                   </th>
-                  <!-- <th
-                    class="px-6 py-4 font-bold uppercase text-[10px] tracking-widest whitespace-nowrap"
-                  >
-                    Salary
-                  </th> -->
                   <th
                     class="px-6 py-4 font-bold uppercase text-[10px] tracking-widest text-center whitespace-nowrap"
                   >
@@ -539,7 +515,10 @@
                   data-name="{{ emp.employee_name }}"
                   data-email="{{ emp.employee_email }}"
                   data-phone="{{ emp.employee_phone_no }}"
+                  data-street="{{ emp.street_address }}"
                   data-address="{{ emp.employee_address }}"
+                  data-state="{{ emp.state }}"
+                  data-pincode="{{ emp.pincode }}"
                   data-join="{{ emp.employee_join_date|date:'Y-m-d' }}"
                   data-salary="{{ emp.salary }}"
                   data-image="{{ emp.image_url }}"
@@ -582,9 +561,6 @@
                   <td class="px-6 py-3 text-xs">
                     {{ emp.jod}}
                   </td>
-                  <!-- <td class="px-6 py-3 font-mono text-brand-500 font-bold">
-                    ₹
-                  </td> -->
                   <td class="px-6 py-3 text-center">
                     <div class="flex items-center justify-center gap-2">
                       <button
@@ -605,7 +581,7 @@
                 {% empty %}
                 <tr>
                   <td
-                    colspan="8"
+                    colspan="7"
                     class="text-center py-8 text-slate-500 dark:text-slate-400"
                   >
                     <div class="flex flex-col items-center justify-center">
@@ -624,320 +600,304 @@
 
     <div id="addEmployeeModal" class="fixed inset-0 z-[100] hidden">
       <div
-        class="absolute inset-0 bg-black/80 backdrop-blur-sm transition-opacity"
+        class="absolute inset-0 bg-black/60 backdrop-blur-md transition-opacity duration-300"
         onclick="closeModal('addEmployeeModal')"
       ></div>
+
       <div
-        class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-2xl bg-white dark:bg-dark-card border border-slate-200 dark:border-white/10 shadow-2xl p-6 rounded-2xl transform scale-95 opacity-0 transition-all duration-200"
+        class="absolute right-0 top-0 h-full w-full md:w-[600px] bg-[#0f172a] border-l border-white/10 shadow-2xl p-0 overflow-y-auto transform translate-x-full transition-transform duration-300 ease-out"
         id="addEmployeeModalPanel"
       >
-        <div class="flex justify-between items-center mb-6">
-          <h2 class="text-xl font-bold text-slate-900 dark:text-white">
-            Add New Employee
-          </h2>
+        <div class="sticky top-0 z-20 bg-[#0f172a]/95 backdrop-blur-xl border-b border-white/5 px-8 py-6 flex justify-between items-center">
+          <div>
+            <h2 class="text-2xl font-black text-white font-mono tracking-tight uppercase">
+              Add Employee
+            </h2>
+            <p class="text-xs text-brand-400 font-bold tracking-widest mt-1 uppercase">
+              Staff Details
+            </p>
+          </div>
           <button
             onclick="closeModal('addEmployeeModal')"
-            class="w-8 h-8 rounded-full bg-slate-100 dark:bg-white/10 flex items-center justify-center hover:bg-red-500 hover:text-white transition-all"
+            class="group w-10 h-10 rounded-full bg-white/5 border border-white/5 hover:bg-red-500/10 hover:border-red-500/50 flex items-center justify-center transition-all duration-300"
           >
-            <i class="bi bi-x-lg"></i>
+            <i class="bi bi-x-lg text-slate-400 group-hover:text-red-500 transition-colors"></i>
           </button>
         </div>
-        <form
-          id="addEmployeeForm"
-          method="POST"
-          action="{%url 'dashboard:employees'%}"
-          enctype="multipart/form-data"
-          class="space-y-4"
-        >
-          {% csrf_token %}
-          <input type="hidden" name="action" value="insert" />
 
-          <div class="mb-4">
-            <label
-              class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 block"
-              >Profile Photo</label
-            >
-            <input
-              type="file"
-              name="image"
-              accept="image/* bg-[#f8fafc] border-slate-300 text-slate-700 focus:bg-white focus:border-slate-500 placeholder-slate-400 dark:bg-white/5 dark:border-white/10 dark:text-white dark:focus:bg-white/10 dark:placeholder-white/50"
-              class="form-input text-xs"
-            />
-          </div>
-
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label
-                class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1 block"
-                >First Name</label
-              >
-              <input
-                type="text"
-                name="first_name"
-                class="form-input bg-[#f8fafc] border-slate-300 text-slate-700 focus:bg-white focus:border-slate-500 placeholder-slate-400 dark:bg-white/5 dark:border-white/10 dark:text-white dark:focus:bg-white/10 dark:placeholder-white/50"
-                required
-                placeholder="John"
-              />
-            </div>
-            <div>
-              <label
-                class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1 block"
-                >Last Name</label
-              >
-              <input
-                type="text"
-                name="last_name"
-                class="form-input bg-[#f8fafc] border-slate-300 text-slate-700 focus:bg-white focus:border-slate-500 placeholder-slate-400 dark:bg-white/5 dark:border-white/10 dark:text-white dark:focus:bg-white/10 dark:placeholder-white/50"
-                required
-                placeholder="Doe"
-              />
-            </div>
-            <div>
-              <label
-                class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1 block"
-                >Email</label
-              >
-              <input
-                type="email"
-                name="employee_email"
-                class="form-input bg-[#f8fafc] border-slate-300 text-slate-700 focus:bg-white focus:border-slate-500 placeholder-slate-400 dark:bg-white/5 dark:border-white/10 dark:text-white dark:focus:bg-white/10 dark:placeholder-white/50"
-                required
-                placeholder="john@example.com"
-              />
-            </div>
-            <div>
-              <label
-                class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1 block"
-                >Phone</label
-              >
-              <input
-                type="tel"
-                name="employee_phone_no"
-                class="form-input bg-[#f8fafc] border-slate-300 text-slate-700 focus:bg-white focus:border-slate-500 placeholder-slate-400 dark:bg-white/5 dark:border-white/10 dark:text-white dark:focus:bg-white/10 dark:placeholder-white/50"
-                required
-                placeholder="+91 9876543210"
-              />
-            </div>
-            <div>
-              <label
-                class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1 block"
-                >Password</label
-              >
-              <input
-                type="text"
-                name="employe_password"
-                class="form-input bg-[#f8fafc] border-slate-300 text-slate-700 focus:bg-white focus:border-slate-500 placeholder-slate-400 dark:bg-white/5 dark:border-white/10 dark:text-white dark:focus:bg-white/10 dark:placeholder-white/50"
-                required
-                placeholder="Secret123"
-              />
-            </div>
-            <div>
-              <label
-                class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1 block"
-                >Join Date</label
-              >
-              <input
-                type="date"
-                name="employee_join_date"
-                class="form-input bg-[#f8fafc] border-slate-300 text-slate-700 focus:bg-white focus:border-slate-500 placeholder-slate-400 dark:bg-white/5 dark:border-white/10 dark:text-white dark:focus:bg-white/10 dark:placeholder-white/50"
-                required
-              />
-            </div>
-            <div>
-              <label
-                class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1 block"
-                >Salary (₹)</label
-              >
-              <input
-                type="number"
-                name="salary"
-                class="form-input bg-[#f8fafc] border-slate-300 text-slate-700 focus:bg-white focus:border-slate-500 placeholder-slate-400 dark:bg-white/5 dark:border-white/10 dark:text-white dark:focus:bg-white/10 dark:placeholder-white/50"
-                required
-                min="0"
-              />
-            </div>
-          </div>
-          <div>
-            <label
-              class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1 block"
-              >Address</label
-            >
-            <textarea
-              name="employee_address"
-              class="form-input bg-[#f8fafc] border-slate-300 text-slate-700 focus:bg-white focus:border-slate-500 placeholder-slate-400 dark:bg-white/5 dark:border-white/10 dark:text-white dark:focus:bg-white/10 dark:placeholder-white/50"
-              rows="2"
-              required
-              placeholder="Full Address"
-            ></textarea>
-          </div>
-
-          <button
-            type="submit"
-            class="w-full py-3 rounded-xl bg-brand-500 hover:bg-brand-600 text-white font-bold transition-all shadow-lg shadow-brand-500/20 mt-4"
+        <div class="p-8">
+          <form
+            id="addEmployeeForm"
+            method="POST"
+            action="{%url 'dashboard:employees'%}"
+            enctype="multipart/form-data"
+            class="space-y-8"
           >
-            Save Employee
-          </button>
-        </form>
+            {% csrf_token %}
+            <input type="hidden" name="action" value="insert" />
+
+            <div class="bg-white/5 border border-white/10 rounded-2xl p-6 space-y-6">
+              <h3 class="text-sm font-bold text-white uppercase tracking-widest border-b border-white/10 pb-2">
+                <i class="bi bi-person-badge mr-2 text-brand-400"></i>Account Details
+              </h3>
+              
+              <div class="group">
+                <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block group-focus-within:text-brand-300 transition-colors">
+                  Profile Photo
+                </label>
+                <input
+                  type="file"
+                  name="image"
+                  accept="image/*"
+                  class="w-full bg-[#1e293b]/50 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-500/50 focus:bg-brand-500/5 transition-all"
+                />
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="group">
+                  <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block group-focus-within:text-brand-300 transition-colors">
+                    First Name
+                  </label>
+                  <input type="text" name="first_name" required class="w-full bg-[#1e293b]/50 border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white font-medium placeholder-slate-500 focus:outline-none focus:border-brand-500/50 focus:bg-brand-500/5 transition-all" placeholder="John" />
+                </div>
+                <div class="group">
+                  <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block group-focus-within:text-brand-300 transition-colors">
+                    Last Name
+                  </label>
+                  <input type="text" name="last_name" required class="w-full bg-[#1e293b]/50 border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white font-medium placeholder-slate-500 focus:outline-none focus:border-brand-500/50 focus:bg-brand-500/5 transition-all" placeholder="Doe" />
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="group">
+                  <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block group-focus-within:text-brand-300 transition-colors">
+                    Email
+                  </label>
+                  <input type="email" name="employee_email" required class="w-full bg-[#1e293b]/50 border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-500/50 focus:bg-brand-500/5 transition-all" placeholder="john@example.com" />
+                </div>
+                <div class="group">
+                  <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block group-focus-within:text-brand-300 transition-colors">
+                    Phone
+                  </label>
+                  <input type="tel" name="employee_phone_no" required class="w-full bg-[#1e293b]/50 border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white font-mono placeholder-slate-500 focus:outline-none focus:border-brand-500/50 focus:bg-brand-500/5 transition-all" placeholder="+91 9876543210" />
+                </div>
+              </div>
+              
+              <div class="group">
+                <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block group-focus-within:text-brand-300 transition-colors">
+                  Password
+                </label>
+                <input type="text" name="employe_password" required class="w-full bg-[#1e293b]/50 border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-500/50 focus:bg-brand-500/5 transition-all" placeholder="Secret123" />
+              </div>
+            </div>
+
+            <div class="bg-white/5 border border-white/10 rounded-2xl p-6 space-y-6">
+              <h3 class="text-sm font-bold text-white uppercase tracking-widest border-b border-white/10 pb-2">
+                <i class="bi bi-briefcase mr-2 text-brand-400"></i>Employment
+              </h3>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="group">
+                  <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block group-focus-within:text-brand-300 transition-colors">
+                    Join Date
+                  </label>
+                  <input type="date" name="employee_join_date" required class="w-full bg-[#1e293b]/50 border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-500/50 focus:bg-brand-500/5 transition-all" />
+                </div>
+                <div class="group">
+                  <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block group-focus-within:text-brand-300 transition-colors">
+                    Salary (₹)
+                  </label>
+                  <input type="number" name="salary" required min="0" class="w-full bg-[#1e293b]/50 border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white font-mono placeholder-slate-500 focus:outline-none focus:border-brand-500/50 focus:bg-brand-500/5 transition-all" placeholder="0" />
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-accent-500/5 border border-accent-500/20 rounded-2xl p-6 space-y-6">
+              <h3 class="text-sm font-bold text-accent-400 uppercase tracking-widest border-b border-accent-500/20 pb-2">
+                <i class="bi bi-geo-alt-fill mr-2"></i>Location Details
+              </h3>
+              
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="group md:col-span-2">
+                  <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block group-focus-within:text-accent-300 transition-colors">Street Address</label>
+                  <input type="text" name="street_address" required placeholder="123 Main St" class="w-full bg-[#1e293b]/50 border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-accent-500/50 focus:bg-accent-500/5 transition-all" />
+                </div>
+                <div class="group md:col-span-2">
+                  <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block group-focus-within:text-accent-300 transition-colors">Full Address</label>
+                  <textarea name="employee_address" rows="2" required placeholder="Full residential address..." class="w-full bg-[#1e293b]/50 border border-white/10 rounded-xl px-4 py-3 text-sm text-white leading-relaxed placeholder-slate-600 focus:outline-none focus:border-accent-500/50 focus:bg-accent-500/5 resize-none transition-all"></textarea>
+                </div>
+                <div class="group">
+                  <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block group-focus-within:text-accent-300 transition-colors">State</label>
+                  <input type="text" name="state" required placeholder="State" class="w-full bg-[#1e293b]/50 border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-accent-500/50 focus:bg-accent-500/5 transition-all" />
+                </div>
+                <div class="group">
+                  <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block group-focus-within:text-accent-300 transition-colors">Pincode</label>
+                  <input type="text" name="pincode" required placeholder="123456" class="w-full bg-[#1e293b]/50 border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white font-mono placeholder-slate-600 focus:outline-none focus:border-accent-500/50 focus:bg-accent-500/5 transition-all" />
+                </div>
+              </div>
+            </div>
+
+            <div class="pt-6 mt-8 border-t border-white/10 sticky bottom-0 bg-[#0f172a] pb-4 z-20">
+              <button
+                type="submit"
+                class="w-full py-4 rounded-xl bg-gradient-to-r from-brand-600 to-accent-600 hover:from-brand-500 hover:to-accent-500 text-white font-bold text-sm tracking-wide shadow-lg shadow-brand-500/20 hover:shadow-brand-500/40 hover:-translate-y-0.5 transition-all duration-300 flex items-center justify-center gap-2"
+              >
+                <i class="bi bi-check2-circle text-lg"></i>
+                SAVE EMPLOYEE
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
 
     <div id="editEmployeeModal" class="fixed inset-0 z-[100] hidden">
       <div
-        class="absolute inset-0 bg-black/80 backdrop-blur-sm transition-opacity"
+        class="absolute inset-0 bg-black/60 backdrop-blur-md transition-opacity duration-300"
         onclick="closeModal('editEmployeeModal')"
       ></div>
+
       <div
-        class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-2xl bg-white dark:bg-dark-card border border-slate-200 dark:border-white/10 shadow-2xl p-6 rounded-2xl transform scale-95 opacity-0 transition-all duration-200"
+        class="absolute right-0 top-0 h-full w-full md:w-[600px] bg-[#0f172a] border-l border-white/10 shadow-2xl p-0 overflow-y-auto transform translate-x-full transition-transform duration-300 ease-out"
         id="editEmployeeModalPanel"
       >
-        <div class="flex justify-between items-center mb-6">
-          <h2 class="text-xl font-bold text-slate-900 dark:text-white">
-            Edit Employee
-          </h2>
+        <div class="sticky top-0 z-20 bg-[#0f172a]/95 backdrop-blur-xl border-b border-white/5 px-8 py-6 flex justify-between items-center">
+          <div>
+            <h2 class="text-2xl font-black text-white font-mono tracking-tight uppercase">
+              Edit Employee
+            </h2>
+            <p class="text-xs text-brand-400 font-bold tracking-widest mt-1 uppercase">
+              Update Staff Details
+            </p>
+          </div>
           <button
             onclick="closeModal('editEmployeeModal')"
-            class="w-8 h-8 rounded-full bg-slate-100 dark:bg-white/10 flex items-center justify-center hover:bg-red-500 hover:text-white transition-all"
+            class="group w-10 h-10 rounded-full bg-white/5 border border-white/5 hover:bg-red-500/10 hover:border-red-500/50 flex items-center justify-center transition-all duration-300"
           >
-            <i class="bi bi-x-lg"></i>
+            <i class="bi bi-x-lg text-slate-400 group-hover:text-red-500 transition-colors"></i>
           </button>
         </div>
 
-
-        <form
-          id="editEmployeeForm"
-          method="POST"
-          action="{%url 'dashboard:employees'%}"
-          enctype="multipart/form-data"
-          class="space-y-4"
-        >
-          {% csrf_token %}
-          <input type="hidden" name="action" value="update" />
-          <input type="hidden" id="edit_db_id" name="emp_id" />
-
-          <div class="text-center mb-4">
-            <img
-              id="edit_img_preview"
-              src=""
-              class="w-20 h-20 rounded-full border-2 border-slate-200 dark:border-white/10 object-cover mx-auto mb-2"
-            />
-            <label
-              class="cursor-pointer text-xs text-brand-400 hover:text-brand-300 font-bold uppercase tracking-wide"
-            >
-              Change Photo
-              <input
-                type="file"
-                name="image"
-                hidden
-                onchange="
-                  document.getElementById('edit_img_preview').src =
-                    window.URL.createObjectURL(this.files[0])
-                "
-                class="form-input bg-[#f8fafc] border-slate-300 text-slate-700 focus:bg-white focus:border-slate-500 placeholder-slate-400 dark:bg-white/5 dark:border-white/10 dark:text-white dark:focus:bg-white/10 dark:placeholder-white/50"
-              />
-            </label>
-          </div>
-
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label
-                class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1 block"
-                >Full Name</label
-              >
-              <input
-                type="text"
-                id="edit_name"
-                name="employee_name"
-                class="form-input bg-[#f8fafc] border-slate-300 text-slate-700 focus:bg-white focus:border-slate-500 placeholder-slate-400 dark:bg-white/5 dark:border-white/10 dark:text-white dark:focus:bg-white/10 dark:placeholder-white/50"
-                required
-              />
-            </div>
-            <div>
-              <label
-                class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1 block"
-                >Email</label
-              >
-              <input
-                type="email"
-                id="edit_email"
-                name="employee_email"
-                class="form-input bg-[#f8fafc] border-slate-300 text-slate-700 focus:bg-white focus:border-slate-500 placeholder-slate-400 dark:bg-white/5 dark:border-white/10 dark:text-white dark:focus:bg-white/10 dark:placeholder-white/50"
-                required
-              />
-            </div>
-            <div>
-              <label
-                class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1 block"
-                >Emp ID</label
-              >
-              <input
-                type="text"
-                id="edit_emp_id"
-                name="employe_id"
-                class="form-input bg-[#f8fafc] border-slate-300 text-slate-700 focus:bg-white focus:border-slate-500 placeholder-slate-400 dark:bg-white/5 dark:border-white/10 dark:text-white dark:focus:bg-white/10 dark:placeholder-white/50"
-                required
-              />
-            </div>
-            <div>
-              <label
-                class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1 block"
-                >Join Date</label
-              >
-              <input
-                type="date"
-                id="edit_join_date"
-                name="employee_join_date"
-                class="form-input bg-[#f8fafc] border-slate-300 text-slate-700 focus:bg-white focus:border-slate-500 placeholder-slate-400 dark:bg-white/5 dark:border-white/10 dark:text-white dark:focus:bg-white/10 dark:placeholder-white/50"
-                required
-              />
-            </div>
-            <div>
-              <label
-                class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1 block"
-                >Salary (₹)</label
-              >
-              <input
-                type="number"
-                id="edit_salary"
-                name="salary"
-                class="form-input bg-[#f8fafc] border-slate-300 text-slate-700 focus:bg-white focus:border-slate-500 placeholder-slate-400 dark:bg-white/5 dark:border-white/10 dark:text-white dark:focus:bg-white/10 dark:placeholder-white/50"
-                required
-              />
-            </div>
-            <div>
-              <label
-                class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1 block"
-                >Phone</label
-              >
-              <input
-                type="tel"
-                id="edit_phone"
-                name="employee_phone_no"
-                class="form-input bg-[#f8fafc] border-slate-300 text-slate-700 focus:bg-white focus:border-slate-500 placeholder-slate-400 dark:bg-white/5 dark:border-white/10 dark:text-white dark:focus:bg-white/10 dark:placeholder-white/50"
-                required
-              />
-            </div>
-          </div>
-          <div>
-            <label
-              class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1 block"
-              >Address</label
-            >
-            <textarea
-              id="edit_address"
-              name="employee_address"
-              class="form-input bg-[#f8fafc] border-slate-300 text-slate-700 focus:bg-white focus:border-slate-500 placeholder-slate-400 dark:bg-white/5 dark:border-white/10 dark:text-white dark:focus:bg-white/10 dark:placeholder-white/50"
-              rows="2"
-              required
-            ></textarea>
-          </div>
-
-          <button
-            type="submit"
-            class="w-full py-3 rounded-xl bg-brand-500 hover:bg-brand-600 text-white font-bold transition-all shadow-lg shadow-brand-500/20 mt-4"
+        <div class="p-8">
+          <form
+            id="editEmployeeForm"
+            method="POST"
+            action="{%url 'dashboard:employees'%}"
+            enctype="multipart/form-data"
+            class="space-y-8"
           >
-            Update Details
-          </button>
-        </form>
+            {% csrf_token %}
+            <input type="hidden" name="action" value="update" />
+            <input type="hidden" id="edit_db_id" name="emp_id" />
+
+            <div class="text-center mb-6">
+              <div class="relative inline-block group cursor-pointer">
+                <img
+                  id="edit_img_preview"
+                  src=""
+                  class="w-24 h-24 rounded-full border-4 border-[#1e293b] shadow-xl object-cover mx-auto"
+                />
+                <label class="absolute inset-0 flex flex-col items-center justify-center bg-black/60 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
+                  <i class="bi bi-camera-fill text-xl mb-1"></i>
+                  <span class="text-[10px] font-bold uppercase tracking-widest">Change</span>
+                  <input
+                    type="file"
+                    name="image"
+                    hidden
+                    onchange="document.getElementById('edit_img_preview').src = window.URL.createObjectURL(this.files[0])"
+                  />
+                </label>
+              </div>
+            </div>
+
+            <div class="bg-white/5 border border-white/10 rounded-2xl p-6 space-y-6">
+              <h3 class="text-sm font-bold text-white uppercase tracking-widest border-b border-white/10 pb-2">
+                <i class="bi bi-person-badge mr-2 text-brand-400"></i>Account Details
+              </h3>
+              
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="group">
+                  <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block group-focus-within:text-brand-300 transition-colors">
+                    Full Name
+                  </label>
+                  <input type="text" id="edit_name" name="employee_name" required class="w-full bg-[#1e293b]/50 border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white font-medium placeholder-slate-500 focus:outline-none focus:border-brand-500/50 focus:bg-brand-500/5 transition-all" />
+                </div>
+                <div class="group">
+                  <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block group-focus-within:text-brand-300 transition-colors">
+                    Email
+                  </label>
+                  <input type="email" id="edit_email" name="employee_email" required class="w-full bg-[#1e293b]/50 border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-500/50 focus:bg-brand-500/5 transition-all" />
+                </div>
+                <div class="group">
+                  <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block group-focus-within:text-brand-300 transition-colors">
+                    Emp ID
+                  </label>
+                  <input type="text" id="edit_emp_id" name="employe_id" required class="w-full bg-[#1e293b]/50 border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white font-mono placeholder-slate-500 focus:outline-none focus:border-brand-500/50 focus:bg-brand-500/5 transition-all" />
+                </div>
+                <div class="group">
+                  <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block group-focus-within:text-brand-300 transition-colors">
+                    Phone
+                  </label>
+                  <input type="tel" id="edit_phone" name="employee_phone_no" required class="w-full bg-[#1e293b]/50 border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white font-mono placeholder-slate-500 focus:outline-none focus:border-brand-500/50 focus:bg-brand-500/5 transition-all" />
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-white/5 border border-white/10 rounded-2xl p-6 space-y-6">
+              <h3 class="text-sm font-bold text-white uppercase tracking-widest border-b border-white/10 pb-2">
+                <i class="bi bi-briefcase mr-2 text-brand-400"></i>Employment
+              </h3>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="group">
+                  <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block group-focus-within:text-brand-300 transition-colors">
+                    Join Date
+                  </label>
+                  <input type="date" id="edit_join_date" name="employee_join_date" required class="w-full bg-[#1e293b]/50 border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-500/50 focus:bg-brand-500/5 transition-all" />
+                </div>
+                <div class="group">
+                  <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block group-focus-within:text-brand-300 transition-colors">
+                    Salary (₹)
+                  </label>
+                  <input type="number" id="edit_salary" name="salary" required class="w-full bg-[#1e293b]/50 border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white font-mono placeholder-slate-500 focus:outline-none focus:border-brand-500/50 focus:bg-brand-500/5 transition-all" />
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-accent-500/5 border border-accent-500/20 rounded-2xl p-6 space-y-6">
+              <h3 class="text-sm font-bold text-accent-400 uppercase tracking-widest border-b border-accent-500/20 pb-2">
+                <i class="bi bi-geo-alt-fill mr-2"></i>Location Details
+              </h3>
+              
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="group md:col-span-2">
+                  <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block group-focus-within:text-accent-300 transition-colors">Street Address</label>
+                  <input type="text" id="edit_street_address" name="street_address" required class="w-full bg-[#1e293b]/50 border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-accent-500/50 focus:bg-accent-500/5 transition-all" />
+                </div>
+                <div class="group md:col-span-2">
+                  <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block group-focus-within:text-accent-300 transition-colors">Address</label>
+                  <textarea id="edit_address" name="employee_address" rows="2" required class="w-full bg-[#1e293b]/50 border border-white/10 rounded-xl px-4 py-3 text-sm text-white leading-relaxed placeholder-slate-600 focus:outline-none focus:border-accent-500/50 focus:bg-accent-500/5 resize-none transition-all"></textarea>
+                </div>
+                <div class="group">
+                  <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block group-focus-within:text-accent-300 transition-colors">State</label>
+                  <input type="text" id="edit_state" name="state" required class="w-full bg-[#1e293b]/50 border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-accent-500/50 focus:bg-accent-500/5 transition-all" />
+                </div>
+                <div class="group">
+                  <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block group-focus-within:text-accent-300 transition-colors">Pincode</label>
+                  <input type="text" id="edit_pincode" name="pincode" required class="w-full bg-[#1e293b]/50 border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white font-mono placeholder-slate-600 focus:outline-none focus:border-accent-500/50 focus:bg-accent-500/5 transition-all" />
+                </div>
+              </div>
+            </div>
+
+            <div class="pt-6 mt-8 border-t border-white/10 sticky bottom-0 bg-[#0f172a] pb-4 z-20">
+              <button
+                type="submit"
+                class="w-full py-4 rounded-xl bg-gradient-to-r from-brand-600 to-accent-600 hover:from-brand-500 hover:to-accent-500 text-white font-bold text-sm tracking-wide shadow-lg shadow-brand-500/20 hover:shadow-brand-500/40 hover:-translate-y-0.5 transition-all duration-300 flex items-center justify-center gap-2"
+              >
+                <i class="bi bi-check2-circle text-lg"></i>
+                UPDATE DETAILS
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
 
@@ -991,49 +951,49 @@
       class="lg:hidden fixed bottom-4 left-4 right-4 bg-white/90 dark:bg-[#0f172a]/95 backdrop-blur-xl border border-slate-200 dark:border-white/10 p-2 rounded-2xl shadow-2xl z-50 flex justify-around items-center"
     >
       <a
-        href="{% url 'dashboard:home' %}"
+        href="{% url 'dashboard:dashboard_home'%}"
         class="mobile-nav-link flex flex-col items-center gap-1 p-2 rounded-xl text-slate-400 hover:text-brand-600 transition-colors"
         ><i class="bi bi-grid-1x2-fill text-xl"></i
         ><span class="text-[10px] font-bold">Home</span></a
       >
       <a
-        href="{% url 'dashboard:customers' %}"
+        href=""
         class="mobile-nav-link flex flex-col items-center gap-1 p-2 rounded-xl text-slate-400 hover:text-brand-600 transition-colors"
         ><i class="bi bi-people-fill text-xl"></i
         ><span class="text-[10px] font-bold">Users</span></a
       >
       <a
-        href="{% url 'dashboard:products' %}"
+        href="{% url 'dashboard:product'%}"
         class="mobile-nav-link flex flex-col items-center gap-1 p-2 rounded-xl text-slate-400 hover:text-brand-600 transition-colors"
         ><i class="bi bi-box-seam-fill text-xl"></i
         ><span class="text-[10px] font-bold">Products</span></a
       >
       <a
-        href="{% url 'dashboard:brands' %}"
+        href="{% url 'dashboard:brand'%}"
         class="mobile-nav-link flex flex-col items-center gap-1 p-2 rounded-xl text-slate-400 hover:text-brand-600 transition-colors"
         ><i class="bi bi-tags-fill text-xl"></i
         ><span class="text-[10px] font-bold">Brands</span></a
       >
       <a
-        href="{% url 'dashboard:categories' %}"
+        href="{% url 'dashboard:category'%}"
         class="mobile-nav-link flex flex-col items-center gap-1 p-2 rounded-xl text-slate-400 hover:text-brand-600 transition-colors"
         ><i class="bi bi-list-ul text-xl"></i
         ><span class="text-[10px] font-bold">Categories</span></a
       >
       <a
-        href="{% url 'dashboard:employees' %}"
+        href=""
         class="mobile-nav-link active flex flex-col items-center gap-1 p-2 rounded-xl text-brand-600 dark:text-brand-400 bg-brand-50 dark:bg-brand-900/20"
         ><i class="bi bi-person-vcard-fill text-xl"></i
         ><span class="text-[10px] font-bold">Employees</span></a
       >
       <a
-        href="{% url 'dashboard:orders' %}"
+        href=""
         class="mobile-nav-link flex flex-col items-center gap-1 p-2 rounded-xl text-slate-400 hover:text-brand-600 transition-colors"
         ><i class="bi bi-cart-check-fill text-xl"></i
         ><span class="text-[10px] font-bold">Orders</span></a
       >
       <a
-        href="{% url 'dashboard:settings' %}"
+        href=""
         class="mobile-nav-link flex flex-col items-center gap-1 p-2 rounded-xl text-slate-400 hover:text-brand-600 transition-colors"
         ><i class="bi bi-gear text-xl"></i
         ><span class="text-[10px] font-bold">Settings</span></a
@@ -1042,7 +1002,6 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     
-
     <script>
       // --- Theme Init ---
       const html = document.documentElement;
@@ -1072,15 +1031,14 @@
 
       // --- Modal Logic ---
       function openAddModal() {
+        document.getElementById("addEmployeeForm").reset();
+        
         const modal = document.getElementById("addEmployeeModal");
         modal.classList.remove("hidden");
         setTimeout(() => {
           document
             .getElementById("addEmployeeModalPanel")
-            .classList.remove("scale-95", "opacity-0");
-          document
-            .getElementById("addEmployeeModalPanel")
-            .classList.add("scale-100", "opacity-100");
+            .classList.remove("translate-x-full");
         }, 10);
       }
 
@@ -1094,7 +1052,10 @@
         const name = row.dataset.name;
         const email = row.dataset.email;
         const phone = row.dataset.phone;
+        const street = row.dataset.street;
         const address = row.dataset.address;
+        const state = row.dataset.state;
+        const pincode = row.dataset.pincode;
         const joinDate = row.dataset.join;
         const salary = row.dataset.salary;
         const imgUrl = row.dataset.image;
@@ -1105,7 +1066,10 @@
         document.getElementById("edit_name").value = name;
         document.getElementById("edit_email").value = email;
         document.getElementById("edit_phone").value = phone;
-        document.getElementById("edit_address").value = address;
+        document.getElementById("edit_street_address").value = street || "";
+        document.getElementById("edit_address").value = address || "";
+        document.getElementById("edit_state").value = state || "";
+        document.getElementById("edit_pincode").value = pincode || "";
         document.getElementById("edit_join_date").value = joinDate;
         document.getElementById("edit_salary").value = salary;
 
@@ -1118,27 +1082,18 @@
             "https://api.dicebear.com/7.x/avataaars/svg?seed=" + name;
         }
 
-        // Dynamically set the form action to point to the specific update URL
-        const editForm = document.getElementById("editEmployeeForm");
-        
-
         // Show Modal
         const modal = document.getElementById("editEmployeeModal");
         modal.classList.remove("hidden");
         setTimeout(() => {
           document
             .getElementById("editEmployeeModalPanel")
-            .classList.remove("scale-95", "opacity-0");
-          document
-            .getElementById("editEmployeeModalPanel")
-            .classList.add("scale-100", "opacity-100");
+            .classList.remove("translate-x-full");
         }, 10);
       }
 
       function onDeleteEmployeeClick(event, employeeId) {
         event.preventDefault();
-
-        const deleteForm = document.getElementById("deleteEmployeeForm");
 
         document.getElementById("deleteEmployee").value =  employeeId;
         const modal = document.getElementById("deleteEmployeeModal");
@@ -1150,21 +1105,28 @@
         }, 10);
       }
 
-      function closeModal(id) {
-        const modal = document.getElementById(id);
-        const panel =
-          modal.querySelector('div[id$="Panel"]') ||
-          modal.querySelector("#deletePanel");
+      function closeModal(modalId) {
+        const modal = document.getElementById(modalId);
+        const panel = modal.querySelector('div[id$="Panel"]');
 
-        panel.classList.remove("scale-100", "opacity-100");
-        panel.classList.add("scale-95", "opacity-0");
-        setTimeout(() => modal.classList.add("hidden"), 200);
+        if (panel && panel.id !== "deletePanel") {
+          // It's a sliding side panel
+          panel.classList.add("translate-x-full");
+        } else if (panel && panel.id === "deletePanel") {
+          // It's the centered delete panel
+          panel.classList.remove("scale-100", "opacity-100");
+          panel.classList.add("scale-95", "opacity-0");
+        }
+
+        setTimeout(() => {
+          modal.classList.add("hidden");
+        }, 300);
       }
 
       // --- Search Filter ---
       function filterTable(query) {
         const term = query.toLowerCase();
-        document.querySelectorAll("tbody tr").forEach((row) => {
+        document.querySelectorAll("tbody tr.employee-row").forEach((row) => {
           row.style.display = row.innerText.toLowerCase().includes(term)
             ? ""
             : "none";

@@ -1,4 +1,4 @@
-from django.contrib.auth import authenticate, get_user_model, login
+from django.contrib.auth import authenticate, get_user_model, login, logout
 from django.db import IntegrityError
 from django.shortcuts import redirect, render
 
@@ -7,7 +7,7 @@ User = get_user_model()
 
 def login_view(request):
     if request.user.is_authenticated and request.user.role == User.Roles.CUSTOMER:
-        return redirect("home")
+        return redirect("main:home")
 
     context = {}
     if request.method == "POST":
@@ -31,14 +31,14 @@ def login_view(request):
         login(request, user)
         if not request.POST.get("remember"):
             request.session.set_expiry(0)
-        return redirect("home")
+        return redirect("main:home")
 
     return render(request, "accounts/login.html", context)
 
 
 def signup_view(request):
     if request.user.is_authenticated and request.user.role == User.Roles.CUSTOMER:
-        return redirect("home")
+        return redirect("main:home")
 
     context = {}
     if request.method == "POST":
@@ -98,6 +98,12 @@ def signup_view(request):
             return render(request, "accounts/signup.html", context)
 
         login(request, user)
-        return redirect("home")
+        return redirect("main:home")
 
     return render(request, "accounts/signup.html", context)
+
+
+def logout_view(request):
+    """Log out the current user (customer) and redirect to the public home page."""
+    logout(request)
+    return redirect("main:home")
