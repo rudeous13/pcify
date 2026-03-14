@@ -43,7 +43,7 @@ class User(AbstractBaseUser):
     email = models.EmailField(max_length=150, unique=True)
     phone_number = models.CharField(max_length=20, blank=True, null=True)
     password = models.CharField(max_length=255, db_column="password_hash")
-    profile_image = models.CharField(max_length=255, blank=True, null=True)
+    profile_image = models.ImageField(upload_to="profile_images/", blank=True, null=True)
     role = models.CharField(
         max_length=20, choices=Roles.choices, default=Roles.CUSTOMER)
     is_active = models.BooleanField(default=True)

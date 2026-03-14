@@ -528,26 +528,17 @@
                   <td
                     class="px-6 py-4 font-bold text-slate-900 dark:text-white"
                   >
-                    {{ data.user.first_name }}
+                    {{ data.first_name }}
                   </td>
-                  <td class="px-6 py-4 font-semibold">{{ data.user.last_name }}</td>
-                  <td class="px-6 py-4 font-mono text-xs">{{ data.user.email }}</td>
-                  <td class="px-6 py-4 font-mono text-xs">{{ data.user.phone }}</td>
+                  <td class="px-6 py-4 font-semibold">{{ data.last_name }}</td>
+                  <td class="px-6 py-4 font-mono text-xs">{{ data.email }}</td>
+                  <td class="px-6 py-4 font-mono text-xs">{{ data.phone_number }}</td>
                   <td class="px-6 py-4 text-center">
                     <span
                       class="px-2 py-1 rounded-full bg-emerald-500/10 text-emerald-500 text-[10px] font-bold border border-emerald-500/20 uppercase tracking-wide"
                     >
                       Log-in
                     </span>
-                  </td>
-                  <!-- <td class="px-6 py-4 text-right">
-                    <button
-                      class="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-500/10 transition-all"
-                      onclick="onDeleteClick(event, '{{ data.customer_id }}')"
-                      title="Delete Customer"
-                    >
-                      <i class="bi bi-trash"></i>
-                    </button> -->
                   </td>
                 </tr>
                 {%endfor%}

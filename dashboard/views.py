@@ -1,13 +1,14 @@
 from django.contrib.auth import authenticate, login, logout
 from .decorators import admin_required
-# from account.models import *
-# from .models import *
+from accounts.models import *
+from locations.models import *
 from django.shortcuts import render, redirect
 from django.http import HttpResponseRedirect, HttpResponse
 from django.db.utils import DatabaseError
 from datetime import datetime
 from django.utils import timezone
 import re
+
 # Create your views here.
 def is_admin(user):
   return user.is_authenticated and user.is_staff
@@ -47,7 +48,7 @@ def dashboard_home(request):
 # --------------------------------------
 @admin_required
 def dashboard_customers(request):
-  user_list = Customer.objects.select_related('user').all()
+  user_list = User.objects.filter(role="customer")
   return render(request, "AdminPage/admin_customer.html", {"user_list": user_list})
 
 
@@ -58,22 +59,22 @@ def dashboard_customers(request):
 @admin_required
 def dashboard_employees(request):
   context = {
-  "employees" : Staff.objects.select_related('user').all(),
+  "employees": User.objects.filter(role="employee").prefetch_related('addresses__pincode'),
   }
   if request.method == "POST":
     action = request.POST.get("action")
-
+    data = {
+      "f_name": request.POST.get("first_name"),
+      "l_name": request.POST.get("last_name"),
+      "Email": request.POST.get("employee_email"),
+      "PhoneNo": request.POST.get("employee_phone_no"),
+      "password": request.POST.get("employe_password"),
+      "image": request.FILES.get("image"),
+      "street_address": request.POST.get("street_address"),
+      "area_name": request.POST.get("area_name"),
+      "pincode": request.POST.get("pincode"),
+    }
     if action == "insert":
-      data = {
-        "f_name": request.POST.get("first_name"),
-        "l_name": request.POST.get("last_name"),
-        "Email": request.POST.get("employee_email"),
-        "PhoneNo": request.POST.get("employee_phone_no"),
-        "password": request.POST.get("employe_password"),
-        "jod": request.POST.get("employee_join_date"),
-        "address": request.POST.get("employee_address"),
-        "image": request.FILES.get("image")
-      }
       
       errors = {}
 
@@ -102,22 +103,20 @@ def dashboard_employees(request):
       phone_pattern = r'^[6-9]\d{9}$'
       if not re.match(phone_pattern, data["PhoneNo"]):
         errors.setdefault("phoneissue", "Enter a valid 10-digit phone number starting with 6-9.")
-      elif User.objects.filter(phone=data["PhoneNo"]).exists():
+      elif User.objects.filter(phone_number=data["PhoneNo"]).exists():
           errors.setdefault("phoneissue", "Phone number is already used.")
 
       # -------------------- EMAIL UNIQUENESS --------------------
       if User.objects.filter(email=data["Email"]).exists():
         errors.setdefault("emailissue", "E-mail address is already used.")
 
-      # -------------------- DATE VALIDATION --------------------
-      try:
-          user_date = datetime.strptime(data["jod"], "%Y-%m-%d").date()
-          today = timezone.now().date()
+      # ---------------- PINCODE VALIDATION ----------------
+      if not re.match(r'^\d{6}$', data["pincode"]):
+        errors["pincodeissue"] = "Pincode must be 6 digits."
 
-          if user_date > today:
-              errors.setdefault("dateissue", "Date cannot be in the future.")
-      except ValueError:
-          errors.setdefault("dateissue", "Invalid date format.")
+      # ---------------- AREA NAME VALIDATION ----------------
+      if not re.match(r'^[A-Za-z\s]+$', data["area_name"]):
+        errors["areaissue"] = "Area name must contain alphabets only."
 
       # -------------------- RETURN ERRORS IF ANY --------------------
       if errors:
@@ -130,16 +129,30 @@ def dashboard_employees(request):
           first_name=data["f_name"],
           last_name=data["l_name"],
           email=data["Email"],
-          phone=data["PhoneNo"],
+          phone_number=data["PhoneNo"],
           password=data["password"],  
-          role=Role.objects.get(role='employee'),
+          role='employee',
           profile_image = data["image"]
         )
 
-        Staff.objects.create(
+        # ---------------- PINCODE CHECK ----------------
+        pincode_obj = Pincode.objects.filter(pincode=data["pincode"]).first()
+
+        if not pincode_obj:
+            pincode_obj = Pincode.objects.create(
+              pincode=data["pincode"],
+              area_name=data["area_name"],
+              city="Ahmedabad"
+            )
+
+        # ---------------- CREATE ADDRESS ----------------
+        Address.objects.create(
           user=user,
-          jod=data["jod"]
+          address=data["street_address"],
+          pincode=pincode_obj,
+          is_primary=False
         )
+
         context.setdefault("successful", "account is added.")
         return render(request, "AdminPage/admin_employee.html", context)
       except DatabaseError:
@@ -147,12 +160,48 @@ def dashboard_employees(request):
         return render(request, "AdminPage/admin_employee.html", context)
       
     elif action == "update":
-      return render(request, "AdminPage/admin_products.html")
+      emp_id = request.POST.get("emp_id")
+
+      try :
+        user = User.objects.get(user_id = emp_id)
+
+        user.first_name = data["f_name"] or user.first_name
+        user.last_login = data["l_name"] or user.last_name
+        user.email = data["Email"] or user.email
+        user.phone_number = data["PhoneNo"] or user.phone_number
+
+        if data["image"]:
+          user.profile_image = data["image"]
+        
+        user.save()
+
+        pincode_obj = Pincode.objects.filter(pincode=data["pincode"]).first()
+        if not pincode_obj:
+          pincode_obj = Pincode.objects.create(
+            pincode = data["pincode"],
+            area_name = data["area_name"],
+            city = "Ahmedabad"
+          )
+
+        address = Address.objects.filter(user=user).first()
+
+        if address:
+          address.address = data['street_address']
+          address.pincode = data['pincode']
+          address.save()
+        
+        context["successful"] = "Employee updated successfully."
+
+      except Exception:
+        context["errors"] = "Employee Update Failed."
+        
+      return redirect("dashboard:employees")
 
     elif action == "delete":
-      User.objects.filter(user_id = request.POST.get("emp_id")).delete()
-      context.setdefault("errors", "Account has deleted.")
-      return render(request, "AdminPage/admin_employee.html", context)
+      emp_id = request.POST.get("emp_id")
+      if emp_id:
+          User.objects.filter(user_id=emp_id).delete()
+      return redirect("dashboard:employees")
       
     
   return render(request, "AdminPage/admin_employee.html", context)

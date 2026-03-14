@@ -495,11 +495,6 @@
                     Address
                   </th>
                   <th
-                    class="px-6 py-4 font-bold uppercase text-[10px] tracking-widest whitespace-nowrap"
-                  >
-                    Join Date
-                  </th>
-                  <th
                     class="px-6 py-4 font-bold uppercase text-[10px] tracking-widest text-center whitespace-nowrap"
                   >
                     Actions
@@ -507,29 +502,28 @@
                 </tr>
               </thead>
               <tbody class="divide-y divide-slate-200 dark:divide-white/5">
-                {% for emp in employees %}
+                {% for user in employees %}
                 <tr
                   class="text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors duration-200 employee-row"
-                  data-id="{{ emp.user.user_id }}"
-                  data-empid="{{ emp.employe_id }}"
-                  data-name="{{ emp.employee_name }}"
-                  data-email="{{ emp.employee_email }}"
-                  data-phone="{{ emp.employee_phone_no }}"
-                  data-street="{{ emp.street_address }}"
-                  data-address="{{ emp.employee_address }}"
-                  data-state="{{ emp.state }}"
-                  data-pincode="{{ emp.pincode }}"
-                  data-join="{{ emp.employee_join_date|date:'Y-m-d' }}"
-                  data-salary="{{ emp.salary }}"
-                  data-image="{{ emp.image_url }}"
+                  data-id="{{ user.user_id }}"
+                  data-name="{{ user.first_name }}"
+                  data-lname="{{ user.last_name}}"
+                  data-email="{{ user.email }}"
+                  data-phone="{{ user.phone_number }}"
+                  {% if user.addresses.first %}
+                  data-street="{{ user.addresses.first.address }}"
+                  data-area="{{ user.addresses.first.pincode.area_name }}"
+                  data-pincode="{{ user.addresses.first.pincode.pincode }}"
+                  {% endif %}
+                  data-image="{% if user.profile_image %}{{ user.profile_image.url }}{% endif %}"  
                 >
                   <td class="px-6 py-3">
                     <div
                       class="w-10 h-10 rounded-full overflow-hidden border border-slate-200 dark:border-white/10"
                     >
 
-                      {% if emp.user.profile_image%}
-                      <img src="{{ emp.user.profile_image.url}}" alt="" class="w-full h-full object-cover">
+                      {% if user.profile_image%}
+                     <img src="{{ user.profile_image.url }}" class="w-full h-full object-cover">
                       {% else %}
                       <img
                         src="{{ emp.image_url|default:'https://api.dicebear.com/7.x/avataaars/svg?seed=fallback' }}"
@@ -541,25 +535,29 @@
                   <td
                     class="px-6 py-3 font-bold text-slate-900 dark:text-white"
                   >
-                    {{ emp.user.first_name}} {{emp.user.last_name}}
+                    {{ user.first_name}} {{user.last_name}}
                   </td>
                   <td class="px-6 py-3">
                     <span
                       class="badge bg-slate-100 dark:bg-white/10 text-slate-500 dark:text-slate-300 px-2 py-1 rounded border border-slate-200 dark:border-white/5 text-xs"
-                      >{{ emp.staff_id }}</span
+                      >{{ user.user_id }}</span
                     >
                   </td>
                   <td class="px-6 py-3 font-mono text-xs">
-                    {{ emp.user.phone}}<br>
-                    {{ emp.user.email}}
+                    {{ user.phone_number}}<br>
+                    {{ user.email}}
                   </td>
                   <td
                     class="px-6 py-3 max-w-[150px] truncate text-xs"
-                    title="{{ emp.employee_address }}"
+                    title="{% if user.addresses.first %}{{ user.addresses.first.address }}{% endif %}"
                   >
-                  </td>
-                  <td class="px-6 py-3 text-xs">
-                    {{ emp.jod}}
+                    {% if user.addresses.first %}
+                      {{ user.addresses.first.address }}, <br>
+                      {{ user.addresses.first.pincode.area_name }}, <br>
+                      {{ user.addresses.first.pincode.pincode }}
+                    {% else %}
+                      <span class="text-slate-400 italic">No address</span>
+                    {% endif %}
                   </td>
                   <td class="px-6 py-3 text-center">
                     <div class="flex items-center justify-center gap-2">
@@ -569,11 +567,11 @@
                       >
                         <i class="bi bi-pencil"></i>
                       </button>
-                      <button
+                     <button
                         class="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-500/10 transition-all"
-                        onclick="onDeleteEmployeeClick(event, '{{ emp.user.user_id }}')"
+                        onclick="onDeleteEmployeeClick(event, '{{ user.user_id }}')"
                       >
-                        <i class="biemp bi-trash"></i>
+                        <i class="bi bi-trash"></i>
                       </button>
                     </div>
                   </td>
@@ -691,20 +689,6 @@
               </div>
             </div>
 
-            <div class="bg-white/5 border border-white/10 rounded-2xl p-6 space-y-6">
-              <h3 class="text-sm font-bold text-white uppercase tracking-widest border-b border-white/10 pb-2">
-                <i class="bi bi-briefcase mr-2 text-brand-400"></i>Employment
-              </h3>
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="group">
-                  <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block group-focus-within:text-brand-300 transition-colors">
-                    Join Date
-                  </label>
-                  <input type="date" name="employee_join_date" required class="w-full bg-[#1e293b]/50 border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-500/50 focus:bg-brand-500/5 transition-all" />
-                </div>
-              </div>
-            </div>
-
             <div class="bg-accent-500/5 border border-accent-500/20 rounded-2xl p-6 space-y-6">
               <h3 class="text-sm font-bold text-accent-400 uppercase tracking-widest border-b border-accent-500/20 pb-2">
                 <i class="bi bi-geo-alt-fill mr-2"></i>Location Details
@@ -715,13 +699,10 @@
                   <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block group-focus-within:text-accent-300 transition-colors">Street Address</label>
                   <input type="text" name="street_address" required placeholder="123 Main St" class="w-full bg-[#1e293b]/50 border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-accent-500/50 focus:bg-accent-500/5 transition-all" />
                 </div>
-                <div class="group md:col-span-2">
-                  <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block group-focus-within:text-accent-300 transition-colors">Full Address</label>
-                  <textarea name="employee_address" rows="2" required placeholder="Full residential address..." class="w-full bg-[#1e293b]/50 border border-white/10 rounded-xl px-4 py-3 text-sm text-white leading-relaxed placeholder-slate-600 focus:outline-none focus:border-accent-500/50 focus:bg-accent-500/5 resize-none transition-all"></textarea>
-                </div>
+              
                 <div class="group">
-                  <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block group-focus-within:text-accent-300 transition-colors">State</label>
-                  <input type="text" name="state" required placeholder="State" class="w-full bg-[#1e293b]/50 border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-accent-500/50 focus:bg-accent-500/5 transition-all" />
+                  <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block group-focus-within:text-accent-300 transition-colors">Area name</label>
+                  <input type="text" name="area_name" required placeholder="Area name" class="w-full bg-[#1e293b]/50 border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-accent-500/50 focus:bg-accent-500/5 transition-all" />
                 </div>
                 <div class="group">
                   <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block group-focus-within:text-accent-300 transition-colors">Pincode</label>
@@ -811,47 +792,27 @@
               <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="group">
                   <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block group-focus-within:text-brand-300 transition-colors">
-                    Full Name
+                    First Name
                   </label>
-                  <input type="text" id="edit_name" name="employee_name" required class="w-full bg-[#1e293b]/50 border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white font-medium placeholder-slate-500 focus:outline-none focus:border-brand-500/50 focus:bg-brand-500/5 transition-all" />
+                  <input type="text" id="edit_fname" name="first_name" required class="w-full bg-[#1e293b]/50 border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white font-medium placeholder-slate-500 focus:outline-none focus:border-brand-500/50 focus:bg-brand-500/5 transition-all" />
                 </div>
                 <div class="group">
                   <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block group-focus-within:text-brand-300 transition-colors">
-                    Email
+                    Last Name
                   </label>
-                  <input type="email" id="edit_email" name="employee_email" required class="w-full bg-[#1e293b]/50 border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-500/50 focus:bg-brand-500/5 transition-all" />
+                  <input type="text" id="edit_lname" name="last_name" required class="w-full bg-[#1e293b]/50 border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white font-medium placeholder-slate-500 focus:outline-none focus:border-brand-500/50 focus:bg-brand-500/5 transition-all" />
                 </div>
                 <div class="group">
                   <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block group-focus-within:text-brand-300 transition-colors">
-                    Emp ID
+                    Email Id
                   </label>
-                  <input type="text" id="edit_emp_id" name="employe_id" required class="w-full bg-[#1e293b]/50 border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white font-mono placeholder-slate-500 focus:outline-none focus:border-brand-500/50 focus:bg-brand-500/5 transition-all" />
+                   <input type="email" id="edit_email" name="employee_email" required class="w-full bg-[#1e293b]/50 border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-500/50 focus:bg-brand-500/5 transition-all" />
                 </div>
                 <div class="group">
                   <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block group-focus-within:text-brand-300 transition-colors">
                     Phone
                   </label>
                   <input type="tel" id="edit_phone" name="employee_phone_no" required class="w-full bg-[#1e293b]/50 border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white font-mono placeholder-slate-500 focus:outline-none focus:border-brand-500/50 focus:bg-brand-500/5 transition-all" />
-                </div>
-              </div>
-            </div>
-
-            <div class="bg-white/5 border border-white/10 rounded-2xl p-6 space-y-6">
-              <h3 class="text-sm font-bold text-white uppercase tracking-widest border-b border-white/10 pb-2">
-                <i class="bi bi-briefcase mr-2 text-brand-400"></i>Employment
-              </h3>
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="group">
-                  <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block group-focus-within:text-brand-300 transition-colors">
-                    Join Date
-                  </label>
-                  <input type="date" id="edit_join_date" name="employee_join_date" required class="w-full bg-[#1e293b]/50 border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-500/50 focus:bg-brand-500/5 transition-all" />
-                </div>
-                <div class="group">
-                  <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block group-focus-within:text-brand-300 transition-colors">
-                    Salary (₹)
-                  </label>
-                  <input type="number" id="edit_salary" name="salary" required class="w-full bg-[#1e293b]/50 border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white font-mono placeholder-slate-500 focus:outline-none focus:border-brand-500/50 focus:bg-brand-500/5 transition-all" />
                 </div>
               </div>
             </div>
@@ -866,13 +827,9 @@
                   <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block group-focus-within:text-accent-300 transition-colors">Street Address</label>
                   <input type="text" id="edit_street_address" name="street_address" required class="w-full bg-[#1e293b]/50 border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-accent-500/50 focus:bg-accent-500/5 transition-all" />
                 </div>
-                <div class="group md:col-span-2">
-                  <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block group-focus-within:text-accent-300 transition-colors">Address</label>
-                  <textarea id="edit_address" name="employee_address" rows="2" required class="w-full bg-[#1e293b]/50 border border-white/10 rounded-xl px-4 py-3 text-sm text-white leading-relaxed placeholder-slate-600 focus:outline-none focus:border-accent-500/50 focus:bg-accent-500/5 resize-none transition-all"></textarea>
-                </div>
                 <div class="group">
-                  <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block group-focus-within:text-accent-300 transition-colors">State</label>
-                  <input type="text" id="edit_state" name="state" required class="w-full bg-[#1e293b]/50 border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-accent-500/50 focus:bg-accent-500/5 transition-all" />
+                  <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block group-focus-within:text-accent-300 transition-colors">Area</label>
+                  <input type="text" id="edit_area" name="area_name" required class="w-full bg-[#1e293b]/50 border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-accent-500/50 focus:bg-accent-500/5 transition-all" />
                 </div>
                 <div class="group">
                   <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block group-focus-within:text-accent-300 transition-colors">Pincode</label>
@@ -1042,31 +999,28 @@
 
         // Extract data from data attributes
         const dbId = row.dataset.id;
-        const empId = row.dataset.empid;
+
         const name = row.dataset.name;
+        const lname = row.dataset.lname;
         const email = row.dataset.email;
         const phone = row.dataset.phone;
+
         const street = row.dataset.street;
-        const address = row.dataset.address;
-        const state = row.dataset.state;
+        const area = row.dataset.area;
         const pincode = row.dataset.pincode;
-        const joinDate = row.dataset.join;
-        const salary = row.dataset.salary;
+
         const imgUrl = row.dataset.image;
 
         // Populate the modal fields
         document.getElementById("edit_db_id").value = dbId;
-        document.getElementById("edit_emp_id").value = empId;
-        document.getElementById("edit_name").value = name;
+        document.getElementById("edit_fname").value = name;
+        document.getElementById("edit_lname").value = lname;
         document.getElementById("edit_email").value = email;
         document.getElementById("edit_phone").value = phone;
         document.getElementById("edit_street_address").value = street || "";
-        document.getElementById("edit_address").value = address || "";
-        document.getElementById("edit_state").value = state || "";
+        document.getElementById("edit_area").value = area || "";
         document.getElementById("edit_pincode").value = pincode || "";
-        document.getElementById("edit_join_date").value = joinDate;
-        document.getElementById("edit_salary").value = salary;
-
+        
         // Handle Image Preview
         const preview = document.getElementById("edit_img_preview");
         if (imgUrl && imgUrl !== "None" && imgUrl !== "") {
