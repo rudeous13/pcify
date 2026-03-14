@@ -1,0 +1,1351 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Nexus Admin | Analytics Center</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
+    />
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js/dist/chart.umd.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+    <script>
+      tailwind.config = {
+        darkMode: ["class", '[data-theme="dark"]'],
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['"Outfit"', "sans-serif"],
+              mono: ['"Space Grotesk"', "monospace"],
+            },
+            colors: {
+              brand: {
+                400: "#38bdf8",
+                500: "#0ea5e9",
+                600: "#0284c7",
+                glow: "rgba(14, 165, 233, 0.3)",
+              },
+              accent: {
+                400: "#a78bfa",
+                500: "#8b5cf6",
+                600: "#7c3aed",
+                glow: "rgba(139, 92, 246, 0.3)",
+              },
+              dark: { bg: "#0b0f19", card: "#111827", border: "#1f2937" },
+            },
+            backgroundImage: {
+              "grid-pattern":
+                "linear-gradient(to right, #1f2937 1px, transparent 1px), linear-gradient(to bottom, #1f2937 1px, transparent 1px)",
+            },
+            boxShadow: { neon: "0 0 12px -3px var(--tw-shadow-color)" },
+            animation: {
+              "slide-in": "slideIn 0.4s ease-out forwards",
+              pulse: "pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+            },
+            keyframes: {
+              slideIn: {
+                "0%": { opacity: "0", transform: "translateY(10px)" },
+                "100%": { opacity: "1", transform: "translateY(0)" },
+              },
+            },
+          },
+        },
+      };
+    </script>
+
+    <style>
+      ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #a4a4a4;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #334155;
+        border-radius: 4px;
+      }
+      .bg-grid {
+        background-size: 40px 40px;
+        mask-image: linear-gradient(
+          to bottom,
+          transparent,
+          5% white,
+          95% white,
+          transparent
+        );
+      }
+      .nav-item.active {
+        background: rgba(14, 165, 233, 0.1);
+        color: #38bdf8;
+        border-right: 3px solid #38bdf8;
+      }
+      .glass-table th {
+        background-color: rgba(255, 255, 255, 0.05);
+      }
+      .glass-table tr:hover td {
+        background-color: rgba(255, 255, 255, 0.02);
+      }
+      .mobile-nav-link {
+        transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+      .mobile-nav-link.active {
+        color: #0ea5e9;
+        background: rgba(14, 165, 233, 0.15);
+        box-shadow: inset 0 0 0 1px rgba(14, 165, 233, 0.15);
+      }
+      .trend-up {
+        @apply text-emerald-500 bg-emerald-500/10;
+      }
+      .trend-down {
+        @apply text-red-500 bg-red-500/10;
+      }
+      .chart-fullscreen {
+        @apply fixed inset-4 z-[100] shadow-2xl;
+      }
+      /* Utility for sortable headers */
+      .sortable:hover {
+        cursor: pointer;
+        color: #38bdf8;
+        transition: color 0.2s;
+      }
+    </style>
+  </head>
+  <body
+    class="bg-slate-50 dark:bg-dark-bg text-slate-600 dark:text-slate-300 antialiased font-sans transition-colors duration-300 h-screen overflow-hidden flex selection:bg-brand-500 selection:text-white pb-20 lg:pb-0"
+  >
+    <div class="fixed inset-0 z-0 pointer-events-none">
+      <div
+        class="absolute inset-0 bg-grid-pattern bg-grid opacity-[0.03] dark:opacity-[0.05]"
+      ></div>
+      <div
+        class="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-brand-500/10 rounded-full blur-[100px] mix-blend-screen"
+      ></div>
+      <div
+        class="absolute bottom-[20%] right-[-10%] w-[500px] h-[500px] bg-accent-500/10 rounded-full blur-[100px] mix-blend-screen"
+      ></div>
+    </div>
+
+    <aside
+      id="sidebar"
+      class="w-64 bg-white/80 dark:bg-dark-card/80 backdrop-blur-xl border-r border-slate-200 dark:border-white/5 h-full flex-col hidden lg:flex z-50 transition-all duration-300 relative"
+    >
+      <div
+        class="h-20 flex items-center px-6 border-b border-slate-200 dark:border-white/5"
+      >
+        <a href="" class="flex items-center gap-3">
+          <div
+            class="w-8 h-8 rounded-lg bg-gradient-to-tr from-brand-500 to-accent-600 text-white flex items-center justify-center font-bold shadow-lg shadow-brand-500/20"
+          >
+            <i class="bi bi-shield-lock-fill" aria-hidden="true"></i>
+          </div>
+          <div class="flex flex-col">
+            <span
+              class="font-bold text-lg tracking-tight text-slate-900 dark:text-white font-mono uppercase"
+              >Nexus<span class="text-brand-400">Admin</span></span
+            >
+            <span
+              class="text-[10px] font-bold tracking-widest text-slate-500 uppercase"
+              >Command Center</span
+            >
+          </div>
+        </a>
+      </div>
+      <!-- Navigation -->
+      <nav class="flex-1 overflow-y-auto py-6 px-4 space-y-1 custom-scrollbar">
+        
+        <!-- Main Menu -->
+        <p
+          class="px-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2"
+        >
+          Main Menu
+        </p>
+
+        <!-- Overview -->
+        <a
+          href="{% url 'dashboard:dashboard_home'%}"
+          class="nav-item  flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
+        >
+          <i
+            class="bi bi-grid-1x2-fill text-lg drop-shadow-sm"
+            aria-hidden="true"
+          ></i>
+          Overview
+        </a>
+        
+        <!-- Users  -->
+        <p
+          class="px-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 mt-6"
+        >
+          Users
+        </p>
+        
+        <!-- Customers -->
+        <a
+          href="{% url 'dashboard:customers'%}"
+          class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
+        >
+          <i
+            class="bi bi-people-fill text-lg drop-shadow-sm"
+            aria-hidden="true"
+          ></i>
+          Customers
+        </a>
+        
+        <!-- Employees -->
+        <a
+          href="{% url 'dashboard:employees'%}"
+          class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
+        >
+          <i
+            class="bi bi-person-vcard-fill text-lg drop-shadow-sm"
+            aria-hidden="true"
+          ></i>
+          Employees
+        </a>
+
+        <!-- Suppliers -->
+        <a
+          href="{% url 'dashboard:suppliers'%}"
+          class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
+        >
+          <i class="bi bi-truck text-lg drop-shadow-sm"></i> Suppliers
+        </a>
+
+
+        <!-- Management -->
+        <p
+          class="px-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 mt-6"
+        >
+          Management
+        </p>
+
+
+        <!-- Product -->
+        <a
+          href="{% url 'dashboard:product'%}"
+          class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
+        >
+          <i
+            class="bi bi-box-seam-fill text-lg drop-shadow-sm"
+            aria-hidden="true"
+          ></i>
+          Products
+        </a>
+
+        <!-- Brand -->
+        <a
+          href="{% url 'dashboard:brand'%}"
+          class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
+        >
+          <i
+            class="bi bi-tags-fill text-lg drop-shadow-sm"
+            aria-hidden="true"
+          ></i>
+          Brand
+        </a>
+
+        <!-- Category -->
+        <a
+          href="{% url 'dashboard:category'%}"
+          class="nav-item  flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
+        >
+          <i
+            class="bi bi-list-check text-lg drop-shadow-sm"
+            aria-hidden="true"
+          ></i>
+          Category
+        </a>
+
+        <!-- Compatibility -->
+        <a
+          href="{% url 'dashboard:order'%}"
+          class="nav-item    flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
+        >
+          <i
+            class="bi bi-cart-check-fill text-lg drop-shadow-sm"
+            aria-hidden="true"
+          ></i>
+          Orders
+        </a>
+
+        <!-- Task Management -->
+        <a
+          href="{% url 'dashboard:task'%}"
+          class="nav-item  flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
+        >
+          <i class="bi bi-briefcase-fill text-lg drop-shadow-sm"></i> Task Mgmt
+        </a>
+
+        <!-- Invetory -->
+        <a
+          href="{% url 'dashboard:inventory'%}"
+          class="nav-item  flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
+        >
+          <i class="bi bi-boxes text-lg drop-shadow-sm" aria-hidden="true"></i>
+          Inventory
+        </a>
+
+        <!-- Compatibility -->
+        <a
+          href="{% url 'dashboard:compatibility'%}"
+          class="nav-item  flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
+        >
+          <i class="bi bi-puzzle-fill text-lg drop-shadow-sm"></i> Compatibility
+        </a>
+
+        <!-- Trending -->
+        <a
+          href="{% url 'dashboard:trending'%}"
+          class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
+        >
+          <i class="bi bi-fire text-lg drop-shadow-sm"></i> Trending
+        </a>
+
+        <!-- Pre-Built PCs -->
+        <a
+          href="{% url 'dashboard:pre_built'%}"
+          class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
+        >
+          <i class="bi bi-pc-display text-lg drop-shadow-sm"></i> Pre-Built PCs
+        </a>
+
+
+        <!-- System -->
+        <p
+          class="px-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 mt-6"
+        >
+          System
+        </p>
+
+        <!-- Analytics -->
+        <a
+          href="{% url 'dashboard:analytic'%}"
+          class="nav-item active flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
+        >
+          <i
+            class="bi bi-bar-chart-fill text-lg drop-shadow-sm"
+            aria-hidden="true"
+          ></i>
+          Analytics
+        </a>
+
+        <!-- Settings -->
+        <a
+          href="{% url 'dashboard:setting'%}"
+          class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
+        >
+          <i
+            class="bi bi-gear-fill text-lg drop-shadow-sm"
+            aria-hidden="true"
+          ></i>
+          Settings
+        </a>
+      </nav>
+
+      <div class="p-4 border-t border-slate-200 dark:border-white/5">
+        <a
+          href="{% url 'dashboard:logout'%}"
+          class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-red-500 hover:bg-red-500/10 transition-all"
+        >
+          <i class="bi bi-box-arrow-right"></i> Logout
+        </a>
+      </div>
+    </aside>
+
+    <div
+      class="flex-1 flex flex-col h-full relative z-10 w-full lg:w-[calc(100%-16rem)]"
+    >
+      <header
+        class="h-20 bg-white/80 dark:bg-dark-bg/80 backdrop-blur-md border-b border-slate-200 dark:border-white/5 flex items-center justify-between px-4 md:px-8 z-40 sticky top-0"
+      >
+        <div class="flex items-center gap-4 flex-1">
+          <div class="lg:hidden flex items-center gap-2">
+            <div
+              class="w-8 h-8 rounded-lg bg-gradient-to-tr from-brand-500 to-accent-600 text-white flex items-center justify-center font-bold"
+            >
+              <i class="bi bi-shield-lock-fill"></i>
+            </div>
+          </div>
+          <div class="relative hidden md:block w-full max-w-md">
+            <i class="bi bi-search absolute left-4 top-3 text-slate-400"></i>
+            <input
+              type="text"
+              id="adminSearch"
+              placeholder="Search Products (Ctrl + K)"
+              class="w-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-full pl-10 pr-4 py-2.5 text-sm text-slate-700 dark:text-white outline-none focus:border-brand-500 transition-all focus:ring-2 focus:ring-brand-500/20"
+            />
+          </div>
+        </div>
+        <div class="flex items-center gap-3 md:gap-4">
+          <div class="hidden sm:flex">
+            <button
+              onclick="downloadPDF()"
+              class="flex items-center gap-2 bg-brand-500 hover:bg-brand-600 text-white px-4 py-2 rounded-lg font-bold text-xs transition-all shadow-lg shadow-brand-500/20 hover:-translate-y-0.5"
+            >
+              <i class="bi bi-file-earmark-pdf-fill"></i> PDF Report
+            </button>
+          </div>
+          <button
+            id="themeToggle"
+            aria-label="Toggle Dark Mode"
+            class="w-10 h-10 rounded-full border border-slate-200 dark:border-white/10 flex items-center justify-center text-slate-500 hover:text-brand-400 transition-colors"
+          >
+            <i class="bi bi-moon-stars-fill"></i>
+          </button>
+          <div
+            class="h-8 w-px bg-slate-200 dark:bg-white/10 hidden sm:block"
+          ></div>
+          <div
+            class="flex items-center gap-3 pl-2 cursor-pointer group relative"
+          >
+            <div class="text-right hidden sm:block">
+              <p
+                class="text-sm font-bold text-slate-900 dark:text-white leading-none group-hover:text-brand-400 transition-colors"
+              >
+                Admin User
+              </p>
+              <p class="text-[10px] text-slate-500 font-mono mt-1">
+                Super Admin
+              </p>
+            </div>
+            <div class="relative">
+              <img
+                src="https://api.dicebear.com/7.x/avataaars/svg?seed={{ request.user.username|default:'Admin' }}"
+                alt="User Avatar"
+                class="w-10 h-10 rounded-full border-2 border-slate-200 dark:border-white/10 group-hover:border-brand-500 transition-all"
+              />
+              <span
+                class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white dark:border-dark-bg rounded-full"
+              ></span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div
+        id="pdf-content"
+        class="flex-1 overflow-y-auto p-4 md:p-8 custom-scrollbar bg-slate-50 dark:bg-dark-bg"
+      >
+        <div
+          class="flex flex-col xl:flex-row justify-between items-start xl:items-center mb-8 animate-slide-in gap-4"
+        >
+          <div>
+            <h1
+              class="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white font-mono mb-2"
+            >
+              Analytics Center
+            </h1>
+            <p class="text-slate-500 dark:text-slate-400 text-sm">
+              Deep dive into your performance metrics and sales trends.
+            </p>
+          </div>
+          <div class="flex flex-wrap gap-2 w-full xl:w-auto items-center">
+            <div class="relative group">
+              <i
+                class="bi bi-calendar-range absolute left-3 top-2.5 text-slate-400 text-xs"
+              ></i>
+              <select
+                id="dateRangeSelect"
+                onchange="simulateDataRefresh()"
+                class="pl-8 pr-8 py-2 text-xs font-bold rounded-lg border border-slate-200 dark:border-white/10 bg-white dark:bg-dark-card text-slate-700 dark:text-white outline-none focus:border-brand-500 appearance-none shadow-sm cursor-pointer"
+              >
+                <option value="7">Last 7 Days</option>
+                <option value="30" selected>Last 30 Days</option>
+                <option value="90">Last 90 Days</option>
+                <option value="365">This Year</option>
+              </select>
+              <i
+                class="bi bi-chevron-down absolute right-3 top-2.5 text-slate-400 text-[10px] pointer-events-none"
+              ></i>
+            </div>
+          </div>
+        </div>
+
+        <div
+          id="analytics-stats-grid"
+          class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 md:gap-6 mb-8 animate-slide-in"
+          style="animation-delay: 0.1s"
+        ></div>
+
+        <div
+          class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8 animate-slide-in"
+          style="animation-delay: 0.2s"
+        >
+          <div
+            id="perfChartContainer"
+            class="lg:col-span-2 bg-white dark:bg-dark-card border border-slate-200 dark:border-white/10 p-5 rounded-2xl shadow-sm transition-all duration-300 relative"
+          >
+            <div class="flex justify-between items-center mb-6">
+              <div>
+                <h3 class="font-bold text-slate-900 dark:text-white">
+                  Revenue vs Net Profit
+                </h3>
+                <p class="text-xs text-slate-500">
+                  Comparing gross income against margin.
+                </p>
+              </div>
+              <button
+                onclick="toggleCardFullscreen(this)"
+                class="w-8 h-8 rounded bg-slate-100 dark:bg-white/5 text-slate-500 hover:text-brand-500 flex items-center justify-center transition-colors tooltip"
+                title="Toggle Fullscreen"
+              >
+                <i class="bi bi-arrows-fullscreen text-xs"></i>
+              </button>
+            </div>
+            <div
+              class="h-72 w-full transition-all duration-300"
+              id="perfChartWrapper"
+            >
+              <canvas id="performanceChart"></canvas>
+            </div>
+          </div>
+
+          <div
+            class="lg:col-span-1 bg-white dark:bg-dark-card border border-slate-200 dark:border-white/10 p-5 rounded-2xl shadow-sm"
+          >
+            <div class="mb-4">
+              <h3 class="font-bold text-slate-900 dark:text-white">
+                Sales Distribution
+              </h3>
+              <p class="text-xs text-slate-500">
+                By top-level component categories.
+              </p>
+            </div>
+            <div class="h-56 w-full flex items-center justify-center relative">
+              <canvas id="categoryChart"></canvas>
+              <div
+                class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none mt-2"
+              >
+                <span
+                  id="categoryCenterTotal"
+                  class="text-2xl font-black text-slate-900 dark:text-white font-mono"
+                  >1.2k</span
+                >
+                <span
+                  class="text-[10px] uppercase tracking-widest text-slate-500 font-bold"
+                  >Units</span
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div
+          class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8 animate-slide-in"
+          style="animation-delay: 0.3s"
+        >
+          <div
+            class="lg:col-span-1 bg-white dark:bg-dark-card border border-slate-200 dark:border-white/10 p-5 rounded-2xl shadow-sm"
+          >
+            <div class="mb-6">
+              <h3 class="font-bold text-slate-900 dark:text-white">
+                User Traffic Sources
+              </h3>
+              <p class="text-xs text-slate-500">
+                Where your customers are coming from.
+              </p>
+            </div>
+            <div class="h-64 w-full">
+              <canvas id="trafficChart"></canvas>
+            </div>
+          </div>
+
+          <div
+            class="lg:col-span-2 bg-white dark:bg-dark-card border border-slate-200 dark:border-white/10 rounded-2xl overflow-hidden shadow-sm flex flex-col"
+          >
+            <div
+              class="p-5 border-b border-slate-200 dark:border-white/10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4"
+            >
+              <div>
+                <h3 class="font-bold text-slate-900 dark:text-white">
+                  Top Performing Products
+                </h3>
+                <p class="text-xs text-slate-500">
+                  Highest grossing items in the selected period.
+                </p>
+              </div>
+              <div class="flex gap-2">
+                <button
+                  onclick="exportCSV()"
+                  class="flex items-center gap-2 text-xs font-bold text-emerald-500 bg-emerald-500/10 px-3 py-1.5 rounded-lg hover:bg-emerald-500/20 transition-colors"
+                >
+                  <i class="bi bi-filetype-csv"></i> Export CSV
+                </button>
+                <button
+                  id="viewAllBtn"
+                  onclick="loadMoreProducts(this)"
+                  class="text-xs font-bold text-brand-500 bg-brand-500/10 px-3 py-1.5 rounded-lg hover:bg-brand-500/20 transition-colors"
+                >
+                  View All
+                </button>
+              </div>
+            </div>
+
+            <div class="flex-1 overflow-x-auto">
+              <table class="w-full text-left text-sm glass-table">
+                <thead>
+                  <tr
+                    class="text-slate-500 border-b border-slate-200 dark:border-white/10 bg-slate-50/50 dark:bg-white/5"
+                  >
+                    <th
+                      onclick="sortTable('rank')"
+                      class="sortable px-5 py-3 font-bold uppercase text-[10px] tracking-widest whitespace-nowrap"
+                    >
+                      Rank <i class="bi bi-arrow-down-up opacity-50 ml-1"></i>
+                    </th>
+                    <th
+                      onclick="sortTable('name')"
+                      class="sortable px-5 py-3 font-bold uppercase text-[10px] tracking-widest whitespace-nowrap"
+                    >
+                      Product Name
+                      <i class="bi bi-arrow-down-up opacity-50 ml-1"></i>
+                    </th>
+                    <th
+                      onclick="sortTable('category')"
+                      class="sortable px-5 py-3 font-bold uppercase text-[10px] tracking-widest whitespace-nowrap"
+                    >
+                      Category
+                      <i class="bi bi-arrow-down-up opacity-50 ml-1"></i>
+                    </th>
+                    <th
+                      onclick="sortTable('sold')"
+                      class="sortable px-5 py-3 font-bold uppercase text-[10px] tracking-widest text-right whitespace-nowrap"
+                    >
+                      Sold <i class="bi bi-arrow-down-up opacity-50 ml-1"></i>
+                    </th>
+                    <th
+                      onclick="sortTable('revenue')"
+                      class="sortable px-5 py-3 font-bold uppercase text-[10px] tracking-widest text-right whitespace-nowrap"
+                    >
+                      Revenue
+                      <i class="bi bi-arrow-down-up opacity-50 ml-1"></i>
+                    </th>
+                    <th
+                      class="px-5 py-3 font-bold uppercase text-[10px] tracking-widest text-center whitespace-nowrap"
+                    >
+                      Trend
+                    </th>
+                  </tr>
+                </thead>
+                <tbody
+                  class="divide-y divide-slate-200 dark:divide-white/5"
+                  id="products-table-body"
+                ></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <nav
+      class="lg:hidden fixed bottom-2 left-1 right-1 bg-white/90 dark:bg-[#0f172a]/95 backdrop-blur-xl border border-slate-200 dark:border-white/10 p-2 rounded-full shadow-2xl z-50 flex overflow-x-auto gap-2 items-center [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+    >
+      <a
+        href="admin_home.html"
+        class="mobile-nav-link flex-shrink-0 flex flex-col items-center justify-center w-10 h-10 rounded-full text-slate-500 hover:text-brand-500"
+      >
+        <i class="bi bi-grid-1x2-fill text-lg"></i>
+      </a>
+      <a
+        href="reports.html"
+        class="mobile-nav-link active flex-shrink-0 flex flex-col items-center justify-center w-10 h-10 rounded-full text-slate-500 hover:text-brand-500"
+      >
+        <i class="bi bi-bar-chart-fill text-lg"></i>
+      </a>
+      <a
+        href="#"
+        onclick="confirmLogout()"
+        class="mobile-nav-link flex flex-col items-center justify-center w-10 h-10 rounded-full text-slate-500 hover:text-brand-500"
+      >
+        <i class="bi bi-box-arrow-right text-lg"></i>
+      </a>
+    </nav>
+
+    <div
+      id="logout-modal"
+      class="fixed inset-0 z-[100] hidden flex items-center justify-center bg-black/80 backdrop-blur-sm"
+    >
+      <div
+        class="bg-white dark:bg-dark-card p-6 rounded-2xl w-full max-w-sm border border-slate-200 dark:border-white/10 shadow-2xl scale-95 opacity-0 transition-all duration-200"
+        id="logout-content"
+      >
+        <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-2">
+          Confirm Logout
+        </h3>
+        <p class="text-sm text-slate-500 dark:text-slate-400 mb-6">
+          Are you sure you want to end your session?
+        </p>
+        <div class="flex gap-3">
+          <button
+            onclick="closeLogout()"
+            class="flex-1 px-4 py-2 rounded-lg border border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-300 font-bold text-sm hover:bg-slate-100 dark:hover:bg-white/5 transition-colors"
+          >
+            Cancel
+          </button>
+          <button
+            onclick="window.location.href = 'login.html'"
+            class="flex-1 px-4 py-2 rounded-lg bg-red-500 text-white font-bold text-sm hover:bg-red-600 transition-colors shadow-lg shadow-red-500/20"
+          >
+            Logout
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // --- 1. Core Data ---
+      let analyticsStats = [
+        {
+          id: "conv",
+          title: "Conversion Rate",
+          value: 3.24,
+          prefix: "",
+          suffix: "%",
+          change: "+0.8%",
+          sub: "vs last period",
+          icon: "bi-funnel-fill",
+          color: "brand",
+          positive: true,
+        },
+        {
+          id: "aov",
+          title: "Avg Order Value",
+          value: 45200,
+          prefix: "₹",
+          suffix: "",
+          change: "+12%",
+          sub: "vs last period",
+          icon: "bi-cart-plus-fill",
+          color: "accent",
+          positive: true,
+        },
+        {
+          id: "profit",
+          title: "Total Profit",
+          value: 185400,
+          prefix: "₹",
+          suffix: "",
+          change: "-2.4%",
+          sub: "vs last period",
+          icon: "bi-piggy-bank-fill",
+          color: "warning",
+          positive: false,
+        },
+        {
+          id: "return",
+          title: "Return Rate",
+          value: 1.2,
+          prefix: "",
+          suffix: "%",
+          change: "-0.5%",
+          sub: "vs last period",
+          icon: "bi-arrow-return-left",
+          color: "success",
+          positive: true,
+        },
+      ];
+
+      let topProducts = [
+        {
+          rank: 1,
+          name: "MSI MAG Z590 Tomahawk WiFi",
+          category: "Motherboards",
+          sold: 142,
+          revenue: "₹3,40,800",
+          trend: "up",
+        },
+        {
+          rank: 2,
+          name: "Intel Core i5-11600K 11th Gen",
+          category: "Processors",
+          sold: 98,
+          revenue: "₹2,15,600",
+          trend: "up",
+        },
+        {
+          rank: 3,
+          name: "Corsair Vengeance LPX 16GB DDR4",
+          category: "Memory",
+          sold: 215,
+          revenue: "₹96,750",
+          trend: "down",
+        },
+        {
+          rank: 4,
+          name: "Samsung 980 512GB M.2 NVMe",
+          category: "Storage",
+          sold: 176,
+          revenue: "₹88,000",
+          trend: "up",
+        },
+        {
+          rank: 5,
+          name: "Seagate BarraCuda 1TB HDD",
+          category: "Storage",
+          sold: 84,
+          revenue: "₹29,400",
+          trend: "down",
+        },
+      ];
+
+      // Format Numbers to Indian Rupee Locale
+      const formatNum = (num) => new Intl.NumberFormat("en-IN").format(num);
+
+      // --- 2. Global Variables ---
+      let perfChart, catChart, trafChart;
+      let sortDirection = 1; // 1 for asc, -1 for desc
+
+      // --- 3. Rendering Functions ---
+      function renderStatsGrid() {
+        const statsGrid = document.getElementById("analytics-stats-grid");
+        if (statsGrid) {
+          statsGrid.innerHTML = analyticsStats
+            .map((stat) => {
+              let themeColor = "text-emerald-500 bg-emerald-500/10";
+              if (stat.color === "brand")
+                themeColor = "text-brand-500 bg-brand-500/10";
+              if (stat.color === "accent")
+                themeColor = "text-accent-500 bg-accent-500/10";
+              if (stat.color === "warning")
+                themeColor = "text-yellow-500 bg-yellow-500/10";
+
+              const trendIcon = stat.positive
+                ? "bi-arrow-up-right"
+                : "bi-arrow-down-right";
+              const trendColor = stat.positive
+                ? "text-emerald-500 bg-emerald-500/10"
+                : "text-red-500 bg-red-500/10";
+
+              return `
+                  <div class="bg-white dark:bg-dark-card border border-slate-200 dark:border-white/10 p-5 rounded-2xl shadow-sm transition-all hover:shadow-neon group">
+                    <div class="flex justify-between items-start mb-4">
+                      <div>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">${stat.title}</p>
+                        <h3 class="text-2xl font-black text-slate-900 dark:text-white mt-1 font-mono">${stat.prefix}${formatNum(stat.value)}${stat.suffix}</h3>
+                      </div>
+                      <div class="w-10 h-10 rounded-lg ${themeColor} flex items-center justify-center">
+                        <i class="bi ${stat.icon} text-xl"></i>
+                      </div>
+                    </div>
+                    <span class="text-xs font-bold px-2 py-1 rounded flex items-center gap-1 w-fit ${trendColor}">
+                      <i class="bi ${trendIcon}"></i> ${stat.change} <span class="text-slate-400 font-normal text-[10px] ml-1">${stat.sub}</span>
+                    </span>
+                  </div>`;
+            })
+            .join("");
+        }
+      }
+
+      function renderTable() {
+        const tbody = document.getElementById("products-table-body");
+        if (tbody) {
+          tbody.innerHTML = topProducts
+            .map((product) => {
+              const trendClass =
+                product.trend === "up"
+                  ? "text-emerald-500 bg-emerald-500/10 bi-graph-up-arrow"
+                  : "text-red-500 bg-red-500/10 bi-graph-down-arrow";
+              return `
+                  <tr class="text-slate-700 dark:text-slate-300 border-b border-slate-200 dark:border-white/5 last:border-0 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors">
+                      <td class="px-5 py-4"><span class="w-6 h-6 rounded-full bg-slate-100 dark:bg-white/5 flex items-center justify-center text-xs font-bold text-slate-500">#${product.rank}</span></td>
+                      <td class="px-5 py-4 font-bold text-sm">${product.name}</td>
+                      <td class="px-5 py-4"><span class="px-2 py-1 rounded text-[10px] font-bold uppercase border border-slate-200 dark:border-white/10 text-slate-500">${product.category}</span></td>
+                      <td class="px-5 py-4 font-mono font-bold text-right">${product.sold}</td>
+                      <td class="px-5 py-4 font-mono font-bold text-brand-500 text-right">${product.revenue}</td>
+                      <td class="px-5 py-4 text-center">
+                          <div class="inline-flex w-7 h-7 rounded-full items-center justify-center ${trendClass}"><i class="bi text-xs"></i></div>
+                      </td>
+                  </tr>`;
+            })
+            .join("");
+        }
+      }
+
+      function initAnalyticsCharts() {
+        if (typeof Chart === "undefined") {
+          console.error("Chart.js missing!");
+          return;
+        }
+
+        const isDark =
+          document.documentElement.getAttribute("data-theme") === "dark";
+        const gridColor = isDark
+          ? "rgba(255,255,255,0.05)"
+          : "rgba(0,0,0,0.05)";
+        const textColor = isDark ? "#94a3b8" : "#64748b";
+
+        // Line Chart (Performance)
+        const perfEl = document.getElementById("performanceChart");
+        if (perfEl) {
+          perfChart = new Chart(perfEl.getContext("2d"), {
+            type: "line",
+            data: {
+              labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"], // Default labels
+              datasets: [
+                {
+                  label: "Revenue",
+                  data: [45000, 52000, 48000, 61000, 59000, 75000, 82000],
+                  borderColor: "#0ea5e9",
+                  backgroundColor: "rgba(14, 165, 233, 0.1)",
+                  borderWidth: 3,
+                  tension: 0.4,
+                  fill: true,
+                },
+                {
+                  label: "Net Profit",
+                  data: [15000, 18000, 16000, 22000, 20000, 28000, 31000],
+                  borderColor: "#8b5cf6",
+                  borderWidth: 2,
+                  borderDash: [5, 5],
+                  tension: 0.4,
+                  fill: false,
+                },
+              ],
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {
+                legend: {
+                  position: "top",
+                  align: "end",
+                  labels: {
+                    usePointStyle: true,
+                    color: textColor,
+                    boxWidth: 8,
+                  },
+                },
+              },
+              interaction: { mode: "index", intersect: false },
+              scales: {
+                y: {
+                  grid: { color: gridColor },
+                  border: { display: false },
+                  ticks: { color: textColor },
+                },
+                x: {
+                  grid: { display: false },
+                  border: { display: false },
+                  ticks: { color: textColor },
+                },
+              },
+            },
+          });
+        }
+
+        // Doughnut Chart (Category)
+        const catEl = document.getElementById("categoryChart");
+        if (catEl) {
+          catChart = new Chart(catEl.getContext("2d"), {
+            type: "doughnut",
+            data: {
+              labels: [
+                "GPUs",
+                "CPUs",
+                "Motherboards",
+                "Memory/Storage",
+                "Peripherals",
+              ],
+              datasets: [
+                {
+                  data: [350, 250, 150, 150, 100],
+                  backgroundColor: [
+                    "#0ea5e9",
+                    "#8b5cf6",
+                    "#38bdf8",
+                    "#10b981",
+                    "#f59e0b",
+                  ],
+                  borderWidth: 0,
+                  hoverOffset: 4,
+                },
+              ],
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              cutout: "75%",
+              plugins: {
+                legend: {
+                  position: "right",
+                  labels: {
+                    usePointStyle: true,
+                    color: textColor,
+                    boxWidth: 6,
+                    font: { size: 11 },
+                  },
+                },
+              },
+            },
+          });
+        }
+
+        // Bar Chart (Traffic)
+        const trafEl = document.getElementById("trafficChart");
+        if (trafEl) {
+          trafChart = new Chart(trafEl.getContext("2d"), {
+            type: "bar",
+            data: {
+              labels: ["Organic", "Direct", "Social", "Referral", "Email"],
+              datasets: [
+                {
+                  label: "Visits",
+                  data: [12500, 8200, 5400, 3100, 1800],
+                  backgroundColor: "#38bdf8",
+                  borderRadius: 6,
+                  barThickness: 24,
+                },
+              ],
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: { legend: { display: false } },
+              scales: {
+                y: {
+                  grid: { color: gridColor },
+                  border: { display: false },
+                  ticks: { color: textColor },
+                },
+                x: {
+                  grid: { display: false },
+                  border: { display: false },
+                  ticks: { color: textColor },
+                },
+              },
+            },
+          });
+        }
+      }
+
+      // --- 4. Interactive Functions ---
+
+      // Sorting Logic for the Table
+      function sortTable(column) {
+        sortDirection *= -1; // Toggle direction
+
+        topProducts.sort((a, b) => {
+          let valA = a[column];
+          let valB = b[column];
+
+          // Clean currency strings for accurate number sorting
+          if (typeof valA === "string" && valA.includes("₹")) {
+            valA = parseInt(valA.replace(/[^0-9.-]+/g, ""));
+            valB = parseInt(valB.replace(/[^0-9.-]+/g, ""));
+          }
+          // Clean strings for alphabetical sorting
+          if (typeof valA === "string" && !valA.includes("₹")) {
+            valA = valA.toLowerCase();
+            valB = valB.toLowerCase();
+          }
+
+          if (valA < valB) return -1 * sortDirection;
+          if (valA > valB) return 1 * sortDirection;
+          return 0;
+        });
+
+        renderTable();
+      }
+
+      // Export Table to CSV
+      function exportCSV() {
+        let csvContent = "data:text/csv;charset=utf-8,";
+        csvContent += "Rank,Product Name,Category,Sold,Revenue,Trend\n"; // Headers
+
+        topProducts.forEach((row) => {
+          // Quote strings to prevent commas from breaking CSV columns
+          let rowData = `${row.rank},"${row.name}","${row.category}",${row.sold},"${row.revenue}",${row.trend}`;
+          csvContent += rowData + "\n";
+        });
+
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", "Nexus_Top_Products.csv");
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+
+      // Search Filter
+      document
+        .getElementById("adminSearch")
+        .addEventListener("input", function (e) {
+          const term = e.target.value.toLowerCase();
+          const rows = document.querySelectorAll("#products-table-body tr");
+          rows.forEach((row) => {
+            const text = row.textContent.toLowerCase();
+            row.style.display = text.includes(term) ? "" : "none";
+          });
+        });
+
+      // Search Keyboard Shortcut (Ctrl+K)
+      document.addEventListener("keydown", (e) => {
+        if ((e.ctrlKey || e.metaKey) && e.key === "k") {
+          e.preventDefault();
+          document.getElementById("adminSearch").focus();
+        }
+      });
+
+      // Date Range Change Simulation (Updates Charts AND KPI Cards)
+      function simulateDataRefresh() {
+        const range = document.getElementById("dateRangeSelect").value;
+
+        // 1. Update KPI Cards dynamically
+        analyticsStats.forEach((stat) => {
+          // add or subtract up to 10% randomly
+          const modifier = Math.random() * 0.2 + 0.9;
+          stat.value = Number(
+            (stat.value * modifier).toFixed(
+              stat.id === "return" || stat.id === "conv" ? 2 : 0,
+            ),
+          );
+
+          // Randomize trend positive/negative
+          const isPositive = Math.random() > 0.4; // 60% chance to be positive
+          stat.positive = isPositive;
+          stat.color = isPositive
+            ? stat.id === "profit" || stat.id === "aov"
+              ? "brand"
+              : "success"
+            : "warning";
+          stat.change =
+            (isPositive ? "+" : "-") + (Math.random() * 5).toFixed(1) + "%";
+        });
+        renderStatsGrid();
+
+        // 2. Update Charts
+        if (perfChart) {
+          // Change X-Axis labels based on selected range
+          if (range == "7") {
+            perfChart.data.labels = [
+              "Mon",
+              "Tue",
+              "Wed",
+              "Thu",
+              "Fri",
+              "Sat",
+              "Sun",
+            ];
+          } else if (range == "30") {
+            perfChart.data.labels = ["Week 1", "Week 2", "Week 3", "Week 4"];
+          } else {
+            perfChart.data.labels = [
+              "Jan",
+              "Feb",
+              "Mar",
+              "Apr",
+              "May",
+              "Jun",
+              "Jul",
+            ];
+          }
+          // Randomize data
+          perfChart.data.datasets[0].data = perfChart.data.labels.map(
+            () => Math.floor(Math.random() * 50000) + 20000,
+          );
+          perfChart.data.datasets[1].data = perfChart.data.datasets[0].data.map(
+            (v) => Math.floor(v * (Math.random() * 0.3 + 0.1)),
+          ); // profit is smaller than revenue
+          perfChart.update();
+        }
+        if (catChart) {
+          catChart.data.datasets[0].data = catChart.data.datasets[0].data.map(
+            () => Math.floor(Math.random() * 300) + 50,
+          );
+          catChart.update();
+          // Update center label
+          const total = catChart.data.datasets[0].data.reduce(
+            (a, b) => a + b,
+            0,
+          );
+          document.getElementById("categoryCenterTotal").innerText =
+            (total / 1000).toFixed(1) + "k";
+        }
+        if (trafChart) {
+          trafChart.data.datasets[0].data = trafChart.data.datasets[0].data.map(
+            () => Math.floor(Math.random() * 15000) + 2000,
+          );
+          trafChart.update();
+        }
+      }
+
+      // Fullscreen Chart Toggle
+      function toggleCardFullscreen(btn) {
+        const card = btn.closest(".bg-white"); // targets the chart card
+        const wrapper = document.getElementById("perfChartWrapper");
+        const icon = btn.querySelector("i");
+
+        card.classList.toggle("chart-fullscreen");
+
+        if (card.classList.contains("chart-fullscreen")) {
+          wrapper.classList.remove("h-72");
+          wrapper.classList.add("h-[85vh]");
+          icon.classList.replace("bi-arrows-fullscreen", "bi-fullscreen-exit");
+        } else {
+          wrapper.classList.add("h-72");
+          wrapper.classList.remove("h-[85vh]");
+          icon.classList.replace("bi-fullscreen-exit", "bi-arrows-fullscreen");
+        }
+
+        // Re-render chart to fit new container size
+        setTimeout(() => {
+          if (perfChart) perfChart.resize();
+        }, 300);
+      }
+
+      // View All Products Load Simulation
+      function loadMoreProducts(btn) {
+        btn.innerHTML =
+          '<i class="bi bi-arrow-repeat animate-spin inline-block"></i> Loading...';
+        btn.disabled = true;
+
+        setTimeout(() => {
+          const extraProducts = [
+            {
+              rank: 6,
+              name: "ASUS ROG Strix 850W PSU",
+              category: "Power",
+              sold: 65,
+              revenue: "₹12,500",
+              trend: "up",
+            },
+            {
+              rank: 7,
+              name: "NZXT Kraken Z73 Cooler",
+              category: "Cooling",
+              sold: 42,
+              revenue: "₹24,000",
+              trend: "up",
+            },
+            {
+              rank: 8,
+              name: "Logitech G Pro Wireless",
+              category: "Peripherals",
+              sold: 110,
+              revenue: "₹16,500",
+              trend: "down",
+            },
+          ];
+          topProducts.push(...extraProducts);
+          renderTable();
+
+          btn.innerHTML = "All Loaded";
+          btn.classList.add("opacity-50", "cursor-not-allowed");
+        }, 800);
+      }
+
+      // Download PDF
+      function downloadPDF() {
+        const element = document.getElementById("pdf-content");
+        const opt = {
+          margin: [0.5, 0.5, 0.5, 0.5],
+          filename: "Nexus_Analytics_Report.pdf",
+          image: { type: "jpeg", quality: 0.98 },
+          html2canvas: { scale: 2, useCORS: true, logging: false },
+          jsPDF: { unit: "in", format: "letter", orientation: "landscape" },
+        };
+        html2pdf().set(opt).from(element).save();
+      }
+
+      // --- 5. Theme & Modals ---
+      function updateChartThemes(isDark) {
+        const gridColor = isDark
+          ? "rgba(255,255,255,0.05)"
+          : "rgba(0,0,0,0.05)";
+        const textColor = isDark ? "#94a3b8" : "#64748b";
+
+        if (perfChart) {
+          perfChart.options.scales.x.grid.color = gridColor;
+          perfChart.options.scales.y.grid.color = gridColor;
+          perfChart.options.scales.x.ticks.color = textColor;
+          perfChart.options.scales.y.ticks.color = textColor;
+          perfChart.options.plugins.legend.labels.color = textColor;
+          perfChart.update();
+        }
+        if (catChart) {
+          catChart.options.plugins.legend.labels.color = textColor;
+          catChart.update();
+        }
+        if (trafChart) {
+          trafChart.options.scales.x.grid.color = gridColor;
+          trafChart.options.scales.y.grid.color = gridColor;
+          trafChart.options.scales.x.ticks.color = textColor;
+          trafChart.options.scales.y.ticks.color = textColor;
+          trafChart.update();
+        }
+      }
+
+      function initTheme() {
+        const htmlEl = document.documentElement;
+        const savedTheme = localStorage.getItem("theme");
+        const icon = document.querySelector("#themeToggle i");
+
+        if (savedTheme === "light") {
+          htmlEl.setAttribute("data-theme", "light");
+          htmlEl.classList.remove("dark");
+          if (icon) icon.classList.replace("bi-moon-stars-fill", "bi-sun-fill");
+        } else {
+          htmlEl.setAttribute("data-theme", "dark");
+          htmlEl.classList.add("dark");
+          if (icon) icon.classList.replace("bi-sun-fill", "bi-moon-stars-fill");
+        }
+      }
+
+      const themeToggleBtn = document.getElementById("themeToggle");
+      if (themeToggleBtn) {
+        themeToggleBtn.addEventListener("click", () => {
+          const htmlEl = document.documentElement;
+          const isCurrentlyDark = htmlEl.getAttribute("data-theme") === "dark";
+          const newTheme = isCurrentlyDark ? "light" : "dark";
+
+          localStorage.setItem("theme", newTheme);
+          initTheme();
+          updateChartThemes(!isCurrentlyDark);
+        });
+      }
+
+      function confirmLogout() {
+        const modal = document.getElementById("logout-modal");
+        const content = document.getElementById("logout-content");
+        modal.classList.remove("hidden");
+        modal.classList.add("flex");
+        setTimeout(() => {
+          content.classList.remove("opacity-0", "scale-95");
+          content.classList.add("opacity-100", "scale-100");
+        }, 10);
+      }
+
+      function closeLogout() {
+        const modal = document.getElementById("logout-modal");
+        const content = document.getElementById("logout-content");
+        content.classList.remove("opacity-100", "scale-100");
+        content.classList.add("opacity-0", "scale-95");
+        setTimeout(() => {
+          modal.classList.add("hidden");
+          modal.classList.remove("flex");
+        }, 200);
+      }
+
+      // Execute on Page Load
+      document.addEventListener("DOMContentLoaded", () => {
+        initTheme();
+        renderStatsGrid();
+        renderTable();
+        initAnalyticsCharts();
+      });
+    </script>
+  </body>
+</html>

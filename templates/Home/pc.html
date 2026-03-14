@@ -1,0 +1,1073 @@
+{% load static %}
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Nexus Builder | Ultimate PC Configurator</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script>
+      tailwind.config = {
+        darkMode: ["class", '[data-theme="dark"]'],
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['"Outfit"', "sans-serif"],
+              mono: ['"Space Grotesk"', "monospace"],
+            },
+            colors: {
+              brand: {
+                400: "#38bdf8",
+                500: "#0ea5e9",
+                600: "#0284c7",
+                glow: "rgba(14, 165, 233, 0.3)",
+              },
+              accent: {
+                400: "#a78bfa",
+                500: "#8b5cf6",
+                600: "#7c3aed",
+                glow: "rgba(139, 92, 246, 0.3)",
+              },
+              dark: {
+                bg: "#0b0f19",
+                card: "#111827",
+                border: "#1f2937",
+              },
+            },
+            backgroundImage: {
+              "grid-pattern":
+                "linear-gradient(to right, #1f2937 1px, transparent 1px), linear-gradient(to bottom, #1f2937 1px, transparent 1px)",
+            },
+            boxShadow: {
+              neon: "0 0 12px -3px var(--tw-shadow-color)",
+            },
+            animation: {
+              float: "float 6s ease-in-out infinite",
+              "slide-in": "slideIn 0.3s ease-out forwards",
+              pulse: "pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+            },
+            keyframes: {
+              float: {
+                "0%, 100%": { transform: "translateY(0)" },
+                "50%": { transform: "translateY(-6px)" },
+              },
+              slideIn: {
+                "0%": { opacity: "0", transform: "translateX(-10px)" },
+                "100%": { opacity: "1", transform: "translateX(0)" },
+              },
+            },
+          },
+        },
+      };
+    </script>
+
+    <style>
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #030712;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #334155;
+        border-radius: 4px;
+        border: 2px solid #030712;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #475569;
+      }
+
+      .bg-grid {
+        background-size: 40px 40px;
+        mask-image: linear-gradient(
+          to bottom,
+          transparent,
+          10% white,
+          90% white,
+          transparent
+        );
+        -webkit-mask-image: linear-gradient(
+          to bottom,
+          transparent,
+          5% white,
+          95% white,
+          transparent
+        );
+      }
+
+      select {
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2338bdf8' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+        background-position: right 0.75rem center;
+        background-repeat: no-repeat;
+        background-size: 1.25em 1.25em;
+      }
+
+      .circuit-line {
+        position: absolute;
+        left: 23px;
+        top: 35px;
+        bottom: -35px;
+        width: 2px;
+        background: linear-gradient(
+          to bottom,
+          #334155 0%,
+          #0ea5e9 50%,
+          #334155 100%
+        );
+        opacity: 0.2;
+        z-index: 0;
+      }
+      .component:last-child .circuit-line {
+        display: none;
+      }
+      .component.active .circuit-line {
+        background: linear-gradient(to bottom, #0ea5e9 0%, #8b5cf6 100%);
+        opacity: 0.8;
+        box-shadow: 0 0 8px rgba(14, 165, 233, 0.6);
+      }
+
+      .status-ok {
+        border-color: rgba(16, 185, 129, 0.5);
+        box-shadow: 0 0 15px -3px rgba(16, 185, 129, 0.2);
+      }
+      .status-warn {
+        border-color: rgba(245, 158, 11, 0.5);
+        box-shadow: 0 0 15px -3px rgba(245, 158, 11, 0.2);
+      }
+      .status-err {
+        border-color: rgba(239, 68, 68, 0.5);
+        box-shadow: 0 0 15px -3px rgba(239, 68, 68, 0.2);
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        ::before,
+        ::after {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+          scroll-behavior: auto !important;
+        }
+      }
+    </style>
+  </head>
+  <body
+    class="bg-slate-50 dark:bg-dark-bg text-slate-600 dark:text-slate-300 antialiased transition-colors duration-500 pb-40 selection:bg-brand-500 selection:text-white overflow-x-hidden"
+  >
+    <div class="fixed inset-0 z-0 pointer-events-none" aria-hidden="true">
+      <div
+        class="absolute inset-0 bg-grid-pattern bg-grid opacity-[0.03] dark:opacity-[0.05]"
+      ></div>
+      <div
+        class="absolute top-0 left-0 w-[500px] h-[500px] bg-brand-500/10 rounded-full blur-[100px] -translate-x-1/2 -translate-y-1/2 mix-blend-screen"
+      ></div>
+      <div
+        class="absolute bottom-0 right-0 w-[500px] h-[500px] bg-accent-500/10 rounded-full blur-[100px] translate-x-1/2 translate-y-1/2 mix-blend-screen"
+      ></div>
+    </div>
+
+    <header
+      class="sticky top-0 z-50 w-full backdrop-blur-md bg-white/80 dark:bg-dark-bg/80 border-b border-slate-200/60 dark:border-white/5 transition-all duration-300"
+    >
+      <div
+        class="max-w-7xl mx-auto px-4 md:px-6 h-20 flex items-center justify-between"
+      >
+        <a href="{% url 'core:homepage'%}" class="flex items-center gap-3 group">
+          <div
+            class="relative w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-500 to-accent-600 text-white flex items-center justify-center font-bold text-lg shadow-lg shadow-brand-500/20 group-hover:rotate-12 transition-transform duration-300"
+          >
+            <i class="bi bi-cpu-fill" aria-hidden="true"></i>
+          </div>
+          <div class="flex flex-col">
+            <span
+              class="font-bold text-xl tracking-tight text-slate-900 dark:text-white font-mono uppercase"
+            >
+              Nexus<span class="text-brand-400">Build</span>
+            </span>
+            <span
+              class="text-[10px] font-bold tracking-widest text-slate-500 uppercase"
+              >Intelligent Configurator</span
+            >
+          </div>
+        </a>
+
+        <nav
+          class="hidden md:flex items-center gap-1 bg-slate-100/50 dark:bg-white/5 p-1.5 rounded-full border border-slate-200 dark:border-white/10 backdrop-blur-md"
+        >
+          <a
+            href="{% url 'core:homepage'%}"
+            class="px-6 py-2 rounded-full text-sm font-medium hover:text-brand-600 hover:bg-white dark:hover:bg-white/10 dark:hover:text-white transition-all"
+            >Home</a
+          >
+          <a
+            href="{% url 'core:prebuilt'%}"
+            class="px-6 py-2 rounded-full text-sm font-medium hover:text-brand-600 hover:bg-white dark:hover:bg-white/10 dark:hover:text-white transition-all"
+            >Prebuilt</a
+          >
+          <a
+            href="{% url 'core:built'%}"
+            class="px-6 py-2 rounded-full text-sm font-bold bg-white dark:bg-brand-600 text-brand-600 dark:text-white shadow-md shadow-brand-500/10"
+            >Builder</a
+          >
+          <a
+            href="cart.html"
+            class="px-6 py-2 rounded-full text-sm font-medium hover:text-brand-600 hover:bg-white dark:hover:bg-white/10 dark:hover:text-white transition-all"
+            >Cart</a
+          >
+          <a
+            href="{% url 'core:profile'%}"
+            class="px-6 py-2 rounded-full text-sm font-medium hover:text-brand-600 hover:bg-white dark:hover:bg-white/10 dark:hover:text-white transition-all"
+            >Profile</a
+          >
+        </nav>
+
+        <div class="flex items-center gap-3">
+          <button
+            id="themeToggle"
+            class="w-10 h-10 rounded-full flex items-center justify-center text-slate-500 hover:bg-slate-100 dark:hover:bg-white/10 dark:text-slate-400 transition-colors border border-transparent dark:hover:border-white/20"
+            aria-label="Toggle Theme"
+          >
+            <i class="bi bi-moon-stars-fill text-sm" aria-hidden="true"></i>
+          </button>
+          <div
+            class="h-8 w-px bg-slate-200 dark:bg-white/10 mx-1 hidden sm:block"
+          ></div>
+          {% if request.user.is_authenticated %}
+          <a
+            href=""
+            class="hidden sm:flex items-center gap-2 px-6 py-2.5 rounded-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold text-sm hover:scale-105 active:scale-95 transition-all shadow-md"
+          >
+            <span>Logout</span>
+          </a>
+          {% else %}
+          <a
+            href=""
+            class="hidden sm:flex items-center gap-2 px-6 py-2.5 rounded-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold text-sm hover:scale-105 active:scale-95 transition-all shadow-md"
+          >
+            <span>Login</span>
+          </a>
+          {% endif %}
+        </div>
+      </div>
+    </header>
+
+    <main
+      class="relative z-10 max-w-7xl mx-auto px-4 md:px-6 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start"
+    >
+      <section class="lg:col-span-8 animate-slide-up">
+        <div class="mb-8 space-y-6">
+          <div
+            class="pl-2 border-l-4 border-brand-500 flex justify-between items-end"
+          >
+            <div>
+              <h1
+                class="text-3xl md:text-5xl font-black mb-2 tracking-tight text-slate-900 dark:text-white font-mono"
+              >
+                SYSTEM
+                <span
+                  class="text-transparent bg-clip-text bg-gradient-to-r from-brand-400 to-accent-500"
+                  >INITIATED</span
+                >
+              </h1>
+              <p
+                class="text-slate-500 dark:text-slate-400 text-sm md:text-base max-w-xl font-light"
+              >
+                Select separate components. Real-time compatibility checks &
+                power estimation enabled.
+              </p>
+            </div>
+            <div class="hidden md:block w-48 text-right">
+              <div
+                class="flex justify-between text-[10px] font-bold uppercase text-slate-400 mb-1"
+              >
+                <span>Completion</span>
+                <span id="progress-text">0%</span>
+              </div>
+              <div
+                class="h-2 w-full bg-slate-200 dark:bg-white/10 rounded-full overflow-hidden"
+              >
+                <div
+                  id="progress-bar"
+                  class="h-full bg-gradient-to-r from-brand-500 to-accent-500 w-0 transition-all duration-500"
+                ></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex pb-2">
+            <button
+              type="submit"
+              form="buildForm"
+              class="group relative inline-flex items-center justify-center gap-3 px-8 py-3 rounded-xl bg-white dark:bg-[#0a1120] border border-brand-500/30 text-brand-600 dark:text-brand-400 font-bold uppercase tracking-widest text-xs overflow-hidden transition-all duration-300 hover:border-brand-500 hover:shadow-[0_0_20px_rgba(14,165,233,0.3)] hover:-translate-y-0.5"
+            >
+              <div class="absolute inset-0 bg-brand-500/10 group-hover:bg-brand-500/20 transition-colors"></div>
+              <i class="bi bi-floppy2-fill text-lg relative z-10 transition-transform group-hover:scale-110"></i>
+              <span class="relative z-10">Save Build PC</span>
+            </button>
+          </div>
+        </div>
+
+        <form id="buildForm" method="POST" action="">
+          {% csrf_token %}
+          <div class="space-y-4 relative" id="component-list-container"></div>
+        </form>
+      </section>
+
+      <aside class="lg:col-span-4 sticky top-24 z-30">
+        <div class="relative group">
+          <div
+            class="absolute -inset-1 bg-gradient-to-r from-brand-500 to-accent-600 rounded-[2rem] blur-md opacity-20 group-hover:opacity-40 transition duration-1000 group-hover:duration-200"
+          ></div>
+
+          <div
+            class="relative backdrop-blur-xl bg-white/90 dark:bg-[#0a1120]/95 border border-slate-200/50 dark:border-white/10 rounded-3xl overflow-hidden shadow-2xl ring-1 ring-slate-900/5 dark:ring-white/5 flex flex-col h-[calc(100vh-8rem)] max-h-[750px]"
+          >
+            <div
+              class="h-auto py-6 bg-[#02040a] relative overflow-hidden shrink-0 border-b border-white/5"
+            >
+              <div
+                class="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(14,165,233,0.15),transparent_70%)]"
+              ></div>
+
+              <div class="relative px-6 z-10 text-center">
+                <h3
+                  class="font-mono font-bold text-xs tracking-[0.2em] text-brand-400 uppercase mb-3"
+                >
+                  System Health
+                </h3>
+
+                <div
+                  id="build-status"
+                  class="w-full text-xs font-mono font-bold text-slate-400 bg-slate-800/50 border border-slate-500/20 py-2 rounded-lg flex items-center justify-center gap-2 mb-3 transition-colors"
+                >
+                  <span class="relative flex h-2 w-2">
+                    <span
+                      class="animate-ping absolute inline-flex h-full w-full rounded-full bg-slate-400 opacity-75"
+                    ></span>
+                    <span
+                      class="relative inline-flex rounded-full h-2 w-2 bg-slate-500"
+                    ></span>
+                  </span>
+                  INCOMPLETE
+                </div>
+
+                <div class="grid grid-cols-2 gap-2 text-[10px] font-mono">
+                  <div class="bg-white/5 rounded p-2 border border-white/5">
+                    <div class="text-slate-500 uppercase tracking-wide">
+                      Wattage
+                    </div>
+                    <div class="text-white font-bold text-sm">
+                      <span id="watts-total">0</span>W
+                      <span id="watts-max" class="text-slate-500">/ 0W</span>
+                    </div>
+                  </div>
+                  <div class="bg-white/5 rounded p-2 border border-white/5">
+                    <div class="text-slate-500 uppercase tracking-wide">
+                      FPS Est.
+                    </div>
+                    <div class="text-white font-bold text-sm">
+                      <span id="fps-est">0</span>
+                      <span class="text-slate-500">1440p</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div
+              class="flex-1 overflow-y-auto p-6 space-y-4 bg-slate-50/50 dark:bg-[#080e1a]/50"
+            >
+              <div
+                class="flex items-center justify-between border-b border-slate-200 dark:border-white/5 pb-2"
+              >
+                <span
+                  class="text-[10px] font-bold text-slate-400 uppercase tracking-widest"
+                  >Component List</span
+                >
+                <button
+                  type="button"
+                  onclick="copyList()"
+                  class="text-[10px] font-bold text-brand-400 uppercase tracking-widest hover:text-brand-300"
+                >
+                  <i class="bi bi-copy"></i> Copy
+                </button>
+              </div>
+              <ul class="space-y-2" id="summary-list">
+                <li class="text-center py-8 text-slate-400 text-xs italic">
+                  Components will appear here...
+                </li>
+              </ul>
+            </div>
+
+            <div
+              class="p-6 border-t border-slate-200 dark:border-white/10 bg-white dark:bg-[#0a1120] z-20"
+            >
+              <div class="space-y-1 mb-4 text-xs font-mono text-slate-500">
+                <div class="flex justify-between">
+                  <span>Subtotal:</span>
+                  <span class="text-slate-300"
+                    >₹ <span id="price-subtotal">0</span></span
+                  >
+                </div>
+                <div class="flex justify-between">
+                  <span>Tax (18%):</span>
+                  <span class="text-slate-300"
+                    >₹ <span id="price-tax">0</span></span
+                  >
+                </div>
+                <div class="flex justify-between">
+                  <span>Shipping:</span>
+                  <span class="text-green-400">FREE</span>
+                </div>
+              </div>
+
+              <div
+                class="flex justify-between items-end mb-4 border-t border-white/10 pt-3"
+              >
+                <span
+                  class="text-xs text-brand-400 font-bold uppercase tracking-widest"
+                  >Total</span
+                >
+                <span
+                  class="text-2xl font-black font-mono text-white tracking-tight"
+                  >₹ <span id="price-total">0</span></span
+                >
+              </div>
+
+              <div class="grid grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  onclick="saveBuild()"
+                  class="py-3 bg-white/5 border border-white/10 hover:bg-white/10 text-white rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition-all"
+                >
+                  <i class="bi bi-share"></i> Share
+                </button>
+                <button
+                  type="button"
+                  id="addToCartBtn"
+                  class="py-3 bg-brand-600 hover:bg-brand-500 text-white rounded-xl font-bold text-xs flex items-center justify-center gap-2 shadow-lg shadow-brand-500/20 transition-all"
+                >
+                  <i class="bi bi-cart-check"></i> Checkout
+                </button>
+              </div>
+              <div class="mt-3 text-center">
+                <a
+                  href="#"
+                  class="text-[10px] text-slate-500 hover:text-slate-300 underline"
+                  >Warranty & Return Policy</a
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </main>
+
+    <div
+      class="md:hidden fixed bottom-[80px] left-4 right-4 bg-slate-900/95 dark:bg-white/95 backdrop-blur-xl text-white dark:text-slate-900 p-4 rounded-2xl z-40 shadow-2xl flex items-center justify-between border border-white/10 dark:border-slate-200 ring-1 ring-white/10"
+    >
+      <div>
+        <div
+          class="text-[10px] opacity-70 uppercase tracking-widest font-bold font-mono"
+        >
+          Total
+        </div>
+        <div class="text-xl font-black font-mono">
+          ₹ <span id="total-price-mobile">0</span>
+        </div>
+      </div>
+      <button
+        class="bg-brand-500 hover:bg-brand-400 text-white px-6 py-3 rounded-xl font-bold text-sm shadow-lg shadow-brand-500/30"
+        onclick="document.getElementById('addToCartBtn').click()"
+      >
+        Checkout
+      </button>
+    </div>
+
+    <div
+      id="toast"
+      class="fixed top-6 left-1/2 -translate-x-1/2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-6 py-4 rounded-full font-bold shadow-lg flex items-center gap-3 z-[100] transition-all duration-300 opacity-0 -translate-y-10 pointer-events-none border border-slate-800 dark:border-slate-100"
+      role="status"
+    >
+      <div
+        class="w-6 h-6 rounded-full bg-emerald-500 flex items-center justify-center shrink-0"
+      >
+        <i class="bi bi-check text-white text-lg" aria-hidden="true"></i>
+      </div>
+      <span class="font-mono text-sm" id="toast-msg">Action Successful!</span>
+    </div>
+
+    <div
+      id="imageModal"
+      class="fixed inset-0 z-[110] bg-black/90 backdrop-blur-md hidden flex flex-col items-center justify-center opacity-0 transition-opacity duration-300 cursor-pointer"
+      onclick="closeImageModal()"
+    >
+      <button
+        class="absolute top-6 right-6 text-white/50 hover:text-white transition-colors p-2"
+        onclick="closeImageModal()"
+      >
+        <i class="bi bi-x-lg text-2xl"></i>
+      </button>
+      <div class="max-w-4xl max-h-[85vh] p-4 flex flex-col items-center pointer-events-none">
+        <img 
+          id="modalImageSrc" 
+          src="" 
+          class="max-w-full max-h-[70vh] rounded-2xl shadow-2xl shadow-brand-500/20 object-contain pointer-events-auto" 
+          alt="Full Image"
+        >
+        <h3 id="modalImageTitle" class="text-white mt-6 font-bold font-mono text-xl tracking-wide text-center pointer-events-auto"></h3>
+      </div>
+    </div>
+
+    <script>
+      // --- 1. CONFIGURATION DATA FROM DJANGO BACKEND ---
+      const componentsDB = [
+        {
+          id: "cpu",
+          label: "CPU",
+          icon: "bi-cpu-fill",
+          options: [
+            {% for item in cpus %}
+            {
+              id: "{{ item.id }}",
+              name: "{{ item.name|escapejs }}",
+              price: {{ item.price|default:0 }},
+              watts: {{ item.watts|default:0 }},
+              socket: "{{ item.socket|default:''|escapejs }}",
+              type: "{{ item.type|default:''|escapejs }}",
+              score: {{ item.score|default:0 }},
+              {% if item.image %}img: "{{ item.image.url }}"{% endif %}
+            },
+            {% endfor %}
+          ],
+        },
+        {
+          id: "mobo",
+          label: "Motherboard",
+          icon: "bi-motherboard-fill",
+          options: [
+            {% for item in motherboards %}
+            {
+              id: "{{ item.id }}",
+              name: "{{ item.name|escapejs }}",
+              price: {{ item.price|default:0 }},
+              socket: "{{ item.socket|default:''|escapejs }}",
+              memory: "{{ item.memory_type|default:''|escapejs }}",
+              {% if item.image %}img: "{{ item.image.url }}"{% endif %}
+            },
+            {% endfor %}
+          ],
+        },
+        {
+          id: "gpu",
+          label: "Graphics Card",
+          icon: "bi-gpu-card",
+          options: [
+            {% for item in gpus %}
+            {
+              id: "{{ item.id }}",
+              name: "{{ item.name|escapejs }}",
+              price: {{ item.price|default:0 }},
+              watts: {{ item.watts|default:0 }},
+              score: {{ item.score|default:0 }},
+              {% if item.image %}img: "{{ item.image.url }}"{% endif %}
+            },
+            {% endfor %}
+          ],
+        },
+        {
+          id: "ram",
+          label: "Memory (RAM)",
+          icon: "bi-memory",
+          options: [
+            {% for item in rams %}
+            {
+              id: "{{ item.id }}",
+              name: "{{ item.name|escapejs }}",
+              price: {{ item.price|default:0 }},
+              type: "{{ item.ram_type|default:''|escapejs }}",
+              {% if item.image %}img: "{{ item.image.url }}"{% endif %}
+            },
+            {% endfor %}
+          ],
+        },
+        {
+          id: "storage_m2",
+          label: "Primary Storage (M.2)",
+          icon: "bi-device-ssd-fill",
+          options: [
+            {% for item in storage_m2 %}
+            {
+              id: "{{ item.id }}",
+              name: "{{ item.name|escapejs }}",
+              price: {{ item.price|default:0 }},
+              {% if item.image %}img: "{{ item.image.url }}"{% endif %}
+            },
+            {% endfor %}
+          ],
+        },
+        {
+          id: "storage_hdd",
+          label: "Secondary Storage (HDD)",
+          icon: "bi-device-hdd-fill",
+          options: [
+            { id: "none", name: "None", price: 0 },
+            {% for item in storage_hdd %}
+            {
+              id: "{{ item.id }}",
+              name: "{{ item.name|escapejs }}",
+              price: {{ item.price|default:0 }},
+              {% if item.image %}img: "{{ item.image.url }}"{% endif %}
+            },
+            {% endfor %}
+          ],
+        },
+        {
+          id: "cooler_air",
+          label: "CPU Air Cooler",
+          icon: "bi-fan",
+          options: [
+            { id: "none", name: "None (Use AIO)", price: 0 },
+            {% for item in air_coolers %}
+            {
+              id: "{{ item.id }}",
+              name: "{{ item.name|escapejs }}",
+              price: {{ item.price|default:0 }},
+              {% if item.image %}img: "{{ item.image.url }}"{% endif %}
+            },
+            {% endfor %}
+          ],
+        },
+        {
+          id: "cooler_aio",
+          label: "AIO Liquid Cooler",
+          icon: "bi-snow2",
+          options: [
+            { id: "none", name: "None (Use Air)", price: 0 },
+            {% for item in aio_coolers %}
+            {
+              id: "{{ item.id }}",
+              name: "{{ item.name|escapejs }}",
+              price: {{ item.price|default:0 }},
+              {% if item.image %}img: "{{ item.image.url }}"{% endif %}
+            },
+            {% endfor %}
+          ],
+        },
+        {
+          id: "psu",
+          label: "Power Supply",
+          icon: "bi-lightning-charge-fill",
+          options: [
+            {% for item in psus %}
+            {
+              id: "{{ item.id }}",
+              name: "{{ item.name|escapejs }}",
+              price: {{ item.price|default:0 }},
+              watts: {{ item.watts|default:0 }},
+              {% if item.image %}img: "{{ item.image.url }}"{% endif %}
+            },
+            {% endfor %}
+          ],
+        },
+        {
+          id: "case",
+          label: "PC Case",
+          icon: "bi-pc-display",
+          options: [
+            {% for item in pc_cases %}
+            {
+              id: "{{ item.id }}",
+              name: "{{ item.name|escapejs }}",
+              price: {{ item.price|default:0 }},
+              {% if item.image %}img: "{{ item.image.url }}"{% endif %}
+            },
+            {% endfor %}
+          ],
+        },
+      ];
+
+      // Array of components that should have quantity +/- buttons
+      const needsQuantity = ["ram", "storage_m2", "storage_hdd"];
+
+      function changeQty(id, delta) {
+        const span = document.getElementById(`qty-${id}`);
+        const input = document.getElementById(`input-qty-${id}`);
+        if (!span) return;
+        let current = parseInt(span.innerText);
+        let newVal = current + delta;
+        if (newVal < 1) newVal = 1; // Prevent negative or zero
+        if (newVal > 8) newVal = 8; // Cap to max 8 items just in case
+        span.innerText = newVal;
+        if (input) input.value = newVal;
+        updateSystem(); // Recalculate system on change
+      }
+
+      // --- Lightbox Modal Logic ---
+      function openImageModal(src, title) {
+        const modal = document.getElementById("imageModal");
+        document.getElementById("modalImageSrc").src = src;
+        document.getElementById("modalImageTitle").innerText = title;
+        modal.classList.remove("hidden");
+        // small timeout to allow CSS transition
+        setTimeout(() => {
+          modal.classList.remove("opacity-0");
+          modal.classList.add("opacity-100");
+        }, 10);
+      }
+
+      function closeImageModal() {
+        const modal = document.getElementById("imageModal");
+        modal.classList.remove("opacity-100");
+        modal.classList.add("opacity-0");
+        setTimeout(() => {
+          modal.classList.add("hidden");
+        }, 300);
+      }
+
+      // Allow Escape key to close modal
+      document.addEventListener("keydown", function(event) {
+        if (event.key === "Escape") closeImageModal();
+      });
+
+      // --- 2. RENDERER ---
+      function renderComponents() {
+        const container = document.getElementById("component-list-container");
+        let html = "";
+
+        componentsDB.forEach((comp, index) => {
+          // Generate Options HTML
+          let opts = `<option value="">Select ${comp.label}</option>`;
+          comp.options.forEach((opt) => {
+            // Generate a placeholder image URL if none is provided via django
+            let imgUrl = opt.id === "none" || opt.id === "50" || opt.id === "60" || opt.id === "70" 
+              ? "" // Don't generate images for "None" options
+              : opt.img || `https://placehold.co/600x600/1e293b/38bdf8?text=${encodeURIComponent(opt.name.split(' ').slice(0, 3).join('+'))}`;
+            
+            // Serialize data attributes
+            let dataAttrs = `data-price="${opt.price}" data-name="${opt.name}" data-img="${imgUrl}"`;
+            if (opt.watts) dataAttrs += ` data-watts="${opt.watts}"`;
+            if (opt.socket) dataAttrs += ` data-socket="${opt.socket}"`;
+            if (opt.type) dataAttrs += ` data-type="${opt.type}"`;
+            if (opt.memory) dataAttrs += ` data-memory="${opt.memory}"`;
+            if (opt.score) dataAttrs += ` data-score="${opt.score}"`;
+
+            opts += `<option value="${opt.id}" ${dataAttrs}>${opt.name} ${opt.price > 0 ? "- ₹" + opt.price.toLocaleString() : ""}</option>`;
+          });
+
+          // Generate Quantity Controls if needed
+          let qtyControls = "";
+          if (needsQuantity.includes(comp.id)) {
+            qtyControls = `
+              <div class="flex items-center gap-1 bg-slate-200 dark:bg-slate-800 rounded-lg p-1 shrink-0 mt-3 md:mt-0">
+                <button type="button" class="w-10 h-10 md:w-8 md:h-8 flex items-center justify-center rounded bg-white dark:bg-slate-700 hover:text-brand-500 transition-colors shadow-sm" onclick="changeQty('${comp.id}', -1)">
+                  <i class="bi bi-dash"></i>
+                </button>
+                <input type="hidden" name="qty_${comp.id}" id="input-qty-${comp.id}" value="1">
+                <span id="qty-${comp.id}" class="w-8 text-center text-sm font-bold font-mono">1</span>
+                <button type="button" class="w-10 h-10 md:w-8 md:h-8 flex items-center justify-center rounded bg-white dark:bg-slate-700 hover:text-brand-500 transition-colors shadow-sm" onclick="changeQty('${comp.id}', 1)">
+                  <i class="bi bi-plus"></i>
+                </button>
+              </div>
+            `;
+          } else {
+            qtyControls = `<input type="hidden" name="qty_${comp.id}" id="input-qty-${comp.id}" value="1">`;
+          }
+
+          // Generate Component Card HTML
+          html += `
+            <div class="component group relative pl-12" id="comp-${comp.id}">
+              <div class="circuit-line transition-all duration-300"></div>
+              <div class="absolute left-[15px] top-10 w-4 h-4 rounded-full border-[2px] border-slate-300 dark:border-slate-600 bg-slate-100 dark:bg-dark-card group-hover:border-brand-400 group-hover:bg-brand-400 transition-all z-10 indicator-dot"></div>
+              
+              <div class="card-container bg-white dark:bg-white/5 backdrop-blur-sm border border-slate-200 dark:border-white/10 rounded-2xl p-1 transition-all duration-300 hover:shadow-neon hover:-translate-y-1">
+                <div class="relative p-5 bg-gradient-to-b from-transparent to-slate-50/50 dark:to-black/20 rounded-xl">
+                  <div class="flex flex-col md:flex-row md:items-center gap-6">
+                    <div class="md:w-24 shrink-0 flex flex-col items-center gap-2">
+                      <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-slate-100 to-slate-200 dark:from-white/5 dark:to-white/0 border border-white/10 flex items-center justify-center shadow-inner">
+                        <i class="bi ${comp.icon} text-2xl text-slate-400 dark:text-brand-400 group-hover:text-brand-300 transition-colors"></i>
+                      </div>
+                      <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 group-hover:text-brand-400 transition-colors text-center">${comp.label}</label>
+                    </div>
+                    <div class="flex-1 w-full flex flex-col md:flex-row gap-3">
+                      <div class="flex-1 relative">
+                        <select name="${comp.id}" id="${comp.id}" class="peer w-full bg-slate-50 dark:bg-[#050a14] border border-slate-200 dark:border-slate-700 rounded-xl px-5 py-4 text-sm font-semibold text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-brand-500/50 outline-none transition-all cursor-pointer" onchange="updateSystem()">
+                          ${opts}
+                        </select>
+                        <div id="warn-${comp.id}" class="hidden mt-2 text-[11px] font-bold text-amber-500 flex items-center gap-1"><i class="bi bi-exclamation-triangle"></i> <span>Warning</span></div>
+                      </div>
+                      ${qtyControls}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          `;
+        });
+        container.innerHTML = html;
+      }
+
+      // --- 3. SYSTEM LOGIC ---
+      const state = {};
+
+      function updateSystem() {
+        // 1. Gather State
+        let subtotal = 0;
+        let totalWatts = 50; // Base system load
+        let scoreCPU = 0;
+        let scoreGPU = 0;
+        let selectedCount = 0;
+        const warnings = [];
+
+        // Clear previous state
+        componentsDB.forEach((c) => {
+          const el = document.getElementById(c.id);
+          const opt = el.selectedOptions[0];
+
+          if (opt.value && opt.dataset.price >= 0 && opt.value !== "none") { 
+            // Get quantity if element has quantity controls
+            let qty = 1;
+            const qtyEl = document.getElementById(`qty-${c.id}`);
+            if (qtyEl) {
+                qty = parseInt(qtyEl.innerText) || 1;
+            }
+
+            const basePrice = parseInt(opt.dataset.price || 0);
+            const baseWatts = parseInt(opt.dataset.watts || 0);
+
+            state[c.id] = {
+              name: opt.dataset.name,
+              price: basePrice * qty,
+              watts: baseWatts * qty,
+              qty: qty,
+              img: opt.dataset.img,
+              socket: opt.dataset.socket,
+              memory: opt.dataset.memory,
+              type: opt.dataset.type,
+              score: parseInt(opt.dataset.score || 0),
+            };
+
+            subtotal += state[c.id].price;
+            totalWatts += state[c.id].watts;
+
+            if (c.id === "cpu") scoreCPU = state[c.id].score;
+            if (c.id === "gpu") scoreGPU = state[c.id].score;
+            selectedCount++;
+
+            // Visual Active State
+            const compDiv = document.getElementById(`comp-${c.id}`);
+            compDiv
+              .querySelector(".indicator-dot")
+              .classList.add("bg-emerald-500", "border-emerald-500");
+            compDiv.querySelector(".card-container").classList.add("status-ok");
+          } else {
+            delete state[c.id];
+            
+            // Mark visually as selected but 0 impact if it's "None"
+            const compDiv = document.getElementById(`comp-${c.id}`);
+            if(opt.value === "none") {
+                compDiv.querySelector(".indicator-dot").classList.add("bg-emerald-500", "border-emerald-500");
+                compDiv.querySelector(".card-container").classList.add("status-ok");
+                selectedCount++;
+            } else {
+                compDiv.querySelector(".indicator-dot").classList.remove("bg-emerald-500", "border-emerald-500");
+                compDiv.querySelector(".card-container").classList.remove("status-ok", "status-warn", "status-err");
+            }
+          }
+
+          // Clear previous warnings
+          document.getElementById(`warn-${c.id}`).classList.add("hidden");
+        });
+
+        // 2. Compatibility Checks
+        // Socket Check
+        if (state.cpu && state.mobo) {
+          if (state.cpu.socket !== state.mobo.socket) {
+            warnings.push("CPU and Motherboard socket mismatch!");
+            markError("cpu");
+            markError("mobo");
+            showWarning("mobo", `Requires ${state.cpu.socket} socket`);
+          }
+        }
+
+        // Memory Check
+        if (state.ram && state.mobo) {
+          // Simplistic check: name contains DDR4/5 or type matches
+          const ramType = state.ram.name.includes("DDR5") ? "DDR5" : "DDR4";
+          if (state.mobo.memory && state.mobo.memory !== ramType) {
+            warnings.push(
+              `Motherboard supports ${state.mobo.memory}, RAM is ${ramType}`,
+            );
+            markError("ram");
+            showWarning("ram", `Motherboard requires ${state.mobo.memory}`);
+          }
+        }
+
+        // PSU Wattage Check
+        if (state.psu) {
+          document.getElementById("watts-max").innerText =
+            `/ ${state.psu.watts}W`;
+          if (state.psu.watts < totalWatts * 1.1) {
+            warnings.push(`PSU too weak. Estimated load: ${totalWatts}W`);
+            markError("psu");
+            showWarning("psu", `Recommended: ${Math.ceil(totalWatts * 1.1)}W+`);
+          }
+        } else {
+          document.getElementById("watts-max").innerText = `/ --`;
+        }
+
+        // 3. Update Health & Stats
+        const statusEl = document.getElementById("build-status");
+        if (warnings.length > 0) {
+          statusEl.className =
+            "w-full text-xs font-mono font-bold text-red-400 bg-red-950/30 border border-red-500/20 py-2 rounded-lg flex items-center justify-center gap-2 mb-3";
+          statusEl.innerHTML = `<i class="bi bi-exclamation-triangle-fill"></i> ${warnings[0]}`;
+        } else if (selectedCount < componentsDB.length) {
+          statusEl.className =
+            "w-full text-xs font-mono font-bold text-slate-400 bg-slate-800/50 border border-slate-500/20 py-2 rounded-lg flex items-center justify-center gap-2 mb-3";
+          statusEl.innerHTML = `BUILD IN PROGRESS`;
+        } else {
+          statusEl.className =
+            "w-full text-xs font-mono font-bold text-emerald-400 bg-emerald-950/30 border border-emerald-500/20 py-2 rounded-lg flex items-center justify-center gap-2 mb-3";
+          statusEl.innerHTML = `<i class="bi bi-check-circle-fill"></i> SYSTEM READY`;
+        }
+
+        // Update Text Stats
+        document.getElementById("watts-total").innerText = totalWatts;
+
+        // Simple FPS Calc (Arbitrary logic for demo)
+        const fps = (scoreCPU + scoreGPU) / 2;
+        document.getElementById("fps-est").innerText =
+          fps > 0 ? Math.round(fps) + "+" : "--";
+
+        // 4. Update Financials
+        const tax = Math.round(subtotal * 0.18);
+        const total = subtotal + tax;
+
+        document.getElementById("price-subtotal").innerText =
+          subtotal.toLocaleString("en-IN");
+        document.getElementById("price-tax").innerText =
+          tax.toLocaleString("en-IN");
+        document.getElementById("price-total").innerText =
+          total.toLocaleString("en-IN");
+        document.getElementById("total-price-mobile").innerText =
+          total.toLocaleString("en-IN");
+
+        // 5. Update List (System Health Summary List)
+        const listContainer = document.getElementById("summary-list");
+        const listItems = Object.values(state);
+        
+        if (listItems.length > 0) {
+          listContainer.innerHTML = listItems
+            .map((item) => {
+              // Create the thumbnail element if an image URL exists
+              const thumbHTML = item.img 
+                ? `<img src="${item.img}" alt="Thumb" class="w-8 h-8 rounded bg-slate-800 border border-white/10 object-cover cursor-pointer hover:ring-2 hover:ring-brand-400 transition-all shrink-0" onclick="openImageModal('${item.img}', '${item.name.replace(/'/g, "\\'")}')">`
+                : `<div class="w-8 h-8 rounded bg-slate-800 border border-white/10 shrink-0 flex items-center justify-center text-slate-500"><i class="bi bi-image"></i></div>`;
+
+              return `
+              <li class="flex items-center justify-between text-xs border-b border-white/5 pb-2 pt-1 gap-2">
+                <div class="flex items-center gap-3 overflow-hidden flex-1">
+                  ${thumbHTML}
+                  <span class="text-slate-300 truncate">
+                    ${item.qty > 1 ? `<span class="text-brand-400 font-bold">${item.qty}x</span> ` : ""}${item.name}
+                  </span>
+                </div>
+                <span class="text-slate-500 font-mono shrink-0">₹${item.price.toLocaleString()}</span>
+              </li>
+            `})
+            .join("");
+        } else {
+          listContainer.innerHTML =
+            '<li class="text-center py-8 text-slate-400 text-xs italic">Components will appear here...</li>';
+        }
+
+        // 6. Progress Bar
+        const percent = (selectedCount / componentsDB.length) * 100;
+        document.getElementById("progress-bar").style.width = `${percent}%`;
+        document.getElementById("progress-text").innerText =
+          `${Math.round(percent)}%`;
+      }
+
+      // --- Helpers ---
+      function markError(id) {
+        const div = document
+          .getElementById(`comp-${id}`)
+          .querySelector(".card-container");
+        div.classList.remove("status-ok");
+        div.classList.add("status-err");
+      }
+      function markWarning(id) {
+        const div = document
+          .getElementById(`comp-${id}`)
+          .querySelector(".card-container");
+        div.classList.remove("status-ok");
+        div.classList.add("status-warn");
+      }
+      function showWarning(id, msg) {
+        const el = document.getElementById(`warn-${id}`);
+        el.innerHTML = `<i class="bi bi-exclamation-triangle"></i> ${msg}`;
+        el.classList.remove("hidden");
+      }
+
+      function setSelect(id, index) {
+        const el = document.getElementById(id);
+        if (el && el.options.length > index + 1) {
+          el.selectedIndex = index + 1;
+        }
+      }
+
+      function showToast(msg) {
+        const t = document.getElementById("toast");
+        t.querySelector("span").innerText = msg;
+        t.classList.remove("opacity-0", "-translate-y-10");
+        setTimeout(() => t.classList.add("opacity-0", "-translate-y-10"), 2500);
+      }
+
+      function saveBuild() {
+        showToast("Link copied to clipboard!");
+      }
+
+      function copyList() {
+        showToast("Build list copied!");
+      }
+
+      // Init
+      renderComponents();
+
+      // Theme Toggle Logic
+      const toggleBtn = document.getElementById("themeToggle");
+      const html = document.documentElement;
+      const icon = toggleBtn.querySelector("i");
+
+      function initTheme() {
+        const savedTheme = localStorage.getItem("theme") || "dark"; // Default to dark
+        html.setAttribute("data-theme", savedTheme);
+        icon.classList.toggle("bi-sun-fill", savedTheme === "light");
+        icon.classList.toggle("bi-moon-stars-fill", savedTheme === "dark");
+      }
+
+      toggleBtn.addEventListener("click", () => {
+        const current = html.getAttribute("data-theme");
+        const next = current === "dark" ? "light" : "dark";
+        html.setAttribute("data-theme", next);
+        localStorage.setItem("theme", next);
+        icon.classList.toggle("bi-sun-fill");
+        icon.classList.toggle("bi-moon-stars-fill");
+      });
+      initTheme();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,1115 @@
+{% load static %}
+<!doctype html>
+<html lang="en" data-theme="dark" class="scroll-smooth">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="NexusBuild - Build your ultimate reality with expertly curated PC components. Shop CPUs, GPUs, and custom builds."
+    />
+    <meta property="og:title" content="NexusBuild | Ultimate PC Hardware" />
+    <meta
+      property="og:description"
+      content="Expertly curated components for gamers and creators."
+    />
+    <meta property="og:type" content="website" />
+    <title>NexusBuild | Ultimate PC Hardware</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
+    />
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script>
+      tailwind.config = {
+        darkMode: ["class", '[data-theme="dark"]'],
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: [
+                "-apple-system",
+                "BlinkMacSystemFont",
+                '"Segoe UI"',
+                "Roboto",
+                "sans-serif",
+              ],
+              mono: [
+                "ui-monospace",
+                "SFMono-Regular",
+                "Menlo",
+                "Monaco",
+                "Consolas",
+                "monospace",
+              ],
+            },
+            colors: {
+              brand: {
+                400: "#38bdf8",
+                500: "#0ea5e9",
+                600: "#0284c7",
+                glow: "rgba(14, 165, 233, 0.3)",
+              },
+              accent: {
+                400: "#a78bfa",
+                500: "#8b5cf6",
+                600: "#7c3aed",
+                glow: "rgba(139, 92, 246, 0.3)",
+              },
+              dark: {
+                bg: "#0b0f19",
+                card: "#111827",
+                border: "#1f2937",
+              },
+            },
+            backgroundImage: {
+              "grid-pattern":
+                "linear-gradient(to right, #1f2937 1px, transparent 1px), linear-gradient(to bottom, #1f2937 1px, transparent 1px)",
+            },
+            boxShadow: {
+              neon: "0 0 12px -3px var(--tw-shadow-color)",
+              glass: "0 8px 32px 0 rgba(0, 0, 0, 0.37)",
+            },
+            animation: {
+              float: "float 6s ease-in-out infinite",
+              "slide-up": "slideUp 0.8s ease-out forwards",
+              "fade-in-up": "fadeInUp 0.5s ease-out forwards",
+            },
+            keyframes: {
+              float: {
+                "0%, 100%": { transform: "translateY(0)" },
+                "50%": { transform: "translateY(-10px)" },
+              },
+              slideUp: {
+                "0%": { opacity: "0", transform: "translateY(20px)" },
+                "100%": { opacity: "1", transform: "translateY(0)" },
+              },
+              fadeInUp: {
+                "0%": { opacity: "0", transform: "translateY(10px)" },
+                "100%": { opacity: "1", transform: "translateY(0)" },
+              },
+            },
+          },
+        },
+      };
+    </script>
+
+    <style>
+      /* Custom Scrollbar */
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #030712;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #334155;
+        border-radius: 4px;
+        border: 2px solid #030712;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #475569;
+      }
+
+      .bg-grid {
+        background-size: 40px 40px;
+        mask-image: linear-gradient(
+          to bottom,
+          transparent,
+          10% white,
+          90% white,
+          transparent
+        );
+        -webkit-mask-image: linear-gradient(
+          to bottom,
+          transparent,
+          5% white,
+          95% white,
+          transparent
+        );
+      }
+
+      .hide-scroll::-webkit-scrollbar {
+        display: none;
+      }
+      .hide-scroll {
+        -ms-overflow-style: none; /* IE and Edge */
+        scrollbar-width: none; /* Firefox */
+      }
+
+      /* Micro-interactions */
+      button:active,
+      a.btn:active {
+        transform: scale(0.95);
+      }
+
+      /* Toast Notification */
+      #toast-container {
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        z-index: 100;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        pointer-events: none;
+      }
+
+      .toast {
+        background: rgba(255, 255, 255, 0.9);
+        border: 1px solid #e2e8f0;
+        color: #0f172a;
+        padding: 12px 20px;
+        border-radius: 12px;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-width: 300px;
+        transform: translateY(20px);
+        opacity: 0;
+        transition: all 0.3s ease-out;
+        pointer-events: auto;
+      }
+
+      [data-theme="dark"] .toast {
+        background: rgba(17, 24, 39, 0.9);
+        border-color: rgba(255, 255, 255, 0.1);
+        color: #f8fafc;
+      }
+
+      .toast.show {
+        transform: translateY(0);
+        opacity: 1;
+      }
+
+      .toast-icon {
+        color: #0ea5e9;
+        font-size: 1.25rem;
+      }
+
+      /* Accessibility: Reduced Motion */
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        ::before,
+        ::after {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+          scroll-behavior: auto !important;
+        }
+      }
+    </style>
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Store",
+        "name": "NexusBuild",
+        "image": "",
+        "telephone": "+91-7016455514",
+        "email": "support@nexusbuild.com",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "305, 3rd Floor, Gedore House 51-52, Nehru Place",
+          "addressLocality": "New Delhi",
+          "postalCode": "110019",
+          "addressCountry": "IN"
+        },
+        "openingHoursSpecification": {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": [
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday"
+          ],
+          "opens": "11:00",
+          "closes": "18:00"
+        }
+      }
+    </script>
+  </head>
+  <body
+    class="bg-slate-50 dark:bg-dark-bg text-slate-600 dark:text-slate-300 antialiased font-mono Monaco transition-colors duration-500 pb-20 selection:bg-brand-500 selection:text-white overflow-x-hidden"
+  >
+    <div class="fixed inset-0 z-0 pointer-events-none" aria-hidden="true">
+      <div
+        class="absolute inset-0 bg-grid-pattern bg-grid opacity-[0.03] dark:opacity-[0.05]"
+      ></div>
+      <div
+        class="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-brand-500/10 rounded-full blur-[100px] mix-blend-screen"
+      ></div>
+      <div
+        class="absolute bottom-[20%] right-[-10%] w-[500px] h-[500px] bg-accent-500/10 rounded-full blur-[100px] mix-blend-screen"
+      ></div>
+    </div>
+
+    <div id="toast-container"></div>
+
+    <header
+      class="sticky top-0 z-50 w-full backdrop-blur-md bg-white/80 dark:bg-dark-bg/80 border-b border-slate-200/60 dark:border-white/5 transition-all duration-300"
+    >
+      <div
+        class="max-w-7xl mx-auto px-4 md:px-6 h-20 flex items-center justify-between"
+      >
+        <a href="{% url 'core:homepage'%}" class="flex items-center gap-3 group">
+          <div
+            class="relative w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-500 to-accent-600 text-white flex items-center justify-center font-bold text-lg shadow-lg shadow-brand-500/20 group-hover:rotate-12 transition-transform duration-300"
+          >
+            <i class="bi bi-cpu-fill" aria-hidden="true"></i>
+          </div>
+          <div class="flex flex-col">
+            <span
+              class="font-bold text-xl tracking-tight text-slate-900 dark:text-white font-mono Monaco"
+            >
+              Nexus<span class="text-brand-400">Build</span>
+            </span>
+            <span
+              class="text-[10px] font-bold tracking-widest text-slate-500 uppercase hidden sm:block"
+              >Premium Hardware</span
+            >
+          </div>
+        </a>
+
+        <nav
+          class="hidden lg:flex items-center gap-1 bg-slate-100/50 dark:bg-white/5 p-1.5 rounded-full border border-slate-200 dark:border-white/10 backdrop-blur-md"
+        >
+          <a
+            href="{% url 'core:homepage'%}"
+            class="px-6 py-2 rounded-full text-sm font-bold bg-white dark:bg-brand-600 text-brand-600 dark:text-white shadow-md shadow-brand-500/10 font-mono Monaco"
+            >Home</a
+          >
+          <a
+            href="{% url 'core:prebuilt'%}"
+            class="px-6 py-2 rounded-full text-sm font-medium hover:text-brand-600 hover:bg-white dark:hover:bg-white/10 dark:hover:text-white transition-all"
+            >Prebuilt</a
+          >
+          <a
+            href="{% url 'core:built'%}"
+            class="px-6 py-2 rounded-full text-sm font-medium hover:text-brand-600 hover:bg-white dark:hover:bg-white/10 dark:hover:text-white transition-all"
+            >Builder</a
+          >
+          <a
+            href="cart.html"
+            class="px-6 py-2 rounded-full text-sm font-medium hover:text-brand-600 hover:bg-white dark:hover:bg-white/10 dark:hover:text-white transition-all relative"
+            >Cart
+            <span
+              id="cart-badge"
+              class="absolute top-1 right-2 w-2 h-2 rounded-full bg-red-500 opacity-0 transition-opacity duration-300"
+            ></span>
+          </a>
+          <a
+            href="{% url 'core:profile'%}"
+            class="px-6 py-2 rounded-full text-sm font-medium hover:text-brand-600 hover:bg-white dark:hover:bg-white/10 dark:hover:text-white transition-all"
+            >Profile</a
+          >
+        </nav>
+
+        <div class="flex items-center gap-2 sm:gap-3">
+          <button
+            id="themeToggle"
+            class="w-10 h-10 rounded-full flex items-center justify-center text-slate-500 hover:bg-slate-100 dark:hover:bg-white/10 dark:text-slate-400 transition-colors border border-transparent dark:hover:border-white/20"
+            aria-label="Toggle Theme"
+          >
+            <i class="bi bi-moon-stars-fill text-sm" aria-hidden="true"></i>
+          </button>
+          <div
+            class="h-8 w-px bg-slate-200 dark:bg-white/10 mx-1 hidden sm:block"
+          ></div>
+          
+          {% if request.session.active %}
+          <a
+            href="{% url 'accounts:singout' %}"
+            class="hidden sm:flex items-center gap-2 px-6 py-2.5 rounded-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold text-sm hover:scale-105 active:scale-95 transition-all shadow-md btn"
+          >
+            <span>{{request.session.user_name}} {{request.session.user_lname}} Logout</span>
+          </a>
+          {% else%}
+          <a
+            href="{% url 'accounts:signin'%}"
+            class="hidden sm:flex items-center gap-2 px-6 py-2.5 rounded-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold text-sm hover:scale-105 active:scale-95 transition-all shadow-md btn"
+          >
+            <span>Login</span>
+          </a>
+          {%endif%}
+        </div>
+      </div>
+    </header>
+
+    <main class="relative z-10">
+      <section
+        class="max-w-7xl mx-auto px-4 md:px-6 py-12 md:py-20 lg:py-32 flex flex-col items-center text-center"
+      >
+        <div class="animate-slide-up w-full max-w-4xl">
+          <form
+            action="/search"
+            method="GET"
+            role="search"
+            class="mb-8 md:mb-12 w-full max-w-[90%] md:max-w-md mx-auto relative group z-20"
+          >
+            <div
+              class="absolute inset-0 bg-gradient-to-r from-brand-500 to-accent-500 rounded-full blur opacity-20 group-hover:opacity-40 transition duration-500"
+            ></div>
+            <div
+              class="relative flex items-center bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-full p-1.5 shadow-lg backdrop-blur-md group-focus-within:border-brand-500/50 transition-all"
+            >
+              <i
+                class="bi bi-search absolute left-5 text-slate-400"
+                aria-hidden="true"
+              ></i>
+              <input
+                type="text"
+                name="q"
+                aria-label="Search components"
+                placeholder="Search (e.g. RTX 4090)"
+                class="w-full bg-transparent border-none outline-none pl-12 pr-4 py-2 text-slate-700 dark:text-slate-200 placeholder:text-slate-400 font-medium font-mono text-sm"
+              />
+              <button
+                type="submit"
+                aria-label="Search"
+                class="bg-slate-100 dark:bg-white/10 text-slate-500 dark:text-slate-300 hover:bg-brand-500 hover:text-white dark:hover:bg-brand-500 p-2.5 rounded-full transition-all"
+              >
+                <i class="bi bi-arrow-right" aria-hidden="true"></i>
+              </button>
+            </div>
+          </form>
+
+          <span
+            class="inline-block py-1 px-3 rounded-full bg-brand-500/10 border border-brand-500/20 text-brand-500 text-[10px] md:text-xs font-bold tracking-widest uppercase mb-4 md:mb-6 shadow-neon shadow-brand-500/50"
+          >
+            Next Gen Configuration
+          </span>
+          <h1
+            class="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter mb-4 md:mb-6 text-slate-900 dark:text-white font-mono Monaco leading-[1.1]"
+          >
+            BUILD YOUR <br />
+            <span
+              class="text-transparent bg-clip-text bg-gradient-to-r from-brand-400 via-accent-500 to-brand-400 animate-pulse font-mono Monaco"
+              >ULTIMATE REALITY</span
+            >
+          </h1>
+          <p
+            class="text-slate-500 dark:text-slate-400 text-base md:text-xl max-w-xl md:max-w-2xl mx-auto mb-8 md:mb-10 font-light px-4"
+          >
+            Expertly curated components for gamers and creators. Experience
+            zero-bottleneck performance.
+          </p>
+
+          <div
+            class="flex flex-col sm:flex-row gap-4 justify-center items-center w-full px-4 sm:px-0"
+          >
+            <a
+              href="custom.html"
+              class="btn w-full sm:w-auto px-8 py-4 font-mono Monaco rounded-xl bg-gradient-to-r from-brand-600 to-accent-600 hover:from-brand-500 hover:to-accent-500 text-white font-bold text-lg shadow-lg shadow-brand-500/25 hover:shadow-brand-500/40 hover:-translate-y-1 transition-all flex items-center justify-center gap-3"
+            >
+              <i class="bi bi-cpu-fill" aria-hidden="true"></i> Start Building
+            </a>
+            <a
+              href="#products"
+              class="btn w-full sm:w-auto px-8 py-4 font-mono Monaco rounded-xl bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 hover:border-brand-500 dark:hover:border-brand-500 text-slate-700 dark:text-white font-bold text-lg hover:-translate-y-1 transition-all backdrop-blur-sm text-center"
+            >
+              View Components
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <section
+        class="border-y border-slate-200 dark:border-white/5 bg-white/50 dark:bg-black/20 backdrop-blur-sm py-12"
+      >
+        <div class="max-w-7xl mx-auto px-4 md:px-6">
+          <div class="flex justify-between items-end mb-8">
+            <div>
+              <h2
+                class="text-2xl font-bold text-slate-900 dark:text-white font-mono Monaco"
+              >
+                Shop by
+                <span class="text-brand-400 font-mono Monaco">Category</span>
+              </h2>
+            </div>
+            <div class="hidden sm:flex gap-2">
+              <button
+                id="cat-prev"
+                aria-label="Previous Category"
+                class="w-10 h-10 rounded-xl border border-slate-200 dark:border-white/10 flex items-center justify-center hover:bg-white dark:hover:bg-white/10 transition-colors"
+              >
+                <i class="bi bi-chevron-left" aria-hidden="true"></i>
+              </button>
+              <button
+                id="cat-next"
+                aria-label="Next Category"
+                class="w-10 h-10 rounded-xl border border-slate-200 dark:border-white/10 flex items-center justify-center hover:bg-white dark:hover:bg-white/10 transition-colors"
+              >
+                <i class="bi bi-chevron-right" aria-hidden="true"></i>
+              </button>
+            </div>
+          </div>
+
+          <div
+            id="category-scroll"
+            class="flex gap-4 overflow-x-auto hide-scroll pb-4 scroll-smooth snap-x"
+          >
+            <a
+              href="#"
+              class="snap-start min-w-[140px] h-[160px] p-4 rounded-2xl bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 flex flex-col items-center justify-center gap-4 group hover:border-brand-500 hover:shadow-neon hover:shadow-brand-500/20 transition-all duration-300"
+            >
+              <div
+                class="w-12 h-12 rounded-full bg-slate-100 dark:bg-white/10 flex items-center justify-center text-2xl text-slate-400 dark:text-white/50 group-hover:bg-brand-500 group-hover:text-white transition-all"
+              >
+                <i class="bi bi-cpu" aria-hidden="true"></i>
+              </div>
+              <span
+                class="font-bold text-sm text-slate-600 dark:text-slate-300 group-hover:text-brand-500 dark:group-hover:text-white"
+                >CPU</span
+              >
+            </a>
+
+            <a
+              href="#"
+              class="snap-start min-w-[140px] h-[160px] p-4 rounded-2xl bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 flex flex-col items-center justify-center gap-4 group hover:border-accent-500 hover:shadow-neon hover:shadow-accent-500/20 transition-all duration-300"
+            >
+              <div
+                class="w-12 h-12 rounded-full bg-slate-100 dark:bg-white/10 flex items-center justify-center text-2xl text-slate-400 dark:text-white/50 group-hover:bg-accent-500 group-hover:text-white transition-all"
+              >
+                <i class="bi bi-gpu-card" aria-hidden="true"></i>
+              </div>
+              <span
+                class="font-bold text-sm text-slate-600 dark:text-slate-300 group-hover:text-accent-500 dark:group-hover:text-white"
+                >GPU</span
+              >
+            </a>
+
+            <a
+              href="#"
+              class="snap-start min-w-[140px] h-[160px] p-4 rounded-2xl bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 flex flex-col items-center justify-center gap-4 group hover:border-brand-500 hover:shadow-neon hover:shadow-brand-500/20 transition-all duration-300"
+            >
+              <div
+                class="w-12 h-12 rounded-full bg-slate-100 dark:bg-white/10 flex items-center justify-center text-2xl text-slate-400 dark:text-white/50 group-hover:bg-brand-500 group-hover:text-white transition-all"
+              >
+                <i class="bi bi-motherboard" aria-hidden="true"></i>
+              </div>
+              <span
+                class="font-bold text-sm text-slate-600 dark:text-slate-300 group-hover:text-brand-500 dark:group-hover:text-white"
+                >Mobo</span
+              >
+            </a>
+
+            <a
+              href="#"
+              class="snap-start min-w-[140px] h-[160px] p-4 rounded-2xl bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 flex flex-col items-center justify-center gap-4 group hover:border-brand-500 hover:shadow-neon hover:shadow-brand-500/20 transition-all duration-300"
+            >
+              <div
+                class="w-12 h-12 rounded-full bg-slate-100 dark:bg-white/10 flex items-center justify-center text-2xl text-slate-400 dark:text-white/50 group-hover:bg-brand-500 group-hover:text-white transition-all"
+              >
+                <i class="bi bi-memory" aria-hidden="true"></i>
+              </div>
+              <span
+                class="font-bold text-sm text-slate-600 dark:text-slate-300 group-hover:text-brand-500 dark:group-hover:text-white"
+                >RAM</span
+              >
+            </a>
+
+            <a
+              href="#"
+              class="snap-start min-w-[140px] h-[160px] p-4 rounded-2xl bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 flex flex-col items-center justify-center gap-4 group hover:border-brand-500 hover:shadow-neon hover:shadow-brand-500/20 transition-all duration-300"
+            >
+              <div
+                class="w-12 h-12 rounded-full bg-slate-100 dark:bg-white/10 flex items-center justify-center text-2xl text-slate-400 dark:text-white/50 group-hover:bg-brand-500 group-hover:text-white transition-all"
+              >
+                <i class="bi bi-device-ssd" aria-hidden="true"></i>
+              </div>
+              <span
+                class="font-bold text-sm text-slate-600 dark:text-slate-300 group-hover:text-brand-500 dark:group-hover:text-white"
+                >Storage</span
+              >
+            </a>
+
+            <a
+              href="#"
+              class="snap-start min-w-[140px] h-[160px] p-4 rounded-2xl bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 flex flex-col items-center justify-center gap-4 group hover:border-yellow-500 hover:shadow-neon hover:shadow-yellow-500/20 transition-all duration-300"
+            >
+              <div
+                class="w-12 h-12 rounded-full bg-slate-100 dark:bg-white/10 flex items-center justify-center text-2xl text-slate-400 dark:text-white/50 group-hover:bg-yellow-500 group-hover:text-white transition-all"
+              >
+                <i class="bi bi-lightning-charge" aria-hidden="true"></i>
+              </div>
+              <span
+                class="font-bold text-sm text-slate-600 dark:text-slate-300 group-hover:text-yellow-500 dark:group-hover:text-white"
+                >Power</span
+              >
+            </a>
+
+            <a
+              href="#"
+              class="snap-start min-w-[140px] h-[160px] p-4 rounded-2xl bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 flex flex-col items-center justify-center gap-4 group hover:border-brand-500 hover:shadow-neon hover:shadow-brand-500/20 transition-all duration-300"
+            >
+              <div
+                class="w-12 h-12 rounded-full bg-slate-100 dark:bg-white/10 flex items-center justify-center text-2xl text-slate-400 dark:text-white/50 group-hover:bg-brand-500 group-hover:text-white transition-all"
+              >
+                <i class="bi bi-box" aria-hidden="true"></i>
+              </div>
+              <span
+                class="font-bold text-sm text-slate-600 dark:text-slate-300 group-hover:text-brand-500 dark:group-hover:text-white"
+                >Case</span
+              >
+            </a>
+            <a
+              href="#"
+              class="snap-start min-w-[140px] h-[160px] p-4 rounded-2xl bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 flex flex-col items-center justify-center gap-4 group hover:border-brand-500 hover:shadow-neon hover:shadow-brand-500/20 transition-all duration-300"
+            >
+              <div
+                class="w-12 h-12 rounded-full bg-slate-100 dark:bg-white/10 flex items-center justify-center text-2xl text-slate-400 dark:text-white/50 group-hover:bg-brand-500 group-hover:text-white transition-all"
+              >
+                <i class="bi bi-fan" aria-hidden="true"></i>
+              </div>
+              <span
+                class="font-bold text-sm text-slate-600 dark:text-slate-300 group-hover:text-brand-500 dark:group-hover:text-white"
+                >Cooling</span
+              >
+            </a>
+            <a
+              href="#"
+              class="snap-start min-w-[140px] h-[160px] p-4 rounded-2xl bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 flex flex-col items-center justify-center gap-4 group hover:border-brand-500 hover:shadow-neon hover:shadow-brand-500/20 transition-all duration-300"
+            >
+              <div
+                class="w-12 h-12 rounded-full bg-slate-100 dark:bg-white/10 flex items-center justify-center text-2xl text-slate-400 dark:text-white/50 group-hover:bg-brand-500 group-hover:text-white transition-all"
+              >
+                <i class="bi bi-headphones" aria-hidden="true"></i>
+              </div>
+              <span
+                class="font-bold text-sm text-slate-600 dark:text-slate-300 group-hover:text-brand-500 dark:group-hover:text-white"
+                >Accessories</span
+              >
+            </a>
+            <a
+              href="#"
+              class="snap-start min-w-[140px] h-[160px] p-4 rounded-2xl bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 flex flex-col items-center justify-center gap-4 group hover:border-brand-500 hover:shadow-neon hover:shadow-brand-500/20 transition-all duration-300"
+            >
+              <div
+                class="w-12 h-12 rounded-full bg-slate-100 dark:bg-white/10 flex items-center justify-center text-2xl text-slate-400 dark:text-white/50 group-hover:bg-brand-500 group-hover:text-white transition-all"
+              >
+                <i class="bi bi-wifi" aria-hidden="true"></i>
+              </div>
+              <span
+                class="font-bold text-sm text-slate-600 dark:text-slate-300 group-hover:text-brand-500 dark:group-hover:text-white"
+                >Networking</span
+              >
+            </a>
+            <a
+              href="#"
+              class="snap-start min-w-[140px] h-[160px] p-4 rounded-2xl bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 flex flex-col items-center justify-center gap-4 group hover:border-brand-500 hover:shadow-neon hover:shadow-brand-500/20 transition-all duration-300"
+            >
+              <div
+                class="w-12 h-12 rounded-full bg-slate-100 dark:bg-white/10 flex items-center justify-center text-2xl text-slate-400 dark:text-white/50 group-hover:bg-brand-500 group-hover:text-white transition-all"
+              >
+                <i class="bi bi-monitor" aria-hidden="true"></i>
+              </div>
+              <span
+                class="font-bold text-sm text-slate-600 dark:text-slate-300 group-hover:text-brand-500 dark:group-hover:text-white"
+                >Displays</span
+              >
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <section
+        id="products"
+        class="max-w-7xl mx-auto px-4 md:px-6 py-16 scroll-mt-24"
+      >
+        <div
+          class="flex flex-col md:flex-row justify-between items-end gap-6 mb-8"
+        >
+          <h2
+            class="text-3xl font-bold text-slate-900 dark:text-white font-mono Monaco"
+          >
+            Trending
+            <span
+              class="text-transparent bg-clip-text bg-gradient-to-r from-brand-400 to-accent-500 font-mono Monaco"
+              >Components</span
+            >
+          </h2>
+
+          <div class="flex flex-wrap gap-3">
+            <div
+              class="flex items-center gap-2 bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-lg p-1"
+            >
+              <button
+                class="px-3 py-1.5 text-xs font-bold rounded-md bg-brand-500 text-white shadow-sm transition-all"
+              >
+                All
+              </button>
+              <button
+                class="px-3 py-1.5 text-xs font-medium rounded-md text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/10 transition-all"
+              >
+                Intel
+              </button>
+              <button
+                class="px-3 py-1.5 text-xs font-medium rounded-md text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/10 transition-all"
+              >
+                Nvidia
+              </button>
+              <button
+                class="px-3 py-1.5 text-xs font-medium rounded-md text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/10 transition-all"
+              >
+                AMD
+              </button>
+            </div>
+
+            <div class="relative group z-30">
+              <button
+                class="flex items-center gap-2 px-4 py-2 text-xs font-bold rounded-lg bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 hover:border-brand-500 transition-all text-slate-700 dark:text-white"
+              >
+                <i class="bi bi-sort-down"></i> Sort by Price
+              </button>
+              <div class="absolute right-0 mt-2 w-40 bg-white dark:bg-dark-card border border-slate-200 dark:border-white/10 rounded-lg shadow-xl opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto transition-all flex flex-col overflow-hidden">
+                <a href="?sort=price_asc" class="px-4 py-2 text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5">Price: Low to High</a>
+                <a href="?sort=price_desc" class="px-4 py-2 text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5">Price: High to Low</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div
+          class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+        >
+          {% for product in trending_products %}
+          <div
+            class="group bg-white dark:bg-white/5 backdrop-blur-sm border border-slate-200 dark:border-white/10 rounded-2xl p-4 transition-all duration-300 hover:border-brand-500/50 hover:shadow-neon hover:shadow-brand-500/20 hover:-translate-y-1"
+          >
+            <div
+              class="relative aspect-square rounded-xl bg-slate-50 dark:bg-black/20 mb-4 flex items-center justify-center overflow-hidden"
+            >
+              {% if product.badge %}
+              <span
+                class="absolute top-2 left-2 px-2 py-1 {% if product.badge == 'Hot' %}bg-brand-500{% else %}bg-accent-500{% endif %} text-white text-[10px] font-bold uppercase rounded-md z-10"
+                >{{ product.badge }}</span
+              >
+              {% endif %}
+              
+              {% if product.image %}
+              <img src="{{ product.image.url }}" alt="{{ product.name }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+              {% else %}
+              <i
+                class="bi bi-cpu text-6xl text-slate-200 dark:text-white/10 group-hover:scale-110 transition-transform duration-500"
+                aria-hidden="true"
+              ></i>
+              {% endif %}
+            </div>
+            <div>
+              <h3 class="font-bold text-slate-900 dark:text-white text-lg">
+                {{ product.name }}
+              </h3>
+              <p
+                class="text-xs text-slate-500 dark:text-slate-400 font-mono mb-3"
+              >
+                {{ product.short_description|default:"High Performance Component" }}
+              </p>
+              <div class="flex items-center justify-between">
+                <span class="text-brand-500 font-bold font-mono"
+                  >₹{{ product.price }}</span
+                >
+                <button
+                  class="add-to-cart-btn w-8 h-8 rounded-lg bg-slate-100 dark:bg-white/10 flex items-center justify-center hover:bg-brand-500 hover:text-white transition-colors"
+                  aria-label="Add {{ product.name }} to cart"
+                  data-name="{{ product.name }}"
+                >
+                  <i class="bi bi-plus-lg" aria-hidden="true"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          {% empty %}
+          <div class="col-span-full text-center py-10">
+            <p class="text-slate-500 dark:text-slate-400 font-mono">No trending products found.</p>
+          </div>
+          {% endfor %}
+        </div>
+      </section>
+    </main>
+
+    <nav
+      class="lg:hidden fixed bottom-4 left-4 right-4 bg-white/80 dark:bg-[#0f172a]/90 backdrop-blur-xl border border-slate-200 dark:border-white/10 p-2 rounded-2xl shadow-2xl z-50 flex justify-around items-center"
+    >
+      <a
+        href="home.html"
+        class="flex flex-col items-center gap-1 p-2 rounded-xl text-brand-600 dark:text-brand-400 bg-brand-50 dark:bg-brand-900/20"
+      >
+        <i class="bi bi-house text-xl" aria-hidden="true"></i>
+        <span class="text-[10px] font-bold">Home</span>
+      </a>
+      <a
+        href="custom.html"
+        class="flex flex-col items-center gap-1 p-2 rounded-xl text-slate-400 hover:text-brand-600 transition-colors"
+      >
+        <i class="bi bi-cpu text-xl" aria-hidden="true"></i>
+        <span class="text-[10px] font-bold">Builder</span>
+      </a>
+      <a
+        href="cart.html"
+        class="flex flex-col items-center gap-1 p-2 rounded-xl text-slate-400 hover:text-brand-600 transition-colors relative"
+      >
+        <i class="bi bi-cart text-xl" aria-hidden="true"></i>
+        <span class="text-[10px] font-bold">Cart</span>
+        <span
+          class="mobile-cart-badge absolute top-1 right-2 w-2 h-2 rounded-full bg-red-500 opacity-0 transition-opacity duration-300"
+        ></span>
+      </a>
+      <a
+        href="profile.html"
+        class="flex flex-col items-center gap-1 p-2 rounded-xl text-slate-400 hover:text-brand-600 transition-colors"
+      >
+        <i class="bi bi-person text-xl" aria-hidden="true"></i>
+        <span class="text-[10px] font-bold">Profile</span>
+      </a>
+    </nav>
+
+    <footer
+      class="border-t border-slate-200 dark:border-white/5 bg-slate-100 dark:bg-dark-card mt-20 mb-[80px] lg:mb-0 font-mono Monaco"
+    >
+      <div class="max-w-7xl mx-auto px-4 md:px-6 py-12 md:py-16">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
+          <div class="space-y-4">
+            <div class="flex items-center gap-2">
+              <div
+                class="w-8 h-8 rounded-lg bg-gradient-to-tr from-brand-500 to-accent-600 text-white flex items-center justify-center"
+              >
+                <i class="bi bi-cpu-fill" aria-hidden="true"></i>
+              </div>
+              <span
+                class="font-bold text-xl text-slate-900 dark:text-white font-mono uppercase"
+                >Nexus<span class="text-brand-400">Build</span></span
+              >
+            </div>
+            <p
+              class="text-slate-500 dark:text-slate-400 text-sm leading-relaxed"
+            >
+              We have Great amount of experience in Building Gaming PC, Editing
+              PC & Workstation PC for our clients. We build with love and we
+              know what your PC means to you.
+            </p>
+            <div class="flex gap-4 pt-2">
+              <a
+                href="#"
+                aria-label="Facebook"
+                class="w-8 h-8 rounded-full bg-slate-200 dark:bg-white/5 flex items-center justify-center text-slate-600 dark:text-slate-400 hover:bg-brand-500 hover:text-white transition-colors"
+                ><i class="bi bi-facebook" aria-hidden="true"></i
+              ></a>
+              <a
+                href="#"
+                aria-label="X (Twitter)"
+                class="w-8 h-8 rounded-full bg-slate-200 dark:bg-white/5 flex items-center justify-center text-slate-600 dark:text-slate-400 hover:bg-brand-500 hover:text-white transition-colors"
+                ><i class="bi bi-twitter-x" aria-hidden="true"></i
+              ></a>
+              <a
+                href="#"
+                aria-label="Instagram"
+                class="w-8 h-8 rounded-full bg-slate-200 dark:bg-white/5 flex items-center justify-center text-slate-600 dark:text-slate-400 hover:bg-brand-500 hover:text-white transition-colors"
+                ><i class="bi bi-instagram" aria-hidden="true"></i
+              ></a>
+            </div>
+          </div>
+
+          <div>
+            <h3
+              class="text-brand-500 dark:text-brand-400 font-bold text-lg mb-6 font-mono uppercase tracking-wider"
+            >
+              Shop Categories
+            </h3>
+            <ul class="space-y-3">
+              {% for category in categories %}
+              <li class="relative group z-10">
+                <a
+                  href="#"
+                  class="text-slate-600 dark:text-slate-400 hover:text-brand-500 dark:hover:text-brand-400 text-sm flex items-center gap-2 transition-colors cursor-pointer py-1"
+                >
+                  <i class="bi bi-chevron-right text-xs opacity-50" aria-hidden="true"></i>
+                  {{ category.name }}
+                </a>
+                
+                {% if category.subcategories.all %}
+                <div class="absolute left-6 top-6 hidden group-hover:block w-40 bg-white dark:bg-dark-card border border-slate-200 dark:border-white/10 rounded-xl shadow-xl overflow-hidden z-50">
+                  <ul class="py-1">
+                    {% for subcategory in category.subcategories.all %}
+                    <li>
+                      <a href="#" class="block px-4 py-2 text-xs text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 hover:text-brand-500 dark:hover:text-brand-400 transition-colors">
+                        {{ subcategory.name }}
+                      </a>
+                    </li>
+                    {% endfor %}
+                  </ul>
+                </div>
+                {% endif %}
+              </li>
+              {% endfor %}
+            </ul>
+          </div>
+
+          <div>
+            <h3
+              class="text-brand-500 dark:text-brand-400 font-bold text-lg mb-6 font-mono uppercase tracking-wider"
+            >
+              Quick Links
+            </h3>
+            <ul class="space-y-3">
+              <li>
+                <a
+                  href="contact.html"
+                  class="text-slate-600 dark:text-slate-400 hover:text-brand-500 dark:hover:text-brand-400 text-sm transition-colors"
+                  >Contact Us</a
+                >
+              </li>
+              <li>
+                <a
+                  href="about.html"
+                  class="text-slate-600 dark:text-slate-400 hover:text-brand-500 dark:hover:text-brand-400 text-sm transition-colors"
+                  >About Us</a
+                >
+              </li>
+              <li>
+                <a
+                  href="policy.html"
+                  class="text-slate-600 dark:text-slate-400 hover:text-brand-500 dark:hover:text-brand-400 text-sm transition-colors"
+                  >Terms & Conditions</a
+                >
+              </li>
+              <li>
+                <a
+                  href="policy.html"
+                  class="text-slate-600 dark:text-slate-400 hover:text-brand-500 dark:hover:text-brand-400 text-sm transition-colors"
+                  >Privacy Policy</a
+                >
+              </li>
+              <li>
+                <a
+                  href="policy.html"
+                  class="text-slate-600 dark:text-slate-400 hover:text-brand-500 dark:hover:text-brand-401 text-sm transition-colors"
+                  >Refund Policy</a
+                >
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <h3
+              class="text-brand-500 dark:text-brand-400 font-bold text-lg mb-6 font-mono uppercase tracking-wider"
+            >
+              Information
+            </h3>
+            <ul class="space-y-4">
+              <li class="flex items-start gap-3">
+                <i
+                  class="bi bi-geo-alt-fill text-brand-500 mt-1"
+                  aria-hidden="true"
+                ></i>
+                <span class="text-slate-600 dark:text-slate-400 text-sm">
+                  305, 3rd Floor, Gedore House 51-52, Nehru Place, New Delhi
+                  110019
+                </span>
+              </li>
+              <li class="flex items-start gap-3">
+                <i
+                  class="bi bi-telephone-fill text-brand-500 mt-1"
+                  aria-hidden="true"
+                ></i>
+                <a
+                  href="tel:+917016455514"
+                  class="text-slate-600 dark:text-slate-400 text-sm hover:text-brand-500 transition-colors"
+                >
+                  +91-7016455514
+                </a>
+              </li>
+              <li class="flex items-start gap-3">
+                <i
+                  class="bi bi-clock-fill text-brand-500 mt-1"
+                  aria-hidden="true"
+                ></i>
+                <span class="text-slate-600 dark:text-slate-400 text-sm">
+                  11am-6pm (Mon-Sat) Sunday Holiday
+                </span>
+              </li>
+              <li class="flex items-start gap-3">
+                <i
+                  class="bi bi-envelope-fill text-brand-500 mt-1"
+                  aria-hidden="true"
+                ></i>
+                <a
+                  href="mailto:support@nexusbuild.com"
+                  class="text-slate-600 dark:text-slate-400 text-sm hover:text-brand-500 transition-colors"
+                >
+                  support@nexusbuild.com
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div
+          class="border-t border-slate-200 dark:border-white/10 mt-12 pt-8 text-center"
+        >
+          <p class="text-xs text-slate-500">
+            © 2026 NexusBuild Inc. All rights reserved.
+          </p>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      // --- Theme Logic ---
+      document.addEventListener("DOMContentLoaded", function () {
+        const toggleBtn = document.getElementById("themeToggle");
+        if (!toggleBtn) return;
+        const html = document.documentElement;
+        const icon = toggleBtn.querySelector("i");
+
+        function updateIcon() {
+          const isDark = html.getAttribute("data-theme") === "dark";
+          icon.classList.remove("bi-moon-stars-fill");
+          icon.classList.remove("bi-sun-fill");
+          icon.classList.add(isDark ? "bi-sun-fill" : "bi-moon-stars-fill");
+          icon.setAttribute("aria-hidden", "true");
+          toggleBtn.setAttribute(
+            "aria-label",
+            isDark ? "Switch to light theme" : "Switch to dark theme",
+          );
+        }
+
+        function initTheme() {
+          const savedTheme = localStorage.getItem("theme");
+          if (savedTheme === "light") {
+            html.removeAttribute("data-theme");
+          } else if (savedTheme === "dark") {
+            html.setAttribute("data-theme", "dark");
+          } else {
+            const prefersDark =
+              window.matchMedia &&
+              window.matchMedia("(prefers-color-scheme: dark)").matches;
+            if (prefersDark) html.setAttribute("data-theme", "dark");
+            else html.removeAttribute("data-theme");
+          }
+          updateIcon();
+        }
+
+        toggleBtn.addEventListener("click", function () {
+          const isDark = html.getAttribute("data-theme") === "dark";
+          if (isDark) {
+            html.removeAttribute("data-theme");
+            localStorage.setItem("theme", "light");
+          } else {
+            html.setAttribute("data-theme", "dark");
+            localStorage.setItem("theme", "dark");
+          }
+          updateIcon();
+        });
+
+        initTheme();
+
+        // --- Carousel Logic (Auto Scroll) ---
+        const scrollContainer = document.getElementById("category-scroll");
+        const prevBtn = document.getElementById("cat-prev");
+        const nextBtn = document.getElementById("cat-next");
+
+        if (scrollContainer) {
+          let autoScrollInterval;
+
+          function scrollCategories(offset) {
+            scrollContainer.scrollBy({ left: offset, behavior: "smooth" });
+          }
+
+          if (nextBtn)
+            nextBtn.addEventListener("click", () => scrollCategories(200));
+          if (prevBtn)
+            prevBtn.addEventListener("click", () => scrollCategories(-200));
+
+          function startAutoScroll() {
+            autoScrollInterval = setInterval(() => {
+              if (
+                scrollContainer.scrollLeft + scrollContainer.clientWidth >=
+                scrollContainer.scrollWidth - 10
+              ) {
+                scrollContainer.scrollTo({ left: 0, behavior: "smooth" });
+              } else {
+                scrollCategories(160);
+              }
+            }, 3000);
+          }
+
+          function stopAutoScroll() {
+            clearInterval(autoScrollInterval);
+          }
+
+          startAutoScroll();
+          scrollContainer.addEventListener("mouseenter", stopAutoScroll);
+          scrollContainer.addEventListener("mouseleave", startAutoScroll);
+          scrollContainer.addEventListener("touchstart", stopAutoScroll, {
+            passive: true,
+          });
+          scrollContainer.addEventListener("touchend", startAutoScroll, {
+            passive: true,
+          });
+        }
+
+        // --- NEW: Toast Notification System ---
+        const toastContainer = document.getElementById("toast-container");
+        const cartBadges = document.querySelectorAll(
+          "#cart-badge, .mobile-cart-badge",
+        );
+
+        function showToast(message) {
+          const toast = document.createElement("div");
+          toast.className = "toast";
+          toast.innerHTML = `
+            <i class="bi bi-check-circle-fill toast-icon"></i>
+            <span class="text-sm font-medium">${message}</span>
+          `;
+
+          toastContainer.appendChild(toast);
+
+          // Trigger animation
+          requestAnimationFrame(() => {
+            toast.classList.add("show");
+          });
+
+          // Remove after 3 seconds
+          setTimeout(() => {
+            toast.classList.remove("show");
+            setTimeout(() => {
+              toast.remove();
+            }, 300);
+          }, 3000);
+        }
+
+        // --- NEW: Add to Cart Logic & Interactions ---
+        const addToCartBtns = document.querySelectorAll(".add-to-cart-btn");
+
+        addToCartBtns.forEach((btn) => {
+          btn.addEventListener("click", function () {
+            const productName = this.getAttribute("data-name");
+
+            // 1. Show Toast
+            showToast(`Added <b>${productName}</b> to cart`);
+
+            // 2. Update Badge Mockup
+            cartBadges.forEach((badge) => {
+              badge.style.opacity = "1";
+              // Optional: animation pop
+              badge.style.transform = "scale(1.2)";
+              setTimeout(() => (badge.style.transform = "scale(1)"), 200);
+            });
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,1113 @@
+{% load static %}
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Nexus Admin | Command Center</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
+    />
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js/dist/chart.umd.js"></script>
+
+    <script>
+      tailwind.config = {
+        darkMode: ["class", '[data-theme="dark"]'],
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['"Outfit"', "sans-serif"],
+              mono: ['"Space Grotesk"', "monospace"],
+            },
+            colors: {
+              brand: {
+                400: "#38bdf8",
+                500: "#0ea5e9",
+                600: "#0284c7",
+                glow: "rgba(14, 165, 233, 0.3)",
+              },
+              accent: {
+                400: "#a78bfa",
+                500: "#8b5cf6",
+                600: "#7c3aed",
+                glow: "rgba(139, 92, 246, 0.3)",
+              },
+              dark: { bg: "#0b0f19", card: "#111827", border: "#1f2937" },
+            },
+            backgroundImage: {
+              "grid-pattern":
+                "linear-gradient(to right, #1f2937 1px, transparent 1px), linear-gradient(to bottom, #1f2937 1px, transparent 1px)",
+            },
+            boxShadow: { neon: "0 0 12px -3px var(--tw-shadow-color)" },
+            animation: {
+              "slide-in": "slideIn 0.4s ease-out forwards",
+              pulse: "pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+            },
+            keyframes: {
+              slideIn: {
+                "0%": { opacity: "0", transform: "translateY(10px)" },
+                "100%": { opacity: "1", transform: "translateY(0)" },
+              },
+            },
+          },
+        },
+      };
+    </script>
+
+    <style type="text/tailwindcss">
+      ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #a4a4a4;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #334155;
+        border-radius: 4px;
+      }
+      .bg-grid {
+        background-size: 40px 40px;
+        mask-image: linear-gradient(
+          to bottom,
+          transparent,
+          5% white,
+          95% white,
+          transparent
+        );
+      }
+      .nav-item.active {
+        background: rgba(14, 165, 233, 0.1);
+        color: #38bdf8;
+        border-right: 3px solid #38bdf8;
+      }
+      .glass-table th {
+        background-color: rgba(255, 255, 255, 0.05);
+      }
+      .glass-table tr:hover td {
+        background-color: rgba(255, 255, 255, 0.02);
+      }
+      .mobile-nav-link {
+        transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+      .mobile-nav-link.active {
+        color: #0ea5e9;
+        background: rgba(14, 165, 233, 0.15);
+        box-shadow: inset 0 0 0 1px rgba(14, 165, 233, 0.15);
+      }
+      .status-completed {
+        @apply bg-emerald-500/10 text-emerald-500 border-emerald-500/20;
+      }
+      .status-pending {
+        @apply bg-yellow-500/10 text-yellow-500 border-yellow-500/20;
+      }
+      .status-processing {
+        @apply bg-blue-500/10 text-blue-500 border-blue-500/20;
+      }
+      .status-cancelled {
+        @apply bg-red-500/10 text-red-500 border-red-500/20;
+      }
+
+      /* Active state for Time Range buttons */
+      .time-btn.active {
+        @apply bg-brand-500 text-white shadow-sm;
+      }
+      .time-btn:not(.active) {
+        @apply text-slate-500 hover:text-slate-900 dark:hover:text-white bg-transparent;
+      }
+
+      /* Toast notification styles */
+      #toast-container {
+        transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      }
+    </style>
+  </head>
+  <body
+    class="bg-slate-50 dark:bg-dark-bg text-slate-600 dark:text-slate-300 antialiased font-sans transition-colors duration-300 h-screen overflow-hidden flex selection:bg-brand-500 selection:text-white pb-20 lg:pb-0"
+  >
+    <div class="fixed inset-0 z-0 pointer-events-none">
+      <div
+        class="absolute inset-0 bg-grid-pattern bg-grid opacity-[0.03] dark:opacity-[0.05]"
+      ></div>
+      <div
+        class="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-brand-500/10 rounded-full blur-[100px] mix-blend-screen"
+      ></div>
+      <div
+        class="absolute bottom-[20%] right-[-10%] w-[500px] h-[500px] bg-accent-500/10 rounded-full blur-[100px] mix-blend-screen"
+      ></div>
+    </div>
+
+    <aside
+      id="sidebar"
+      class="w-64 bg-white/80 dark:bg-dark-card/80 backdrop-blur-xl border-r border-slate-200 dark:border-white/5 h-full flex-col hidden lg:flex z-50 transition-all duration-300 relative"
+    >
+      <div
+        class="h-20 flex items-center px-6 border-b border-slate-200 dark:border-white/5"
+      >
+        <a href="{% url 'core:homepage'%}" class="flex items-center gap-3">
+          <div
+            class="w-8 h-8 rounded-lg bg-gradient-to-tr from-brand-500 to-accent-600 text-white flex items-center justify-center font-bold shadow-lg shadow-brand-500/20"
+          >
+            <i class="bi bi-shield-lock-fill" aria-hidden="true"></i>
+          </div>
+          <div class="flex flex-col">
+            <span
+              class="font-bold text-lg tracking-tight text-slate-900 dark:text-white font-mono uppercase"
+              >Nexus<span class="text-brand-400">Admin</span></span
+            >
+            <span
+              class="text-[10px] font-bold tracking-widest text-slate-500 uppercase"
+              >Command Center</span
+            >
+          </div>
+        </a>
+      </div>
+      <!-- Navigation -->
+      <nav class="flex-1 overflow-y-auto py-6 px-4 space-y-1 custom-scrollbar">
+        
+        <!-- Main Menu -->
+        <p
+          class="px-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2"
+        >
+          Main Menu
+        </p>
+
+        <!-- Overview -->
+        <a
+          href="{% url 'dashboard:dashboard_home'%}"
+          class="nav-item active flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
+        >
+          <i
+            class="bi bi-grid-1x2-fill text-lg drop-shadow-sm"
+            aria-hidden="true"
+          ></i>
+          Overview
+        </a>
+        
+        <!-- Users  -->
+        <p
+          class="px-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 mt-6"
+        >
+          Users
+        </p>
+        
+        <!-- Customers -->
+        <a
+          href="{% url 'dashboard:customers'%}"
+          class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
+        >
+          <i
+            class="bi bi-people-fill text-lg drop-shadow-sm"
+            aria-hidden="true"
+          ></i>
+          Customers
+        </a>
+        
+        <!-- Employees -->
+        <a
+          href="{% url 'dashboard:employees'%}"
+          class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
+        >
+          <i
+            class="bi bi-person-vcard-fill text-lg drop-shadow-sm"
+            aria-hidden="true"
+          ></i>
+          Employees
+        </a>
+
+        <!-- Suppliers -->
+        <a
+          href="{% url 'dashboard:suppliers'%}"
+          class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
+        >
+          <i class="bi bi-truck text-lg drop-shadow-sm"></i> Suppliers
+        </a>
+
+
+        <!-- Management -->
+        <p
+          class="px-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 mt-6"
+        >
+          Management
+        </p>
+
+
+        <!-- Product -->
+        <a
+          href="{% url 'dashboard:product'%}"
+          class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
+        >
+          <i
+            class="bi bi-box-seam-fill text-lg drop-shadow-sm"
+            aria-hidden="true"
+          ></i>
+          Products
+        </a>
+
+        <!-- Brand -->
+        <a
+          href="{% url 'dashboard:brand'%}"
+          class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
+        >
+          <i
+            class="bi bi-tags-fill text-lg drop-shadow-sm"
+            aria-hidden="true"
+          ></i>
+          Brand
+        </a>
+
+        <!-- Category -->
+        <a
+          href="{% url 'dashboard:category'%}"
+          class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
+        >
+          <i
+            class="bi bi-list-check text-lg drop-shadow-sm"
+            aria-hidden="true"
+          ></i>
+          Category
+        </a>
+
+        <!-- Compatibility -->
+        <a
+          href="{% url 'dashboard:order'%}"
+          class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
+        >
+          <i
+            class="bi bi-cart-check-fill text-lg drop-shadow-sm"
+            aria-hidden="true"
+          ></i>
+          Orders
+        </a>
+
+        <!-- Task Management -->
+        <a
+          href="{% url 'dashboard:task'%}"
+          class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
+        >
+          <i class="bi bi-briefcase-fill text-lg drop-shadow-sm"></i> Task Mgmt
+        </a>
+
+        <!-- Invetory -->
+        <a
+          href="{% url 'dashboard:inventory'%}"
+          class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
+        >
+          <i class="bi bi-boxes text-lg drop-shadow-sm" aria-hidden="true"></i>
+          Inventory
+        </a>
+
+        <!-- Compatibility -->
+        <a
+          href="{% url 'dashboard:compatibility'%}"
+          class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
+        >
+          <i class="bi bi-puzzle-fill text-lg drop-shadow-sm"></i> Compatibility
+        </a>
+
+        <!-- Trending -->
+        <a
+          href="{% url 'dashboard:trending'%}"
+          class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
+        >
+          <i class="bi bi-fire text-lg drop-shadow-sm"></i> Trending
+        </a>
+
+        <!-- Pre-Built PCs -->
+        <a
+          href="{% url 'dashboard:pre_built'%}"
+          class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
+        >
+          <i class="bi bi-pc-display text-lg drop-shadow-sm"></i> Pre-Built PCs
+        </a>
+
+
+        <!-- System -->
+        <p
+          class="px-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 mt-6"
+        >
+          System
+        </p>
+
+        <!-- Analytics -->
+        <a
+          href="{% url 'dashboard:analytic'%}"
+          class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
+        >
+          <i
+            class="bi bi-bar-chart-fill text-lg drop-shadow-sm"
+            aria-hidden="true"
+          ></i>
+          Analytics
+        </a>
+
+        <!-- Settings -->
+        <a
+          href="{% url 'dashboard:setting'%}"
+          class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all hover:bg-slate-100 dark:hover:bg-white/5 hover:text-brand-400"
+        >
+          <i
+            class="bi bi-gear-fill text-lg drop-shadow-sm"
+            aria-hidden="true"
+          ></i>
+          Settings
+        </a>
+      </nav>
+
+      <div class="p-4 border-t border-slate-200 dark:border-white/5">
+        <a
+          href="{% url 'dashboard:logout'%}"
+          class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-red-500 hover:bg-red-500/10 transition-all"
+        >
+          <i class="bi bi-box-arrow-right"></i> Logout
+        </a>
+      </div>
+    </aside>
+
+    <div
+      class="flex-1 flex flex-col h-full relative z-10 w-full lg:w-[calc(100%-16rem)]"
+    >
+      <header
+        class="h-20 bg-white/80 dark:bg-dark-bg/80 backdrop-blur-md border-b border-slate-200 dark:border-white/5 flex items-center justify-between px-4 md:px-8 z-40 sticky top-0"
+      >
+        <div class="flex items-center gap-4 flex-1">
+          <div class="lg:hidden flex items-center gap-2">
+            <div
+              class="w-8 h-8 rounded-lg bg-gradient-to-tr from-brand-500 to-accent-600 text-white flex items-center justify-center font-bold"
+            >
+              <i class="bi bi-shield-lock-fill" aria-hidden="true"></i>
+            </div>
+          </div>
+
+          <div class="relative hidden md:block w-full max-w-md">
+            <i
+              class="bi bi-search absolute left-4 top-3 text-slate-400"
+              aria-hidden="true"
+            ></i>
+            <input
+              type="text"
+              id="adminSearch"
+              aria-label="Search"
+              placeholder="Search orders... (Ctrl + K)"
+              class="w-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-full pl-10 pr-4 py-2.5 text-sm text-slate-700 dark:text-white outline-none focus:border-brand-500 transition-all focus:ring-2 focus:ring-brand-500/20"
+            />
+          </div>
+        </div>
+
+        <div class="flex items-center gap-3 md:gap-4">
+          <button
+            id="themeToggle"
+            aria-label="Toggle Dark Mode"
+            class="w-10 h-10 rounded-full border border-slate-200 dark:border-white/10 flex items-center justify-center text-slate-500 hover:text-brand-400 transition-colors"
+          >
+            <i class="bi bi-moon-stars-fill" aria-hidden="true"></i>
+          </button>
+
+          <div
+            class="h-8 w-px bg-slate-200 dark:bg-white/10 hidden sm:block"
+          ></div>
+
+          <div
+            class="flex items-center gap-3 pl-2 cursor-pointer group relative"
+          >
+            <div class="text-right hidden sm:block">
+              <p
+                class="text-sm font-bold text-slate-900 dark:text-white leading-none group-hover:text-brand-400 transition-colors"
+              >
+                
+              </p>
+              <p class="text-[10px] text-slate-500 font-mono mt-1">
+                
+              </p>
+            </div>
+            <div class="relative">
+              <img
+                src="https://api.dicebear.com/7.x/avataaars/svg?seed={{ request.user.username|default:'Admin' }}"
+                alt="User Avatar"
+                class="w-10 h-10 rounded-full border-2 border-slate-200 dark:border-white/10 group-hover:border-brand-500 transition-all"
+              />
+              <span
+                class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white dark:border-dark-bg rounded-full"
+              ></span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div
+        class="flex-1 overflow-y-auto p-4 md:p-8 custom-scrollbar bg-slate-50 dark:bg-transparent"
+      >
+        <div
+          class="flex flex-col xl:flex-row justify-between items-start xl:items-center mb-8 animate-slide-in gap-4"
+        >
+          <div>
+            <h1
+              class="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white font-mono mb-2"
+            >
+              Dashboard Overview
+            </h1>
+            <p class="text-slate-500 dark:text-slate-400 text-sm">
+              Last updated:
+              <span id="last-updated" class="font-mono text-brand-400"
+                >Just now</span
+              >
+            </p>
+          </div>
+
+          <div class="flex flex-wrap gap-2 w-full xl:w-auto">
+            <div
+              class="bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-lg p-1 flex"
+            >
+              <button
+                onclick="setTimeRange(this, 'Today')"
+                class="time-btn px-3 py-1.5 text-xs font-bold rounded-md transition-colors active"
+              >
+                Today
+              </button>
+              <button
+                onclick="setTimeRange(this, '7D')"
+                class="time-btn px-3 py-1.5 text-xs font-bold rounded-md transition-colors"
+              >
+                7D
+              </button>
+              <button
+                onclick="setTimeRange(this, '30D')"
+                class="time-btn px-3 py-1.5 text-xs font-bold rounded-md transition-colors"
+              >
+                30D
+              </button>
+            </div>
+            <button
+              onclick="exportDashboardData()"
+              class="flex items-center gap-2 bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-300 px-4 py-2 rounded-lg font-bold text-xs hover:border-brand-500 transition-all"
+            >
+              <i class="bi bi-cloud-arrow-down-fill" aria-hidden="true"></i>
+              Export
+            </button>
+          </div>
+        </div>
+
+        <div
+          id="stats-grid"
+          class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 md:gap-6 mb-8 animate-slide-in"
+          style="animation-delay: 0.1s"
+        ></div>
+
+        <div
+          class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8 animate-slide-in"
+          style="animation-delay: 0.2s"
+        >
+          <div
+            class="lg:col-span-2 bg-white dark:bg-dark-card border border-slate-200 dark:border-white/10 p-5 rounded-2xl shadow-sm"
+          >
+            <div class="flex justify-between items-center mb-4">
+              <h3 class="font-bold text-slate-900 dark:text-white">
+                Revenue Analytics
+              </h3>
+              <a
+                href=""
+                class="text-xs text-brand-400 hover:underline"
+                >View Report</a
+              >
+            </div>
+            <div class="h-64 w-full">
+              <canvas
+                id="revenueChart"
+                aria-label="Revenue Chart"
+                role="img"
+              ></canvas>
+            </div>
+          </div>
+          <div
+            class="lg:col-span-1 bg-white dark:bg-dark-card border border-slate-200 dark:border-white/10 p-5 rounded-2xl shadow-sm"
+          >
+            <h3 class="font-bold text-slate-900 dark:text-white mb-4">
+              Order Status
+            </h3>
+            <div class="h-64 w-full flex items-center justify-center relative">
+              <canvas
+                id="statusChart"
+                aria-label="Order Status Chart"
+                role="img"
+              ></canvas>
+            </div>
+          </div>
+        </div>
+
+        <div
+          class="bg-white dark:bg-dark-card border border-slate-200 dark:border-white/10 rounded-3xl overflow-hidden shadow-xl animate-slide-in"
+          style="animation-delay: 0.3s"
+        >
+          <div
+            class="p-6 border-b border-slate-200 dark:border-white/10 flex flex-col sm:flex-row justify-between items-center gap-4"
+          >
+            <div class="flex items-center gap-2">
+              <h3 class="font-bold text-lg text-slate-900 dark:text-white">
+                Recent Orders
+              </h3>
+              <span
+                class="bg-brand-500/10 text-brand-500 text-[10px] font-bold px-2 py-0.5 rounded-full"
+                >Live</span
+              >
+            </div>
+
+            <div class="flex gap-2 w-full sm:w-auto">
+              <div class="relative flex-1 sm:flex-none">
+                <i
+                  class="bi bi-funnel absolute left-3 top-2 text-slate-400 text-xs"
+                  aria-hidden="true"
+                ></i>
+                <select
+                  id="statusFilter"
+                  aria-label="Filter by Status"
+                  class="pl-8 pr-4 py-1.5 text-xs font-bold rounded-lg border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 text-slate-700 dark:text-slate-300 outline-none focus:border-brand-500 appearance-none cursor-pointer"
+                >
+                  <option value="all">All Status</option>
+                  <option value="completed">Completed</option>
+                  <option value="pending">Pending</option>
+                  <option value="processing">Processing</option>
+                  <option value="cancelled">Cancelled</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="hidden md:block overflow-x-auto">
+            <table class="w-full text-left text-sm glass-table">
+              <thead>
+                <tr
+                  class="text-slate-500 border-b border-slate-200 dark:border-white/10"
+                >
+                  <th class="px-6 py-4 w-10">
+                    <input
+                      type="checkbox"
+                      id="selectAllCheckbox"
+                      onchange="toggleSelectAll(this)"
+                      aria-label="Select all orders"
+                      class="rounded border-slate-300 dark:border-slate-600 bg-transparent focus:ring-brand-500 text-brand-500 cursor-pointer"
+                    />
+                  </th>
+                  <th
+                    class="px-6 py-4 font-bold uppercase text-[10px] tracking-widest whitespace-nowrap"
+                  >
+                    Order ID
+                  </th>
+                  <th
+                    class="px-6 py-4 font-bold uppercase text-[10px] tracking-widest whitespace-nowrap"
+                  >
+                    Customer
+                  </th>
+                  <th
+                    class="px-6 py-4 font-bold uppercase text-[10px] tracking-widest whitespace-nowrap"
+                  >
+                    Date
+                  </th>
+                  <th
+                    class="px-6 py-4 font-bold uppercase text-[10px] tracking-widest whitespace-nowrap"
+                  >
+                    Amount
+                  </th>
+                  <th
+                    class="px-6 py-4 font-bold uppercase text-[10px] tracking-widest whitespace-nowrap"
+                  >
+                    Status
+                  </th>
+                  <th
+                    class="px-6 py-4 font-bold uppercase text-[10px] tracking-widest text-right whitespace-nowrap"
+                  >
+                    Action
+                  </th>
+                </tr>
+              </thead>
+              <tbody
+                class="divide-y divide-slate-200 dark:divide-white/5"
+                id="orders-table-body"
+              ></tbody>
+            </table>
+          </div>
+
+          <div
+            class="md:hidden p-4 space-y-4"
+            id="mobile-orders-container"
+          ></div>
+
+          <div
+            class="p-4 border-t border-slate-200 dark:border-white/10 flex justify-between items-center text-xs text-slate-500"
+          >
+            <span id="pagination-info">Showing X to Y of Z entries</span>
+            <div class="flex gap-2">
+              <button
+                onclick="changePage(-1)"
+                id="btn-prev"
+                class="px-3 py-1 rounded border border-slate-200 dark:border-white/10 hover:bg-slate-100 dark:hover:bg-white/5 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                Prev
+              </button>
+              <button
+                onclick="changePage(1)"
+                id="btn-next"
+                class="px-3 py-1 rounded border border-slate-200 dark:border-white/10 hover:bg-slate-100 dark:hover:bg-white/5 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <nav
+      class="lg:hidden fixed bottom-2 left-1 right-1 bg-white/90 dark:bg-[#0f172a]/95 backdrop-blur-xl border border-slate-200 dark:border-white/10 p-2 rounded-full shadow-2xl z-50 flex overflow-x-auto gap-2 items-center [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+    >
+      <a
+        href=""
+        class="mobile-nav-link {% if request.resolver_match.url_name == 'admin_home' %}active{% endif %} flex-shrink-0 flex flex-col items-center justify-center w-10 h-10 rounded-full text-slate-500 dark:text-slate-400 hover:text-brand-500"
+      >
+        <i class="bi bi-grid-1x2-fill text-lg drop-shadow-sm"></i>
+      </a>
+      <a
+        href=""
+        class="mobile-nav-link {% if request.resolver_match.url_name == 'admin_customer' %}active{% endif %} flex-shrink-0 flex flex-col items-center justify-center w-10 h-10 rounded-full text-slate-500 dark:text-slate-400 hover:text-brand-500"
+      >
+        <i class="bi bi-people-fill text-lg drop-shadow-sm"></i>
+      </a>
+      <a
+        href=""
+        class="mobile-nav-link {% if request.resolver_match.url_name == 'admin_employee' %}active{% endif %} flex-shrink-0 flex flex-col items-center justify-center w-10 h-10 rounded-full text-slate-500 dark:text-slate-400 hover:text-brand-500"
+      >
+        <i class="bi bi-person-vcard-fill text-lg drop-shadow-sm"></i>
+      </a>
+      <a
+        href=""
+        class="mobile-nav-link {% if request.resolver_match.url_name == 'admin_products' %}active{% endif %} flex-shrink-0 flex flex-col items-center justify-center w-10 h-10 rounded-full text-slate-500 dark:text-slate-400 hover:text-brand-500"
+      >
+        <i class="bi bi-box-seam-fill text-lg drop-shadow-sm"></i>
+      </a>
+      <a
+        href=""
+        class="mobile-nav-link {% if request.resolver_match.url_name == 'admin_order' %}active{% endif %} flex-shrink-0 flex flex-col items-center justify-center w-10 h-10 rounded-full text-slate-500 dark:text-slate-400 hover:text-brand-500"
+      >
+        <i class="bi bi-cart-check-fill text-lg drop-shadow-sm"></i>
+      </a>
+      <a
+        href=""
+        class="mobile-nav-link {% if request.resolver_match.url_name == 'reports' %}active{% endif %} flex-shrink-0 flex flex-col items-center justify-center w-10 h-10 rounded-full text-slate-500 dark:text-slate-400 hover:text-brand-500"
+      >
+        <i class="bi bi-bar-chart-fill text-lg drop-shadow-sm"></i>
+      </a>
+    </nav>
+
+    <div
+      id="logout-modal"
+      class="fixed inset-0 z-[100] hidden flex items-center justify-center bg-black/80 backdrop-blur-sm"
+    >
+      <div
+        class="bg-white dark:bg-dark-card p-6 rounded-2xl w-full max-w-sm border border-slate-200 dark:border-white/10 shadow-2xl scale-95 opacity-0 transition-all duration-200 transform"
+        id="logout-content"
+      >
+        <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-2">
+          Confirm Logout
+        </h3>
+        <p class="text-sm text-slate-500 dark:text-slate-400 mb-6">
+          Are you sure you want to end your session?
+        </p>
+        <div class="flex gap-3">
+          <button
+            onclick="closeLogout()"
+            class="flex-1 px-4 py-2 rounded-lg border border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-300 font-bold text-sm hover:bg-slate-100 dark:hover:bg-white/5 transition-colors"
+          >
+            Cancel
+          </button>
+          <button
+            onclick="window.location.href"
+            class="flex-1 px-4 py-2 rounded-lg bg-red-500 text-white font-bold text-sm hover:bg-red-600 transition-colors shadow-lg shadow-red-500/20"
+          >
+            Logout
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div
+      id="toast-container"
+      class="fixed bottom-5 right-5 z-[200] transform translate-y-20 opacity-0 pointer-events-none flex items-center gap-3 bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-4 py-3 rounded-xl shadow-2xl font-bold text-sm"
+    >
+      <i class="bi bi-check-circle-fill text-emerald-400"></i>
+      <span id="toast-message">Action Successful</span>
+    </div>
+
+    <template id="stats-skeleton">
+      <div
+        class="bg-white dark:bg-dark-card border border-slate-200 dark:border-white/10 p-5 rounded-2xl animate-pulse"
+      >
+        <div class="flex justify-between items-start mb-4">
+          <div class="space-y-2">
+            <div class="h-3 w-20 bg-slate-200 dark:bg-white/10 rounded"></div>
+            <div class="h-6 w-32 bg-slate-200 dark:bg-white/10 rounded"></div>
+          </div>
+          <div class="w-10 h-10 rounded-lg bg-slate-200 dark:bg-white/10"></div>
+        </div>
+        <div class="h-4 w-24 bg-slate-200 dark:bg-white/10 rounded"></div>
+      </div>
+    </template>
+
+    <script>
+      // --- 1. Theme Logic ---
+      const html = document.documentElement;
+      const themeToggle = document.getElementById("themeToggle");
+      const icon = themeToggle.querySelector("i");
+
+      function updateChartThemes() {
+        const isDark = html.getAttribute("data-theme") === "dark";
+        const gridColor = isDark
+          ? "rgba(255,255,255,0.05)"
+          : "rgba(0,0,0,0.05)";
+
+        if (window.revenueChart) {
+          window.revenueChart.options.scales.x.grid.color = gridColor;
+          window.revenueChart.options.scales.y.grid.color = gridColor;
+          window.revenueChart.update();
+        }
+      }
+
+      function initTheme() {
+        const savedTheme = localStorage.getItem("theme");
+        if (savedTheme === "light") {
+          html.setAttribute("data-theme", "light");
+          html.classList.remove("dark");
+          icon.classList.replace("bi-moon-stars-fill", "bi-sun-fill");
+        } else {
+          html.setAttribute("data-theme", "dark");
+          html.classList.add("dark");
+          icon.classList.replace("bi-sun-fill", "bi-moon-stars-fill");
+        }
+        updateChartThemes();
+      }
+
+      themeToggle.addEventListener("click", () => {
+        const isDark = html.getAttribute("data-theme") === "dark";
+        localStorage.setItem("theme", isDark ? "light" : "dark");
+        initTheme();
+      });
+      initTheme();
+    </script>
+
+    <script>
+      // --- 2. Data & State (INJECTED VIA DJANGO CONTEXT) ---
+      const statsData = {{ dashboard_stats_json|safe }};
+      let ordersData = {{ recent_orders_json|safe }};
+      const revenueChartData = {{ revenue_chart_data_json|safe }};
+      const statusChartData = {{ status_chart_data_json|safe }};
+
+      // Pagination & Filter State
+      let currentPage = 1;
+      const itemsPerPage = 5;
+      let currentFilterStatus = "all";
+      let currentSearchTerm = "";
+
+      // --- 3. UI Rendering & Interactions ---
+
+      function renderStats() {
+        const container = document.getElementById("stats-grid");
+        const skeleton = document.getElementById("stats-skeleton");
+        container.innerHTML = "";
+        for (let i = 0; i < 4; i++)
+          container.appendChild(skeleton.content.cloneNode(true));
+
+        setTimeout(() => {
+          container.innerHTML = statsData
+            .map((stat) => {
+              let colorClass = `text-${stat.color}-500 bg-${stat.color}-500/10`;
+              if (stat.color === "brand")
+                colorClass = "text-brand-500 bg-brand-500/10";
+              if (stat.color === "accent")
+                colorClass = "text-accent-500 bg-accent-500/10";
+              if (stat.color === "warning")
+                colorClass = "text-yellow-500 bg-yellow-500/10";
+              if (stat.color === "success")
+                colorClass = "text-emerald-500 bg-emerald-500/10";
+
+              let badgeHtml = stat.badge
+                ? `<span class="text-xs font-bold text-yellow-500 bg-yellow-500/10 px-2 py-1 rounded">${stat.change}</span>`
+                : `<span class="text-xs font-bold text-emerald-500 bg-emerald-500/10 px-2 py-1 rounded">${stat.change} <span class="text-slate-400 font-normal text-[10px]">${stat.sub}</span></span>`;
+              if (stat.pulse)
+                badgeHtml = `<span class="text-xs font-bold text-emerald-500 bg-emerald-500/10 px-2 py-1 rounded flex items-center gap-2 w-fit"><span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span></span> All Systems Go</span>`;
+
+              return `
+              <div class="bg-white dark:bg-dark-card border border-slate-200 dark:border-white/10 p-5 rounded-2xl shadow-sm hover:shadow-neon hover:shadow-brand-500/20 transition-all group">
+                <div class="flex justify-between items-start mb-4">
+                  <div>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">${stat.title}</p>
+                    <h3 class="text-2xl font-black text-slate-900 dark:text-white mt-1 font-mono group-hover:text-brand-400 transition-colors">${stat.value}</h3>
+                  </div>
+                  <div class="w-10 h-10 rounded-lg ${colorClass} flex items-center justify-center">
+                    <i class="bi ${stat.icon} text-xl" aria-hidden="true"></i>
+                  </div>
+                </div>
+                ${badgeHtml}
+              </div>`;
+            })
+            .join("");
+        }, 300);
+      }
+
+      function renderTable() {
+        const tbody = document.getElementById("orders-table-body");
+        const mobileContainer = document.getElementById(
+          "mobile-orders-container",
+        );
+
+        // Apply Filters
+        let filtered = ordersData.filter(
+          (o) =>
+            currentFilterStatus === "all" || o.status === currentFilterStatus,
+        );
+        if (currentSearchTerm) {
+          filtered = filtered.filter(
+            (o) =>
+              o.user.toLowerCase().includes(currentSearchTerm) ||
+              o.id.toLowerCase().includes(currentSearchTerm),
+          );
+        }
+
+        // Apply Pagination
+        const totalItems = filtered.length;
+        const totalPages = Math.ceil(totalItems / itemsPerPage) || 1;
+        if (currentPage > totalPages) currentPage = totalPages;
+
+        const startIdx = (currentPage - 1) * itemsPerPage;
+        const paginatedData = filtered.slice(startIdx, startIdx + itemsPerPage);
+
+        // Render Desktop
+        tbody.innerHTML = paginatedData
+          .map((order) => {
+            const statusClass = `status-${order.status}`;
+            return `
+            <tr class="text-slate-700 dark:text-slate-300 border-b border-slate-200 dark:border-white/5 last:border-0 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors">
+              <td class="px-6 py-4"><input type="checkbox" aria-label="Select order ${order.id}" class="row-checkbox rounded border-slate-300 dark:border-slate-600 bg-transparent focus:ring-brand-500 text-brand-500 cursor-pointer"></td>
+              <td class="px-6 py-4 font-mono text-xs text-brand-500">${order.id}</td>
+              <td class="px-6 py-4 font-bold">${order.user}</td>
+              <td class="px-6 py-4 text-xs text-slate-500">${order.date}</td>
+              <td class="px-6 py-4 font-mono font-bold text-slate-900 dark:text-white">${order.price}</td>
+              <td class="px-6 py-4"><span class="px-2 py-1 rounded text-[10px] font-bold uppercase border ${statusClass}">${order.status}</span></td>
+              <td class="px-6 py-4 text-right">
+                <button onclick="showToast('Action Menu: ${order.id}')" aria-label="Order Actions" class="text-slate-400 hover:text-brand-400 transition-colors"><i class="bi bi-three-dots-vertical" aria-hidden="true"></i></button>
+              </td>
+            </tr>`;
+          })
+          .join("");
+
+        // Render Mobile
+        mobileContainer.innerHTML = paginatedData
+          .map((order) => {
+            const statusClass = `status-${order.status}`;
+            return `
+            <div class="bg-white dark:bg-white/5 p-4 rounded-xl border border-slate-200 dark:border-white/5 shadow-sm">
+              <div class="flex justify-between items-start mb-3">
+                <div>
+                  <span class="text-xs font-mono text-brand-500 block mb-1">${order.id}</span>
+                  <h4 class="font-bold text-slate-900 dark:text-white">${order.user}</h4>
+                </div>
+                <span class="px-2 py-1 rounded text-[10px] font-bold uppercase border ${statusClass}">${order.status}</span>
+              </div>
+              <div class="flex justify-between items-center text-sm">
+                <span class="text-slate-500">${order.date}</span>
+                <span class="font-bold text-slate-900 dark:text-white font-mono">${order.price}</span>
+              </div>
+            </div>`;
+          })
+          .join("");
+
+        // Update Pagination Controls
+        const endDisplay = Math.min(startIdx + itemsPerPage, totalItems);
+        document.getElementById("pagination-info").innerText =
+          totalItems > 0
+            ? `Showing ${startIdx + 1} to ${endDisplay} of ${totalItems} entries`
+            : "No entries found";
+
+        document.getElementById("btn-prev").disabled = currentPage === 1;
+        document.getElementById("btn-next").disabled =
+          currentPage === totalPages || totalItems === 0;
+
+        // Reset global header checkbox
+        document.getElementById("selectAllCheckbox").checked = false;
+      }
+
+      function changePage(direction) {
+        currentPage += direction;
+        renderTable();
+      }
+
+      // Select All Functionality
+      function toggleSelectAll(checkbox) {
+        const checkboxes = document.querySelectorAll(".row-checkbox");
+        checkboxes.forEach((cb) => (cb.checked = checkbox.checked));
+      }
+
+      // Toast Notification System
+      function showToast(msg) {
+        const toast = document.getElementById("toast-container");
+        document.getElementById("toast-message").innerText = msg;
+        toast.classList.remove("translate-y-20", "opacity-0");
+        setTimeout(() => {
+          toast.classList.add("translate-y-20", "opacity-0");
+        }, 3000);
+      }
+
+      // Time Range Simulator (AJAX integration point)
+      function setTimeRange(btn, range) {
+        document
+          .querySelectorAll(".time-btn")
+          .forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+
+        // Note: For a real Django app, you would make a fetch() call to a Django view
+        // to get the new range data, then update statsData, ordersData, etc., and re-render.
+        showToast(`Filter applied: ${range}. (Connect AJAX view here)`);
+      }
+
+      // Export CSV
+      function exportDashboardData() {
+        let csvContent = "data:text/csv;charset=utf-8,";
+        csvContent += "Order ID,Customer,Date,Amount,Status\n";
+        ordersData.forEach((row) => {
+          csvContent += `"${row.id}","${row.user}","${row.date}","${row.price}","${row.status}"\n`;
+        });
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", "Nexus_Dashboard_Export.csv");
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        showToast("Export Complete");
+      }
+
+      // --- 4. Chart.js Setup ---
+      function initCharts() {
+        const ctx = document.getElementById("revenueChart").getContext("2d");
+        const statusCtx = document
+          .getElementById("statusChart")
+          .getContext("2d");
+        const isDark =
+          document.documentElement.getAttribute("data-theme") === "dark";
+        const gridColor = isDark
+          ? "rgba(255,255,255,0.05)"
+          : "rgba(0,0,0,0.05)";
+
+        window.revenueChart = new Chart(ctx, {
+          type: "line",
+          data: {
+            labels: revenueChartData.labels,
+            datasets: [
+              {
+                label: "Revenue (₹)",
+                data: revenueChartData.data,
+                borderColor: "#0ea5e9",
+                backgroundColor: "rgba(14, 165, 233, 0.1)",
+                fill: true,
+                tension: 0.4,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+              y: { grid: { color: gridColor }, border: { display: false } },
+              x: { grid: { display: false }, border: { display: false } },
+            },
+          },
+        });
+
+        window.statusChart = new Chart(statusCtx, {
+          type: "doughnut",
+          data: {
+            labels: statusChartData.labels,
+            datasets: [
+              {
+                data: statusChartData.data,
+                backgroundColor: ["#10b981", "#f59e0b", "#3b82f6", "#ef4444"],
+                borderWidth: 0,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            cutout: "70%",
+            plugins: {
+              legend: {
+                position: "bottom",
+                labels: { usePointStyle: true, boxWidth: 6 },
+              },
+            },
+          },
+        });
+      }
+
+      // --- 5. Event Listeners ---
+      document
+        .getElementById("statusFilter")
+        .addEventListener("change", (e) => {
+          currentFilterStatus = e.target.value;
+          currentPage = 1;
+          renderTable();
+        });
+
+      document.addEventListener("keydown", (e) => {
+        if ((e.ctrlKey || e.metaKey) && e.key === "k") {
+          e.preventDefault();
+          document.getElementById("adminSearch").focus();
+        }
+      });
+
+      document.getElementById("adminSearch").addEventListener("input", (e) => {
+        currentSearchTerm = e.target.value.toLowerCase();
+        currentPage = 1;
+        renderTable();
+      });
+
+      // Modals
+      function confirmLogout() {
+        const modal = document.getElementById("logout-modal");
+        const content = document.getElementById("logout-content");
+        modal.classList.remove("hidden");
+        setTimeout(() => {
+          content.classList.remove("scale-95", "opacity-0");
+          content.classList.add("scale-100", "opacity-100");
+        }, 10);
+      }
+
+      function closeLogout() {
+        const modal = document.getElementById("logout-modal");
+        const content = document.getElementById("logout-content");
+        content.classList.remove("scale-100", "opacity-100");
+        content.classList.add("scale-95", "opacity-0");
+        setTimeout(() => modal.classList.add("hidden"), 200);
+      }
+
+      // Init
+      document.addEventListener("DOMContentLoaded", () => {
+        renderStats();
+        renderTable();
+        initCharts();
+
+        document.getElementById("last-updated").innerText =
+          new Date().toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          });
+      });
+    </script>
+  </body>
+</html>
