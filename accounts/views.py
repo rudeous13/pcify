@@ -265,6 +265,23 @@ def change_password(request):
                 request, "Account not found. Please retry password reset.")
             return redirect("accounts:send_otp")
 
+        # Disallow reusing the current password. Handle both hashed and
+        # legacy-plaintext stored passwords.
+        is_same = False
+        if user.password:
+            try:
+                identify_hasher(user.password)
+                # password is hashed
+                is_same = user.check_password(new_password)
+            except Exception:
+                # legacy plaintext stored
+                is_same = (new_password == user.password)
+
+        if is_same:
+            messages.error(
+                request, "Please enter a new password different from the current one.")
+            return render(request, "LoginPage/changepassword.html")
+
         user.set_password(new_password)
         user.save()
 
