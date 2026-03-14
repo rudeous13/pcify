@@ -191,7 +191,14 @@ function togglePass(id, btn) {
 const passInput = document.getElementById('signup-pass');
 if (passInput) {
     passInput.addEventListener('input', function (e) {
-        updateStrengthMeter(e.target.value);
+        updateStrengthMeter(e.target.value, 'strength-bar');
+    });
+}
+
+const changePassInput = document.getElementById('new-pass');
+if (changePassInput) {
+    changePassInput.addEventListener('input', function (e) {
+        updateStrengthMeter(e.target.value, 'change-strength-bar');
     });
 }
 
@@ -210,8 +217,10 @@ function scorePassword(pw) {
     return 4; // Strong
 }
 
-function updateStrengthMeter(val) {
-    const bar = document.getElementById('strength-bar');
+function updateStrengthMeter(val, barId = 'strength-bar') {
+    const bar = document.getElementById(barId);
+    if (!bar) return;
+
     if (!val) {
         bar.style.width = '0%';
         return;
@@ -254,6 +263,13 @@ themeBtn.addEventListener('click', () => {
    ----------------------------------------------------------- */
 const forms = document.querySelectorAll('form');
 forms.forEach(form => {
+    const isManagedAuthForm =
+        !!form.closest('#signin-container') ||
+        !!form.closest('#signup-container') ||
+        !!form.querySelector('#new-pass');
+
+    if (isManagedAuthForm) return;
+
     form.addEventListener('submit', (e) => {
         let isValid = true;
 
@@ -328,5 +344,52 @@ if (signinForm) {
     }
 
   });
-
 }
+
+    // Change-password form handler (run on pages that have the change-password form)
+    const changePasswordForm = document.querySelector('form[action*="change-password"]');
+
+    if (changePasswordForm) {
+        const newPass = changePasswordForm.querySelector('[name="new_password"]');
+        const confirmPass = changePasswordForm.querySelector('[name="confirm_password"]');
+
+        const inputs = changePasswordForm.querySelectorAll('input');
+        inputs.forEach(input => {
+            input.addEventListener('input', () => {
+                input.classList.remove('input-error');
+                const err = input.closest('.space-y-2')?.querySelector('.error-msg');
+                if (err) err.innerText = '';
+            });
+        });
+
+        changePasswordForm.addEventListener('submit', (e) => {
+            let valid = true;
+
+            function markError(input, msg) {
+                valid = false;
+                input.classList.add('input-error');
+                const span = input.closest('.space-y-2')?.querySelector('.error-msg');
+                if (span) span.innerText = msg;
+            }
+
+            // Keep same password rule as login page: required field validation.
+            if (!newPass.value.trim()) {
+                markError(newPass, 'Password is required.');
+            }
+
+            // Enforce minimum strength (same as signup): score >= 3
+            else if (scorePassword(newPass.value) < 3) {
+                markError(newPass, 'Password is too weak.');
+            }
+
+            if (!confirmPass.value.trim()) {
+                markError(confirmPass, 'Please confirm password.');
+            } else if (newPass.value !== confirmPass.value) {
+                markError(confirmPass, 'Passwords do not match.');
+            }
+
+            if (!valid) {
+                e.preventDefault();
+            }
+        });
+    }
