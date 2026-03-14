@@ -1,4 +1,5 @@
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
+from django.contrib.auth.hashers import identify_hasher, make_password
 from django.db import models
 
 
@@ -43,7 +44,8 @@ class User(AbstractBaseUser):
     email = models.EmailField(max_length=150, unique=True)
     phone_number = models.CharField(max_length=20, blank=True, null=True)
     password = models.CharField(max_length=255, db_column="password_hash")
-    profile_image = models.ImageField(upload_to="profile_images/", blank=True, null=True)
+    profile_image = models.ImageField(
+        upload_to="profile_images/", blank=True, null=True)
     role = models.CharField(
         max_length=20, choices=Roles.choices, default=Roles.CUSTOMER)
     is_active = models.BooleanField(default=True)
@@ -74,10 +76,12 @@ class User(AbstractBaseUser):
         return self.is_superuser
 
     def save(self, *args, **kwargs):
-        # if password appears to be raw (no algorithm marker), hash it
-        if self.password and '$' not in self.password:
-            raw = self.password
-            self.set_password(raw)
+        # Hash only when the password is raw text.
+        if self.password:
+            try:
+                identify_hasher(self.password)
+            except ValueError:
+                self.password = make_password(self.password)
         super().save(*args, **kwargs)
 
     class Meta:

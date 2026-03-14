@@ -1,11 +1,10 @@
 {% load static %}
-
 <!doctype html>
 <html lang="en" data-theme="dark">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Nexus Auth • Login</title>
+    <title>Nexus Auth • Forgot Password</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link
@@ -82,28 +81,43 @@
         backdrop-filter: blur(12px);
         -webkit-backdrop-filter: blur(12px);
       }
-
-      .input-error{
-        border-color:#ef4444 !important;
-        background:rgba(239,68,68,0.05) !important;
-      }
-
-      .shake{
-        animation:shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
-      }
-
-      @keyframes shake{
-        10%,90%{transform:translateX(-1px);}
-        20%,80%{transform:translateX(2px);}
-        30%,50%,70%{transform:translateX(-4px);}
-        40%,60%{transform:translateX(4px);}
-      }
     </style>
   </head>
-  <body
-    class="bg-slate-50 dark:bg-dark-bg text-slate-600 dark:text-slate-300 antialiased transition-colors duration-500 overflow-hidden min-h-screen flex flex-col"
-  >
-    <div id="toast" class="custom-toast"></div>
+  <body class="bg-slate-50 dark:bg-dark-bg text-slate-600 dark:text-slate-300 antialiased transition-colors duration-500 overflow-hidden min-h-screen flex flex-col">
+    
+    {% if messages %}
+    <div class="fixed top-5 right-5 z-[100] flex flex-col gap-3 pointer-events-none" id="toast-container">
+        {% for message in messages %}
+            <div class="toast-message pointer-events-auto transform transition-all duration-500 ease-in-out hover:-translate-y-1 shadow-2xl flex items-center p-4 rounded-xl border backdrop-blur-md
+                {% if message.tags == 'error' %}
+                    bg-red-500/10 border-red-500/20 text-red-500
+                {% elif message.tags == 'success' %}
+                    bg-emerald-500/10 border-emerald-500/20 text-emerald-500
+                {% else %}
+                    bg-brand-500/10 border-brand-500/20 text-brand-500
+                {% endif %}">
+                
+                <div class="mr-3 text-lg">
+                    {% if message.tags == 'error' %}
+                        <i class="bi bi-exclamation-circle-fill"></i>
+                    {% elif message.tags == 'success' %}
+                        <i class="bi bi-check-circle-fill"></i>
+                    {% else %}
+                        <i class="bi bi-info-circle-fill"></i>
+                    {% endif %}
+                </div>
+                
+                <div class="text-sm font-medium tracking-wide">
+                    {{ message }}
+                </div>
+
+                <button onclick="this.parentElement.style.opacity='0'; setTimeout(() => this.parentElement.remove(), 500);" class="ml-4 opacity-50 hover:opacity-100 transition-opacity">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+        {% endfor %}
+    </div>
+    {% endif %}
 
     <div class="fixed inset-0 z-0 pointer-events-none">
       <div class="absolute inset-0 bg-grid-pattern bg-grid opacity-[0.03] dark:opacity-[0.05]"></div>
@@ -113,7 +127,7 @@
 
     <header class="absolute top-0 z-50 w-full">
       <div class="max-w-7xl mx-auto px-4 md:px-6 h-20 flex items-center justify-between">
-        <a href="{% url 'core:homepage'%}" class="flex items-center gap-3 group">
+        <a href="#" class="flex items-center gap-3 group">
           <div class="relative w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-500 to-accent-600 text-white flex items-center justify-center font-bold text-lg shadow-lg shadow-brand-500/30 group-hover:shadow-brand-500/50 transition-all duration-500">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" class="transition-transform duration-700 group-hover:rotate-[360deg]">
                 <circle cx="12" cy="12" r="10" />
@@ -137,112 +151,73 @@
 
     <main class="relative z-10 flex-1 flex items-center justify-center p-4">
       <div class="w-full max-w-md" id="mainCard">
-        <div id="signin-container" class="bg-white/95 dark:bg-dark-card/90 glass-effect border border-slate-200/50 dark:border-white/10 rounded-3xl p-8 shadow-2xl shadow-brand-500/5 hover:shadow-brand-500/20 hover:-translate-y-1 transition-all duration-500 relative overflow-hidden auth-form-container active">
-          
+        
+        <div class="bg-white/95 dark:bg-dark-card/90 glass-effect border border-slate-200/50 dark:border-white/10 rounded-3xl p-8 shadow-2xl shadow-brand-500/5 hover:shadow-brand-500/20 hover:-translate-y-1 transition-all duration-500 relative overflow-hidden auth-form-container active">
           <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-brand-500 via-accent-500 to-brand-500 bg-[length:200%_auto] animate-[gradient_3s_ease_infinite]"></div>
 
           <div class="text-center mb-8">
-            <h1 id="heroTitle" class="text-3xl font-black text-slate-900 dark:text-white font-mono mb-2 tracking-tight">
-              Welcome back.
+            <div class="w-16 h-16 mx-auto bg-brand-500/10 dark:bg-brand-500/20 rounded-full flex items-center justify-center mb-4">
+              <i class="bi bi-key text-2xl text-brand-500"></i>
+            </div>
+            <h1 class="text-3xl font-black text-slate-900 dark:text-white font-mono mb-2 tracking-tight">
+              Forgot Password?
             </h1>
             <p class="text-slate-500 dark:text-slate-400 text-sm leading-relaxed">
-              Your dream PC builder ecosystem awaits. Sign in to continue building your masterpiece.
+              Enter your registered email, and we'll send you an OTP to reset your password.
             </p>
           </div>
 
-          <form action="{% url 'accounts:signin' %}" method="POST" autocomplete="off" novalidate class="space-y-5">
+          <form action="{% url 'accounts:send_otp' %}" method="POST" autocomplete="off" novalidate class="space-y-6">
             {% csrf_token %}
             
             <div class="space-y-2 group">
-              <label for="signin-id" class="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 group-focus-within:text-brand-500 transition-colors duration-300">Email or Phone</label>
+              <label for="reset-id" class="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 group-focus-within:text-brand-500 transition-colors duration-300">Email Address</label>
               <div class="relative focus-within:transform focus-within:-translate-y-0.5 transition-transform duration-300">
                 <input
-                  type="text"
-                  id="signin-id"
+                  type="email"
+                  id="reset-id"
                   name="emailorphone"
                   required
-                  value="{%if email_or_phone%}{{email_or_phone}}{%endif%}"
                   class="w-full bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-white/10 rounded-xl p-3 pl-10 text-slate-900 dark:text-white hover:border-brand-400/50 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 focus:bg-white dark:focus:bg-black/40 outline-none transition-all duration-300 placeholder:text-slate-400/50 focus:shadow-[0_0_15px_rgba(14,165,233,0.1)]"
-                  placeholder="Enter your email or phone"
+                  placeholder="Enter your email"
                 />
-                <i class="bi bi-person absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-brand-500 group-focus-within:scale-110 transition-all duration-300"></i>
-              </div>
-              <span class="error-msg" style="display: block; margin-top: 4px; color: #ef4444; font-size: 12px;"></span>
-            </div>
-
-            <div class="space-y-2 group/pass">
-              <div class="flex justify-between">
-                <label for="signin-pass" class="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 group-focus-within/pass:text-brand-500 transition-colors duration-300">Password</label>
-              </div>
-              <div class="relative focus-within/pass:transform focus-within/pass:-translate-y-0.5 transition-transform duration-300">
-                <input
-                  type="password"
-                  id="signin-pass"
-                  name="password"
-                  required
-                  value="{%if userPassword%}{{userPassword}}{%endif%}"
-                  class="w-full bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-white/10 rounded-xl p-3 pl-10 pr-10 text-slate-900 dark:text-white hover:border-brand-400/50 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 focus:bg-white dark:focus:bg-black/40 outline-none transition-all duration-300 placeholder:text-slate-400/50 focus:shadow-[0_0_15px_rgba(14,165,233,0.1)]"
-                  placeholder="Enter your password"
-                />
-                <i class="bi bi-lock absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within/pass:text-brand-500 group-focus-within/pass:scale-110 transition-all duration-300"></i>
-                <span class="error-msg" style="display: block; margin-top: 4px; color: #ef4444; font-size: 12px;"></span>
-                <button
-                  type="button"
-                  onclick="togglePass('signin-pass', this)"
-                  class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-brand-500 dark:hover:text-brand-400 transition-colors duration-300 pw-toggle-btn hover:scale-110 active:scale-95"
-                >
-                  <i class="bi bi-eye-slash"></i>
-                </button>
+                <i class="bi bi-envelope absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-brand-500 group-focus-within:scale-110 transition-all duration-300"></i>
               </div>
             </div>
-
-            <div class="flex justify-between items-center text-sm mb-4">
-                <!-- <label class="flex items-center gap-2 cursor-pointer text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white transition-colors">
-                    <input type="checkbox" name="remember" id="remember" class="accent-brand-500 w-4 h-4 rounded border-slate-300 dark:border-white/10 text-brand-500 focus:ring-brand-500 focus:ring-offset-0 transition-all cursor-pointer"> 
-                    Remember me
-                </label> -->
-                <a href="{% url 'accounts:send_otp' %}" class="font-bold text-brand-500 hover:text-brand-400 transition-all hover:underline underline-offset-4 decoration-2 decoration-brand-400/40">Forgot Password?</a>
-            </div>
-
-            {%if message%}
-            <div role="alert" class="p-3 bg-red-500/10 border border-red-500/20 text-red-500 rounded-xl text-sm text-center animate-pulse">
-                {{message}}
-            </div>
-            {%endif%}
-
-            {%if successful%}
-            <div role="alert" class="p-3 bg-green-500/10 border border-green-500/20 text-green-500 rounded-xl text-sm text-center animate-pulse">
-                {{successful}}
-            </div>
-            {%endif%}
 
             <button
               type="submit"
               class="group w-full py-3.5 bg-gradient-to-r from-brand-600 to-accent-600 hover:from-brand-500 hover:to-accent-500 text-white font-bold rounded-xl shadow-lg shadow-brand-500/25 hover:shadow-[0_0_20px_rgba(14,165,233,0.4)] hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 flex items-center justify-center gap-2 relative overflow-hidden"
             >
               <span class="relative z-10 flex items-center gap-2">
-                Sign In <i class="bi bi-arrow-right transition-transform duration-300 group-hover:translate-x-1.5"></i>
+                Send OTP <i class="bi bi-send transition-transform duration-300 group-hover:translate-x-1.5 group-hover:-translate-y-1.5"></i>
               </span>
             </button>
-
-            <div class="relative flex py-2 items-center opacity-70">
-              <div class="flex-grow border-t border-slate-200 dark:border-white/10"></div>
-              <span class="flex-shrink mx-4 text-slate-400 text-xs uppercase tracking-widest">Or</span>
-              <div class="flex-grow border-t border-slate-200 dark:border-white/10"></div>
-            </div>
           </form>
 
           <div class="mt-6 text-center text-sm text-slate-500 dark:text-slate-400">
-            Don't have an account?
-            <a href="{% url 'accounts:signup'%}" class="text-brand-500 font-bold hover:text-brand-400 transition-all duration-300 hover:underline underline-offset-4 decoration-2 decoration-brand-400/40">
-              Create account
+            Remember your password?
+            <a href="{% url 'accounts:signin' %}" class="text-brand-500 font-bold hover:text-brand-400 transition-all duration-300 hover:underline underline-offset-4 decoration-2 decoration-brand-400/40">
+              Back to Login
             </a>
           </div>
-          
         </div>
+
       </div>
     </main>
     
-    <script src="{%static 'LoginPage/login.js'%}"></script>
+    <script src="{% static 'LoginPage/login.js' %}"></script>
+    
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const toasts = document.querySelectorAll('.toast-message');
+        toasts.forEach(toast => {
+          setTimeout(() => {
+            toast.style.opacity = '0';
+            setTimeout(() => toast.remove(), 500);
+          }, 5000); // 5000ms = 5 seconds
+        });
+      });
+    </script>
   </body>
 </html>
